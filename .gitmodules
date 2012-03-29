@@ -1,0 +1,6 @@
+[submodule "js/libs/paper.js"]
+	path = js/libs/paper.js
+	url = git://github.com/paperjs/paper.js.git
+[submodule "js/libs/uglifyjs"]
+	path = js/libs/uglifyjs
+	url = git://github.com/mishoo/UglifyJS.git
