@@ -19,3 +19,9 @@
 [submodule "js/libs/javascript-debug"]
 	path = js/libs/javascript-debug
 	url = git://github.com/cowboy/javascript-debug.git
+[submodule "js/libs/labjs"]
+	path = js/libs/labjs
+	url = git://github.com/getify/LABjs.git
+[submodule "js/libs/sylvester"]
+	path = js/libs/sylvester
+	url = git://github.com/jcoglan/sylvester.git
