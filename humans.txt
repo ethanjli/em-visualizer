@@ -12,6 +12,6 @@
 
 /* SITE */
   Standards: HTML5, LESS
-  Components: Bootstrap, Modernizr, MooTools, Paper.js
+  Components: Bootstrap, Modernizr, JQuery, MooTools, LESS, Paper.js
   Software: Aptana Studio 3
   Icons: Glyphicons

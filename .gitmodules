@@ -10,3 +10,9 @@
 [submodule "js/libs/modernizr"]
 	path = js/libs/modernizr
 	url = https://github.com/Modernizr/Modernizr.git
+[submodule "js/libs/requirejs"]
+	path = js/libs/requirejs
+	url = git://github.com/jrburke/requirejs.git
+[submodule "js/libs/jquery"]
+	path = js/libs/jquery
+	url = git://github.com/jquery/jquery.git
