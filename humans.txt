@@ -5,7 +5,7 @@
 /* TEAM */
   Developer: Ethan Li
   Project Page: http://github.com/lietk12/em-visualizer
-  Location: Beverly Hills, Michigan
+  Location: Beverly Hills, Michigan, USA
 
 /* THANKS */
   Advisor: Mr. Barry Webster (http://barrywebster.com)
@@ -14,3 +14,4 @@
   Standards: HTML5, LESS
   Components: Bootstrap, Modernizr, MooTools, Paper.js
   Software: Aptana Studio 3
+  Icons: Glyphicons
