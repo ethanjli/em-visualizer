@@ -3,8 +3,20 @@ var Universe = new Class({
 		this.id = properties.id;
 		this.type = "Universe";
 		this.setName(properties.name);
+		// Managing entities
 		this.entityIdCounter = 0;
-		this.entitiesList = properties.entities;
+		this.entities = new Array();
+		// Managing graphical display
+		this.setCanvasDimensions(properties.canvasDimensions);
+		this.setCenterOfCanvas(properties.locationOfCenterOfCanvas);
+		this.setCanvasZoom(properties.canvasZoom);
+		// Populate the universe
+		this.addEntity(new UniverseAnchorPoint({
+			id: this.getNextEntityId(),
+			canvasCoordinates: this.findCanvasCoordinates(Vector.create([0, 0]))
+		}));
+		debug.debug("Added centerOfUniverse entity", this.getEntity(0));
+		this.setEntities(properties.entities);
 	},
 	
 	getId: function() {
@@ -39,7 +51,7 @@ var Universe = new Class({
 	},
 	
 	// Provides a counter to be used for setting the id of the next entity made in the universe
-	entityIdCounter: function() {
+	getNextEntityId: function() {
 		return this.entityIdCounter++; // int
 	},
 	
@@ -53,7 +65,10 @@ var Universe = new Class({
 	addEntity: function(entity) {
 		this.entities[entity.getId()] = entity;
 	},
-	removeEntity: function(entity) {
+	getEntity: function(id) { // int
+		return this.entities[id]; // Entity
+	},
+	removeEntity: function(entity) { // Entity
 		this.entities[entity.getId()] = null;
 	},
 	
@@ -72,5 +87,38 @@ var Universe = new Class({
 				return totalElectricPotential + currentValue.findElectricPotentialAt(location, this.getVacuumPermittivity()); // double
 			}
 		});
+	},
+	
+	// Handles the dimensions of the canvas
+	setCanvasDimensions: function(bottomRightCorner) { // size as Size
+		this.canvasDimensions = bottomRightCorner;
+	},
+	getCanvasDimensions: function() {
+		return this.canvasDimensions // size as Size
+	},
+	
+	// Handles the location in the universe where the center of the canvas is
+	setCenterOfCanvas: function(location) { // point as Vector
+		this.locationOfCenterOfCanvas = location;
+	},
+	getCenterOfCanvas: function() {
+		return this.locationOfCenterOfCanvas; // point as Vector
+	},
+	
+	// Handles the zoom of the canvas
+	setCanvasZoom: function(zoom) { // double
+		this.canvasZoom = zoom;
+	},
+	getCanvasZoom: function() {
+		return this.canvasZoom; // double
+	},
+	
+	// Handles conversion of coordinates between the universe and the canvas
+	findCanvasCoordinates: function(universeCoordinates) { // point as Vector
+		var canvasCoordinates = universeCoordinates.subtract(this.getCenterOfCanvas()).multiply(this.getCanvasZoom()).add(Vector.create([this.getCanvasDimensions().width, this.getCanvasDimensions().height]).multiply(0.5));
+		return new paper.Point([canvasCoordinates.elements[0], canvasCoordinates.elements[1]]); // point as Point
+	},
+	findUniverseCoordinates: function(canvasCoordinates) { // point as Point
+		return Vector.create([canvasCoordinates.x, canvasCoordinates.y]).subtract(Vector.create([this.getCanvasDimensions().width, this.getCanvasDimensions().height]).multiply(0.5)).multiply(1 / this.getCanvasZoom()).add(this.getCenterOfCanvas()); // point as Vector
 	}
 });
