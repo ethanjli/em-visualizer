@@ -54,7 +54,12 @@ var PointEntity = new Class({
 	
 	// Handles the entity's location
 	setLocation: function(location) { // point as Vector
-		this.location = location;
+		if (typeof(this.getLocation()) !== 'undefined' && this.isAnchored()) {
+			debug.warn("Tried to set the location of anchored entity " + this.getId());
+		} else {
+			this.location = location;
+			debug.info("Successfully set the location of anchored entity " + this.getId(), this.getLocation());
+		}
 	},
 	getLocation: function() {
 		return this.location; // point as Vector
@@ -124,3 +129,29 @@ var SolidEntity = new Class({
 		this.type.push("Solid");
 	}
 });
+
+// Models the (0,0) anchor in the universe
+var UniverseAnchorPoint = new Class({
+	Extends: PointEntity,
+	
+	initialize: function(properties) { // Object
+		var newProperties = Object.clone(properties);
+		newProperties.name = "Center of the Universe";
+		newProperties.anchored = true;
+		newProperties.mass = 0;
+		newProperties.location = Vector.create([0,0]);
+		this.parent(newProperties);
+		this.type.push("Universe Anchor Point");
+		// start canvas representation
+		this.pathPoint = new Path.Circle(properties.canvasCoordinates, 2);
+		debug.debug("Drew the center of the universe at", properties.canvasCoordinates);
+		this.pathPoint.style = {
+			fillColor: 'black',
+		};
+		this.pathText = new PointText(properties.canvasCoordinates.add(new Point(2, -2)));
+		this.pathText.fillColor = 'black';
+		this.pathText.content = '(0,0)';
+	}
+});
+
+// TODO: add object for measuring distances

@@ -71,79 +71,87 @@ var Electron = new Class({
 	Extends: ChargedPointEntity,
 	
 	initialize: function(properties) { // Object
-		this.parent(properties);
+		var newProperties = Object.clone(properties);
+		newProperties.charge = -1.602176565 * Math.pow(10, -19);
+		newProperties.mass = 9.10938291 * Math.pow(10, -31);
+		this.parent(newProperties);
 		this.type.push("Electron");
-		this.setCharge(-1.602176565 * Math.pow(10, -19));
-		this.setMass(9.10938291 * Math.pow(10, -31));
 	}
 });
 var Positron = new Class({
 	Extends: ChargedPointEntity,
 	
 	initialize: function(properties) { // Object
-		this.parent(properties);
+		var newProperties = Object.clone(properties);
+		newProperties.charge = 1.602176565 * Math.pow(10, -19);
+		newProperties.mass = 9.10938291 * Math.pow(10, -31);
+		this.parent(newProperties);
 		this.type.push("Positron");
-		this.setCharge(1.602176565 * Math.pow(10, -19));
-		this.setMass(9.10938291 * Math.pow(10, -31));
 	}
 });
 var Proton = new Class({
 	Extends: ChargedPointEntity,
 	
 	initialize: function(properties) { // Object
-		this.parent(properties);
+		var newProperties = Object.clone(properties);
+		newProperties.charge = 1.602176565 * Math.pow(10, -19);
+		newProperties.mass = 1.672621777 * Math.pow(10, -27);
+		this.parent(newProperties);
 		this.type.push("Proton");
-		this.setCharge(1.602176565 * Math.pow(10, -19));
-		this.setMass(1.672621777 * Math.pow(10, -27));
 	}
 });
-var Proton = new Class({
+var AntiProton = new Class({
 	Extends: ChargedPointEntity,
 	
 	initialize: function(properties) { // Object
-		this.parent(properties);
-		this.type.push("Proton");
-		this.setCharge(-1.602176565 * Math.pow(10, -19));
-		this.setMass(1.672621777 * Math.pow(10, -27));
+		var newProperties = Object.clone(properties);
+		newProperties.charge = -1.602176565 * Math.pow(10, -19);
+		newProperties.mass = 1.672621777 * Math.pow(10, -27);
+		this.parent(newProperties);
+		this.type.push("AntiProton");
 	}
 });
 var Muon = new Class({
 	Extends: ChargedPointEntity,
 	
 	initialize: function(properties) { // Object
-		this.parent(properties);
+		var newProperties = Object.clone(properties);
+		newProperties.charge = -1.602176565 * Math.pow(10, -19);
+		newProperties.mass = 1.883531 * Math.pow(10, -28);
+		this.parent(newProperties);
 		this.type.push("Muon");
-		this.setCharge(-1.602176565 * Math.pow(10, -19));
-		this.setMass(1.883531 * Math.pow(10, -28));
 	}
 });
 var AntiMuon = new Class({
 	Extends: ChargedPointEntity,
 	
 	initialize: function(properties) { // Object
-		this.parent(properties);
-		this.type.push("Antimuon");
-		this.setCharge(1.602176565 * Math.pow(10, -19));
-		this.setMass(1.883531 * Math.pow(10, -28));
+		var newProperties = Object.clone(properties);
+		newProperties.charge = 1.602176565 * Math.pow(10, -19);
+		newProperties.mass = 1.883531 * Math.pow(10, -28);
+		this.parent(newProperties);
+		this.type.push("AntiMuon");
 	}
 });
 var Tauon = new Class({
 	Extends: ChargedPointEntity,
 	
 	initialize: function(properties) { // Object
-		this.parent(properties);
+		var newProperties = Object.clone(properties);
+		newProperties.charge = -1.602176565 * Math.pow(10, -19);
+		newProperites.mass = 3.16777 * Math.pow(10, -27);
+		this.parent(newProperties);
 		this.type.push("Tauon");
-		this.setCharge(-1.602176565 * Math.pow(10, -19));
-		this.setMass(3.16777 * Math.pow(10, -27));
 	}
 });
 var AntiTau = new Class({
 	Extends: ChargedPointEntity,
 	
 	initialize: function(properties) { // Object
-		this.parent(properties);
-		this.type.push("Antitau");
-		this.setCharge(1.602176565 * Math.pow(10, -19));
-		this.setMass(3.16777 * Math.pow(10, -27));
+		var newProperties = Object.clone(properties);
+		newProperties.charge = 1.602176565 * Math.pow(10, -19);
+		newProperites.mass = 3.16777 * Math.pow(10, -27);
+		this.parent(newProperties);
+		this.type.push("AntiTau");
 	}
 });
