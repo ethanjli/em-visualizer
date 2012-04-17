@@ -20,11 +20,19 @@ $LAB.script("//static.getclicky.com/js").wait(function() {
 
 // Modeling Scripts
 $LAB.script("js/libs/sylvester/lib/sylvester-min.js")
-	.script("js/libs/paper.js/dist/paper.js").wait()
+	.script("js/libs/paper.js/dist/paper.js").wait(function() {
+		debug.info("Finished loading paper.js and sylvester");
+	})
 	.script("js/libs/mootools/mootools-core-1.4.5-full-nocompat.js")/*
-	.script("js/libs/mootools/mootools-more-1.4.0.1.js")*/.wait()
+	.script("js/libs/mootools/mootools-more-1.4.0.1.js")*/.wait(function() {
+		debug.info("Finished loading MooTools");
+	})
 	.script("js/em-entities/entities.js").wait()
 	.script("js/em-entities/e-entities.js")
 	.script("js/em-entities/e-probes.js")
-	.script("js/em-universe/em-universe.js").wait()
-	.script("js/canvas.js");
+	.script("js/em-universe/em-universe.js").wait(function() {
+		debug.info("Finished loading core classes");
+	})
+	.script("js/canvas.js").wait(function() {
+		debug.info("Started up the canvas");
+	});
