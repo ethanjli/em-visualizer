@@ -12,6 +12,9 @@ var Entity = new Class({
 		this.setName(properties.name);
 		this.setAnchored(properties.anchored);
 		this.setMass(properties.mass);
+		this.properties.graphics = new Object();
+		this.properties.graphics.clickable = new Group();
+		this.properties.graphics.group = new Group();
 	},
 	
 	// Handles the entity's basic properties
@@ -25,6 +28,7 @@ var Entity = new Class({
 	// Handles the entity's name
 	setName: function(name) { // String
 		this.properties.name = name;
+		return true; // bool
 	},
 	getName: function() {
 		return this.properties.name; // String
@@ -33,6 +37,7 @@ var Entity = new Class({
 	// Handles whether or not the entity is mobile
 	setAnchored: function(anchored) { // bool
 		this.properties.anchored = anchored;
+		return true; // bool
 	},
 	isAnchored: function() {
 		return this.properties.anchored; // bool
@@ -41,6 +46,7 @@ var Entity = new Class({
 	// Handles the entity's mass
 	setMass: function(mass) { // double
 		this.properties.mass = mass;
+		return true; // bool
 	},
 	getMass: function() {
 		return this.properties.mass; // double
@@ -49,9 +55,18 @@ var Entity = new Class({
 	// Handles properties in a bulk way
 	setProperties: function(properties) { // Object
 		this.properties = Object.clone(properties);
+		return true; // bool
 	},
 	getProperties: function() {
 		return this.properties; // Object
+	},
+	
+	// Handles graphics
+	getClickable: function() {
+		return this.properties.graphics.clickable; // group as Group
+	},
+	getGraphics: function() {
+		return this.properties.graphics.clickable; // group as Group
 	}
 });
 
@@ -68,15 +83,31 @@ var PointEntity = new Class({
 		this.properties.type.push("Point");
 		// Handle point-specific variables
 		this.setLocation(properties.point.location);
+		// Initialize graphics
+		//// Draw the point
+		debug.debug("Drawing new point at", properties.graphics.canvasCoordinates);
+		var point = new Path.Circle(properties.graphics.canvasCoordinates, 2);
+		point.style = {
+			fillColor: "black"
+		};
+		//// Commit graphics
+		this.properties.graphics.point = point;
+		//// Make clickable group and overall group
+		this.properties.graphics.clickable.addChild(point);
+		this.properties.graphics.group.addChild(point);
+		debug.debug("Finished initialization of point graphics", this.properties.graphics);
 	},
 	
 	// Handles the entity's location
 	setLocation: function(location) { // point as Vector
 		if (typeof(this.getLocation()) !== 'undefined' && this.isAnchored()) {
 			debug.warn("Tried to set the location of anchored entity " + this.getId());
+			return false; // bool
 		} else {
+			// TODO: clone the location
 			this.properties.point.location = location;
 			debug.debug("Successfully set the location of anchored entity " + this.getId(), this.getLocation());
+			return true; // bool
 		}
 	},
 	getLocation: function() {
@@ -86,6 +117,36 @@ var PointEntity = new Class({
 	// Returns a vector from the location of the point entity to the given location
 	findVectorTo: function(location) { // point as Vector
 		return location.subtract(this.getLocation()); // vector as Vector
+	},
+	
+	// Handles graphical display of the universe location
+	updateLocation: function(location, canvasCoordinates) { // point as Vector, point as Point
+		if (this.setLocation(location)) {
+			// Determine how far to move
+			var offset = canvasCoordinates.subtract(this.properties.graphics.point.position);
+			// Translate
+			this.properties.graphics.group.translate(offset);
+			// Update label
+			this.properties.graphics.label.content = "(" + this.getLocation().e(1) + "m," + this.getLocation().e(2) + "m)";
+			// Update canvasCoordinates property
+			this.properties.graphics.canvasCoordinates = canvasCoordinates;
+			return true; // bool
+		} else {
+			return false; // bool
+		}
+	},
+	updateLocationByOffset: function(locationOffset, canvasCoordinateOffset) { // vector as Vector, vector as Point
+		if (this.setLocation(location.add(locationOffset))) {
+			// Translate
+			this.properties.graphics.group.translate(canvasCoordinateOffset);
+			// Update label
+			this.properties.graphics.label.content = "(" + this.getLocation().e(1) + "m," + this.getLocation().e(2) + "m)";
+			// Update canvasCoordinates property
+			this.properties.graphics.canvasCoordinates = canvasCoordinates;
+			return true; // bool
+		} else {
+			return false; // bool
+		}
 	}
 });
 
@@ -107,6 +168,7 @@ var LineEntity = new Class({
 	// Handles the entity's location and direction
 	setLine: function(line) { // Line
 		this.line.line = line;
+		return true; // bool
 	},
 	getLine: function() {
 		return this.line.line; // Line
@@ -180,25 +242,52 @@ var UniverseLocation = new Class({
 		// Handle preset properties which don't clone properly with MooTools
 		newProperties.point.location = Vector.create(properties.point.location.elements);
 		newProperties.graphics.canvasCoordinates = new Point(properties.graphics.canvasCoordinates);
-		debug.debug("Finished preset for universe location", newProperties);
+		//debug.debug("Finished preset for universe location", newProperties);
 		// Send up to parent
 		this.parent(newProperties);
 		// Handle universe-location-specific constants
 		this.properties.type.push("Universe Location");
 		// Handle universe-location-specific properties
 		// Initialize graphics
-		var point = new Path.Circle(newProperties.graphics.canvasCoordinates, 2);
-		point.style = {
-			fillColor: "black"
-		};
-		debug.debug("canvas coords are", properties.graphics.canvasCoordinates);
+		//// Draw the label
 		var label = new PointText(newProperties.graphics.canvasCoordinates.add(new Point(2, -2)));
 		label.fillColor = "black";
 		label.content = "(" + this.getLocation().e(1) + "m," + this.getLocation().e(2) + "m)";
-		// Commit graphics
-		this.properties.graphics = new Object();
-		this.properties.graphics.point = point;
+		//// Commit graphics
 		this.properties.graphics.label = label;
+		//// Update clickable group and overall group
+		this.properties.graphics.group.addChild(label);
+		debug.debug("Finished initialization of universe-location graphics", this.properties.graphics);
+	},
+	
+	// Handles graphical display of the universe location
+	updateLocation: function(location, canvasCoordinates) { // point as Vector, point as Point
+		if (this.setLocation(location)) {
+			// Determine how far to move
+			var offset = canvasCoordinates.subtract(this.properties.graphics.point.position);
+			// Translate
+			this.properties.graphics.group.translate(offset);
+			// Update label
+			this.properties.graphics.label.content = "(" + this.getLocation().e(1) + "m," + this.getLocation().e(2) + "m)";
+			// Update canvasCoordinates property
+			this.properties.graphics.canvasCoordinates = canvasCoordinates;
+			return true; // bool
+		} else {
+			return false; // bool
+		}
+	},
+	updateLocationByOffset: function(locationOffset, canvasCoordinateOffset) { // vector as Vector, vector as Point
+		if (this.setLocation(location.add(locationOffset))) {
+			// Translate
+			this.properties.graphics.group.translate(canvasCoordinateOffset);
+			// Update label
+			this.properties.graphics.label.content = "(" + this.getLocation().e(1) + "m," + this.getLocation().e(2) + "m)";
+			// Update canvasCoordinates property
+			this.properties.graphics.canvasCoordinates = canvasCoordinates;
+			return true; // bool
+		} else {
+			return false; // bool
+		}
 	}
 });
 
@@ -213,7 +302,7 @@ var UniverseAnchorPoint = new Class({
 		newProperties.anchored = true;
 		newProperties.point = new Object();
 		newProperties.point.location = Vector.create([0,0]);
-		debug.debug("Finished preset for universe anchor point", newProperties);
+		//debug.debug("Finished preset for universe anchor point", newProperties);
 		// Send up to parent
 		this.parent(newProperties);
 		// Handle universe-anchor-point-specific constants

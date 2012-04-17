@@ -48,4 +48,19 @@ testUniverse.addEntity(new UniverseLocation({
 		canvasCoordinates: testUniverse.findCanvasCoordinates(Vector.create([1, 0]))
 	}
 }));
+testUniverse.addEntity(new UniverseLocation({
+	id: testUniverse.getNextEntityId(),
+	name: "Third Location",
+	point: {
+		location: Vector.create([-1, 0])
+	},
+	graphics: {
+		canvasCoordinates: testUniverse.findCanvasCoordinates(Vector.create([-1, 0]))
+	}
+}));
+testUniverse.getEntity(2).updateLocation(testUniverse.findUniverseCoordinates(new Point(50, 50)), new Point(50, 50));
 debug.debug("Test universe now looks like", testUniverse);
+
+// TODO: Make Third Location move around by mouse events
+
+// TODO: Add proper onResize handler
