@@ -26,7 +26,26 @@ view.onFrame = function(event) {
 var testUniverse = new Universe({
 	id: 0,
 	name: "Test Universe",
-	canvasDimensions: view.viewSize,
-	locationOfCenterOfCanvas: Vector.create([0, 0]),
-	canvasZoom: 1
+	physicalConstants: {
+		vacuumPermittivity: 1.0 / (4 * Math.Pi * Math.pow(10, -7) * Math.pow(299792458, 2)),
+		vacuumPermeability: 4 * Math.Pi * Math.pow(10, -7)
+	},
+	entities: {
+		
+	},
+	graphics: {
+		locationOfCenterOfCanvas: Vector.create([0, 0]),
+		canvasZoom: 100
+	}
 });
+testUniverse.addEntity(new UniverseLocation({
+	id: testUniverse.getNextEntityId(),
+	name: "Second Location",
+	point: {
+		location: Vector.create([1, 0])
+	},
+	graphics: {
+		canvasCoordinates: testUniverse.findCanvasCoordinates(Vector.create([1, 0]))
+	}
+}));
+debug.debug("Test universe now looks like", testUniverse);

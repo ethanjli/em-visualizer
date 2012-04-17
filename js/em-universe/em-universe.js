@@ -1,76 +1,94 @@
 var Universe = new Class({
 	initialize: function(properties) {
-		this.id = properties.id;
-		this.type = "Universe";
+		// Initialize universe-specific properties container
+		this.properties = new Object();
+		// Handle universe-specific constants
+		this.properties.id = properties.id;
+		this.properties.type = "Universe";
+		// Handle universe-specific variables
 		this.setName(properties.name);
-		// Managing entities
-		this.entityIdCounter = 0;
-		this.entities = new Array();
-		// Managing graphical display
-		this.setCanvasDimensions(properties.canvasDimensions);
-		this.setCenterOfCanvas(properties.locationOfCenterOfCanvas);
-		this.setCanvasZoom(properties.canvasZoom);
-		// Populate the universe
+		// Handle physical constant variables
+		this.properties.physicalConstants = new Object();
+		this.setVacuumPermittivity(properties.physicalConstants.vacuumPermittivity);
+		this.setVacuumPermeability(properties.physicalConstants.vacuumPermeability);
+		//// Handle entities
+		this.properties.entities = new Object();
+		this.properties.entities.entityIdCounter = 0;
+		this.properties.entities.entities = new Array();
+		//// Handle graphical display
+		this.properties.graphics = new Object();
+		this.setCenterOfCanvas(properties.graphics.locationOfCenterOfCanvas);
+		this.setCanvasZoom(properties.graphics.canvasZoom);
+		//// Populate the universe with initial entities
+		////// Add the (0,0) anchor point
 		this.addEntity(new UniverseAnchorPoint({
 			id: this.getNextEntityId(),
-			canvasCoordinates: this.findCanvasCoordinates(Vector.create([0, 0]))
+			graphics: {
+				canvasCoordinates: this.findCanvasCoordinates(Vector.create([0, 0]))
+			}
 		}));
-		debug.debug("Added centerOfUniverse entity", this.getEntity(0));
-		this.setEntities(properties.entities);
+		////// Put all the other entities in if the entity list is not undefined
+		if (typeof(properties.entities.entities) !== 'undefined' && properties.entities.entities.length != 0) {
+			this.setEntities(properties.entities.entities);
+		} 
 	},
 	
 	getId: function() {
-		return this.id; // int
+		return this.properties.id; // int
 	},
 	getType: function() {
-		return this.type; // String
+		return this.properties.type; // String
 	},
 	
 	// Handles the universe's name
 	setName: function(name) { // String
-		this.name = name;
+		this.properties.name = name;
 	},
 	getName: function() {
-		return this.name; // String
+		return this.properties.name; // String
 	},
 	
 	// Handles the universe's ε_0
 	setVacuumPermittivity: function(vacuumPermittivity) { // double
-		this.vacuumPermittivity = vacuumPermittivity;
+		this.properties.physicalConstants.vacuumPermittivity = vacuumPermittivity;
 	},
 	getVacuumPermittivity: function() {
-		return this.vacuumPermittivity; // double
+		return this.properties.physicalConstants.vacuumPermittivity; // double
 	},
 	
 	// Handles the universe's μ_0
 	setVacuumPermeability: function(vacuumPermeability) { // double
-		this.vacuumPermeability = vacuumPermeability;
+		this.properties.physicalConstants.vacuumPermeability = vacuumPermeability;
 	},
 	getVacuumPermeability: function() {
-		return this.vacuumPermeability; // double
+		return this.properties.physicalConstants.vacuumPermeability; // double
 	},
 	
 	// Provides a counter to be used for setting the id of the next entity made in the universe
 	getNextEntityId: function() {
-		return this.entityIdCounter++; // int
+		debug.debug("The next entity will have id", this.properties.entities.entityIdCounter + 1);
+		return this.properties.entities.entityIdCounter++; // int
 	},
 	
 	// Handles the universe's list of entities
 	setEntities: function(entities) { // Entity[]
-		this.entities = entities;
+		// FIXME: this should deep copy the entities without messing up the locations. Maybe add a clone method to each entity?
+		this.properties.entities.entities = entities;
 	},
 	getEntities: function() {
-		return this.entities; // Entity[]
+		return this.properties.entities.entities; // Entity[]
 	},
 	addEntity: function(entity) {
-		this.entities[entity.getId()] = entity;
+		this.properties.entities.entities[entity.getId()] = entity;
 	},
 	getEntity: function(id) { // int
-		return this.entities[id]; // Entity
+		return this.properties.entities.entities[id]; // Entity
 	},
 	removeEntity: function(entity) { // Entity
-		this.entities[entity.getId()] = null;
+		this.properties.entities.entities[entity.getId()] = null;
+		// FIXME: remove graphics. Maybe add a erase method to each entity? 
 	},
+	// TODO: add method to compress the entity list and entity ids by filling empty spots
 	
 	// Calculates the electric field in the universe at a given spot by superpositioning
 	findElectricFieldAt: function(location) { // point as Vector
@@ -89,36 +107,28 @@ var Universe = new Class({
 		});
 	},
 	
-	// Handles the dimensions of the canvas
-	setCanvasDimensions: function(bottomRightCorner) { // size as Size
-		this.canvasDimensions = bottomRightCorner;
-	},
-	getCanvasDimensions: function() {
-		return this.canvasDimensions // size as Size
-	},
-	
 	// Handles the location in the universe where the center of the canvas is
 	setCenterOfCanvas: function(location) { // point as Vector
-		this.locationOfCenterOfCanvas = location;
+		this.properties.graphics.locationOfCenterOfCanvas = Vector.create(location.elements);
 	},
 	getCenterOfCanvas: function() {
-		return this.locationOfCenterOfCanvas; // point as Vector
+		return this.properties.graphics.locationOfCenterOfCanvas; // point as Vector
 	},
 	
 	// Handles the zoom of the canvas
 	setCanvasZoom: function(zoom) { // double
-		this.canvasZoom = zoom;
+		this.properties.graphics.canvasZoom = zoom;
 	},
 	getCanvasZoom: function() {
-		return this.canvasZoom; // double
+		return this.properties.graphics.canvasZoom; // double
 	},
 	
 	// Handles conversion of coordinates between the universe and the canvas
 	findCanvasCoordinates: function(universeCoordinates) { // point as Vector
-		var canvasCoordinates = universeCoordinates.subtract(this.getCenterOfCanvas()).multiply(this.getCanvasZoom()).add(Vector.create([this.getCanvasDimensions().width, this.getCanvasDimensions().height]).multiply(0.5));
-		return new paper.Point([canvasCoordinates.elements[0], canvasCoordinates.elements[1]]); // point as Point
+		var canvasCoordinates = universeCoordinates.subtract(this.getCenterOfCanvas()).multiply(this.getCanvasZoom()).add(Vector.create([view.viewSize.width, view.viewSize.height]).multiply(0.5));
+		return new paper.Point([canvasCoordinates.e(1), canvasCoordinates.e(2)]); // point as Point
 	},
 	findUniverseCoordinates: function(canvasCoordinates) { // point as Point
-		return Vector.create([canvasCoordinates.x, canvasCoordinates.y]).subtract(Vector.create([this.getCanvasDimensions().width, this.getCanvasDimensions().height]).multiply(0.5)).multiply(1 / this.getCanvasZoom()).add(this.getCenterOfCanvas()); // point as Vector
+		return Vector.create([canvasCoordinates.x, canvasCoordinates.y]).subtract(Vector.create([view.viewSize.width, view.viewSize.height]).multiply(0.5)).multiply(1 / this.getCanvasZoom()).add(this.getCenterOfCanvas()); // point as Vector
 	}
 });
