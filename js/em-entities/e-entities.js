@@ -18,6 +18,7 @@ var ChargedPointEntity = new Class({
 	// Handles the entity's electric charge
 	setCharge: function(charge) { // double
 		this.charge.charge = charge;
+		return true; // bool
 	},
 	getCharge: function() {
 		return this.charge.charge; // double
@@ -55,6 +56,7 @@ var ChargedLineEntity = new Class({
 	// Handles the entity's electric charge density
 	setChargeDensity: function(chargeDensity) { // double
 		this.charge.chargeDensity = chargeDensity;
+		return true; // bool
 	},
 	getChargeDensity: function() {
 		return this.charge.chargeDensity; // double

@@ -43,6 +43,7 @@ var Universe = new Class({
 	// Handles the universe's name
 	setName: function(name) { // String
 		this.properties.name = name;
+		return true; // bool
 	},
 	getName: function() {
 		return this.properties.name; // String
@@ -51,6 +52,7 @@ var Universe = new Class({
 	// Handles the universe's ε_0
 	setVacuumPermittivity: function(vacuumPermittivity) { // double
 		this.properties.physicalConstants.vacuumPermittivity = vacuumPermittivity;
+		return true; // bool
 	},
 	getVacuumPermittivity: function() {
 		return this.properties.physicalConstants.vacuumPermittivity; // double
@@ -59,6 +61,7 @@ var Universe = new Class({
 	// Handles the universe's μ_0
 	setVacuumPermeability: function(vacuumPermeability) { // double
 		this.properties.physicalConstants.vacuumPermeability = vacuumPermeability;
+		return true; // bool
 	},
 	getVacuumPermeability: function() {
 		return this.properties.physicalConstants.vacuumPermeability; // double
@@ -74,12 +77,14 @@ var Universe = new Class({
 	setEntities: function(entities) { // Entity[]
 		// FIXME: this should deep copy the entities without messing up the locations. Maybe add a clone method to each entity?
 		this.properties.entities.entities = entities;
+		return true; // bool
 	},
 	getEntities: function() {
 		return this.properties.entities.entities; // Entity[]
 	},
 	addEntity: function(entity) {
 		this.properties.entities.entities[entity.getId()] = entity;
+		return true; // bool
 	},
 	getEntity: function(id) { // int
 		return this.properties.entities.entities[id]; // Entity
@@ -87,6 +92,7 @@ var Universe = new Class({
 	removeEntity: function(entity) { // Entity
 		this.properties.entities.entities[entity.getId()] = null;
 		// FIXME: remove graphics. Maybe add a erase method to each entity? 
+		return true; // bool
 	},
 	// TODO: add method to compress the entity list and entity ids by filling empty spots
 	
@@ -110,6 +116,7 @@ var Universe = new Class({
 	// Handles the location in the universe where the center of the canvas is
 	setCenterOfCanvas: function(location) { // point as Vector
 		this.properties.graphics.locationOfCenterOfCanvas = Vector.create(location.elements);
+		return true; // bool
 	},
 	getCenterOfCanvas: function() {
 		return this.properties.graphics.locationOfCenterOfCanvas; // point as Vector
@@ -118,6 +125,7 @@ var Universe = new Class({
 	// Handles the zoom of the canvas
 	setCanvasZoom: function(zoom) { // double
 		this.properties.graphics.canvasZoom = zoom;
+		return true; // bool
 	},
 	getCanvasZoom: function() {
 		return this.properties.graphics.canvasZoom; // double
