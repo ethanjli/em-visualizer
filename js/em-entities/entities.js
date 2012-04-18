@@ -13,8 +13,9 @@ var Entity = new Class({
 		this.setAnchored(properties.anchored);
 		this.setMass(properties.mass);
 		this.properties.graphics = new Object();
-		this.properties.graphics.clickable = new Group();
 		this.properties.graphics.group = new Group();
+		this.properties.graphics.clickable = new Group();
+		this.properties.graphics.group.addChild(this.properties.graphics.clickable);
 	},
 	
 	// Handles the entity's basic properties
@@ -62,11 +63,14 @@ var Entity = new Class({
 	},
 	
 	// Handles graphics
-	getClickable: function() {
-		return this.properties.graphics.clickable; // group as Group
-	},
 	getGraphics: function() {
-		return this.properties.graphics.clickable; // group as Group
+		return this.properties.graphics; // Group
+	},
+	getGroup: function() {
+		return this.properties.graphics.group; // Group
+	},
+	getClickable: function() {
+		return this.properties.graphics.clickable; // Group
 	}
 });
 
@@ -83,19 +87,20 @@ var PointEntity = new Class({
 		this.properties.type.push("Point");
 		// Handle point-specific variables
 		this.setLocation(properties.point.location);
-		// Initialize graphics
+		this.getGraphics().canvasCoordinates = properties.graphics.canvasCoordinates;
+	},
+	initializeGraphics: function() { // Object
 		//// Draw the point
-		debug.debug("Drawing new point at", properties.graphics.canvasCoordinates);
-		var point = new Path.Circle(properties.graphics.canvasCoordinates, 2);
+		debug.debug("Drawing new point at", this.properties.graphics.canvasCoordinates);
+		var point = new Path.Circle(this.properties.graphics.canvasCoordinates, 2.5);
 		point.style = {
 			fillColor: "black"
 		};
 		//// Commit graphics
-		this.properties.graphics.point = point;
+		this.getGraphics.point = point;
 		//// Make clickable group and overall group
-		this.properties.graphics.clickable.addChild(point);
-		this.properties.graphics.group.addChild(point);
-		debug.debug("Finished initialization of point graphics", this.properties.graphics);
+		this.getClickable().addChild(point);
+		debug.debug("Finished initialization of point graphics", this.getGraphics());
 	},
 	
 	// Handles the entity's location
@@ -106,7 +111,6 @@ var PointEntity = new Class({
 		} else {
 			// TODO: clone the location
 			this.properties.point.location = location;
-			debug.debug("Successfully set the location of anchored entity " + this.getId(), this.getLocation());
 			return true; // bool
 		}
 	},
@@ -119,30 +123,30 @@ var PointEntity = new Class({
 		return location.subtract(this.getLocation()); // vector as Vector
 	},
 	
-	// Handles graphical display of the universe location
+	// Handles graphical display of the entity
 	updateLocation: function(location, canvasCoordinates) { // point as Vector, point as Point
 		if (this.setLocation(location)) {
 			// Determine how far to move
-			var offset = canvasCoordinates.subtract(this.properties.graphics.point.position);
+			var canvasCoordinateOffset = canvasCoordinates.subtract(this.properties.graphics.canvasCoordinates);
 			// Translate
-			this.properties.graphics.group.translate(offset);
+			this.getGroup().translate(canvasCoordinateOffset);
 			// Update label
-			this.properties.graphics.label.content = "(" + this.getLocation().e(1) + "m," + this.getLocation().e(2) + "m)";
+			this.getGraphics().label.content = "(" + this.getLocation().e(1) + "m," + this.getLocation().e(2) + "m)";
 			// Update canvasCoordinates property
-			this.properties.graphics.canvasCoordinates = canvasCoordinates;
+			this.getGraphics().canvasCoordinates = canvasCoordinates;
 			return true; // bool
 		} else {
 			return false; // bool
 		}
 	},
 	updateLocationByOffset: function(locationOffset, canvasCoordinateOffset) { // vector as Vector, vector as Point
-		if (this.setLocation(location.add(locationOffset))) {
+		if (this.setLocation(this.getLocation().add(locationOffset))) {
 			// Translate
-			this.properties.graphics.group.translate(canvasCoordinateOffset);
+			this.getGroup().translate(canvasCoordinateOffset);
 			// Update label
-			this.properties.graphics.label.content = "(" + this.getLocation().e(1) + "m," + this.getLocation().e(2) + "m)";
+			this.getGraphics().label.content = "(" + this.getLocation().e(1) + "m," + this.getLocation().e(2) + "m)";
 			// Update canvasCoordinates property
-			this.properties.graphics.canvasCoordinates = canvasCoordinates;
+			this.getGraphics().canvasCoordinates = this.properties.graphics.canvasCoordinates.add(canvasCoordinateOffset);
 			return true; // bool
 		} else {
 			return false; // bool
@@ -248,46 +252,18 @@ var UniverseLocation = new Class({
 		// Handle universe-location-specific constants
 		this.properties.type.push("Universe Location");
 		// Handle universe-location-specific properties
-		// Initialize graphics
+	},
+	initializeGraphics: function() { // Object
+		this.parent(this.properties);
 		//// Draw the label
-		var label = new PointText(newProperties.graphics.canvasCoordinates.add(new Point(2, -2)));
+		var label = new PointText(this.properties.graphics.canvasCoordinates.add(new Point(2, -2)));
 		label.fillColor = "black";
 		label.content = "(" + this.getLocation().e(1) + "m," + this.getLocation().e(2) + "m)";
 		//// Commit graphics
-		this.properties.graphics.label = label;
-		//// Update clickable group and overall group
-		this.properties.graphics.group.addChild(label);
+		this.getGraphics().label = label;
+		//// Update overall group
+		this.getGroup().addChild(label);
 		debug.debug("Finished initialization of universe-location graphics", this.properties.graphics);
-	},
-	
-	// Handles graphical display of the universe location
-	updateLocation: function(location, canvasCoordinates) { // point as Vector, point as Point
-		if (this.setLocation(location)) {
-			// Determine how far to move
-			var offset = canvasCoordinates.subtract(this.properties.graphics.point.position);
-			// Translate
-			this.properties.graphics.group.translate(offset);
-			// Update label
-			this.properties.graphics.label.content = "(" + this.getLocation().e(1) + "m," + this.getLocation().e(2) + "m)";
-			// Update canvasCoordinates property
-			this.properties.graphics.canvasCoordinates = canvasCoordinates;
-			return true; // bool
-		} else {
-			return false; // bool
-		}
-	},
-	updateLocationByOffset: function(locationOffset, canvasCoordinateOffset) { // vector as Vector, vector as Point
-		if (this.setLocation(location.add(locationOffset))) {
-			// Translate
-			this.properties.graphics.group.translate(canvasCoordinateOffset);
-			// Update label
-			this.properties.graphics.label.content = "(" + this.getLocation().e(1) + "m," + this.getLocation().e(2) + "m)";
-			// Update canvasCoordinates property
-			this.properties.graphics.canvasCoordinates = canvasCoordinates;
-			return true; // bool
-		} else {
-			return false; // bool
-		}
 	}
 });
 

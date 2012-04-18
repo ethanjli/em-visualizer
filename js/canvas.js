@@ -16,12 +16,7 @@ pathPoint.style = {
 var pathText = new PointText(origin.add(new Point(2, -2)));
 pathText.fillColor = 'black';
 pathText.content = '(0,0)';
-
-view.onFrame = function(event) {
-    pathRectangle.rotate(1);
-    pathPoint.translate(new Point(1, 1));
-    pathText.translate(new Point(1, 1));
-}*/
+*/
 
 var testUniverse = new Universe({
 	id: 0,
@@ -38,7 +33,7 @@ var testUniverse = new Universe({
 		canvasZoom: 100
 	}
 });
-testUniverse.addEntity(new UniverseLocation({
+entity0Preset = {
 	id: testUniverse.getNextEntityId(),
 	name: "Second Location",
 	point: {
@@ -47,8 +42,9 @@ testUniverse.addEntity(new UniverseLocation({
 	graphics: {
 		canvasCoordinates: testUniverse.findCanvasCoordinates(Vector.create([1, 0]))
 	}
-}));
-testUniverse.addEntity(new UniverseLocation({
+};
+testUniverse.addEntity(new UniverseLocation(entity0Preset)).initializeGraphics(entity0Preset);
+entity1Preset = {
 	id: testUniverse.getNextEntityId(),
 	name: "Third Location",
 	point: {
@@ -57,10 +53,34 @@ testUniverse.addEntity(new UniverseLocation({
 	graphics: {
 		canvasCoordinates: testUniverse.findCanvasCoordinates(Vector.create([-1, 0]))
 	}
-}));
+};
+testUniverse.addEntity(new UniverseLocation(entity1Preset)).initializeGraphics(entity1Preset);
 testUniverse.getEntity(2).updateLocation(testUniverse.findUniverseCoordinates(new Point(50, 50)), new Point(50, 50));
+testUniverse.getEntity(1).getClickable().selected = true;
 debug.debug("Test universe now looks like", testUniverse);
 
-// TODO: Make Third Location move around by mouse events
-
+// Set up view
+view.onFrame = function(event) {
+	//testUniverse.getEntity(2).updateLocationByOffset(testUniverse.findUniverseCoordinates(new Point(5, 5)), new Point(5, 5));
+};
 // TODO: Add proper onResize handler
+
+// Set up tools
+var hitOptions = {
+	type: Group,
+	fill: true,
+	stroke: true,
+	segment: true,
+	tolerance: 5
+};
+//// Tool to select and move entities
+var selectAndMove = new Tool();
+selectAndMove.onMouseDown = function(event) {
+    var hitResult = project.hitTest(event.point, hitOptions);
+	if (hitResult && hitResult.item) {
+		debug.debug("selected item", hitResult.item);
+		hitResult.item.selected = true;
+	}
+};
+selectAndMove.onMouseMove = function(event) {
+};

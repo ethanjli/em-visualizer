@@ -26,7 +26,7 @@ var Universe = new Class({
 			graphics: {
 				canvasCoordinates: this.findCanvasCoordinates(Vector.create([0, 0]))
 			}
-		}));
+		})).initializeGraphics();
 		////// Put all the other entities in if the entity list is not undefined
 		if (typeof(properties.entities.entities) !== 'undefined' && properties.entities.entities.length != 0) {
 			this.setEntities(properties.entities.entities);
@@ -84,7 +84,7 @@ var Universe = new Class({
 	},
 	addEntity: function(entity) {
 		this.properties.entities.entities[entity.getId()] = entity;
-		return true; // bool
+		return entity; // Entity
 	},
 	getEntity: function(id) { // int
 		return this.properties.entities.entities[id]; // Entity
@@ -92,7 +92,7 @@ var Universe = new Class({
 	removeEntity: function(entity) { // Entity
 		this.properties.entities.entities[entity.getId()] = null;
 		// FIXME: remove graphics. Maybe add a erase method to each entity? 
-		return true; // bool
+		return entity; // Entity
 	},
 	// TODO: add method to compress the entity list and entity ids by filling empty spots
 	
