@@ -19,6 +19,9 @@ var Universe = new Class({
 		this.properties.graphics = new Object();
 		this.setCenterOfCanvas(properties.graphics.locationOfCenterOfCanvas);
 		this.setCanvasZoom(properties.graphics.canvasZoom);
+		//// Handle text display
+		this.properties.text = new Object();
+		this.setDecimalPrecision(properties.text.decimalPrecision);
 		//// Populate the universe with initial entities
 		////// Add the (0,0) anchor point
 		this.addEntity(new UniverseAnchorPoint({
@@ -26,7 +29,7 @@ var Universe = new Class({
 			graphics: {
 				canvasCoordinates: this.findCanvasCoordinates(Vector.create([0, 0]))
 			}
-		})).initializeGraphics();
+		}, this));
 		////// Put all the other entities in if the entity list is not undefined
 		if (typeof(properties.entities.entities) !== 'undefined' && properties.entities.entities.length != 0) {
 			this.setEntities(properties.entities.entities);
@@ -84,7 +87,8 @@ var Universe = new Class({
 	},
 	addEntity: function(entity) {
 		this.properties.entities.entities[entity.getId()] = entity;
-		return entity; // Entity
+		entity.initializeGraphics();
+		return this; // Entity
 	},
 	getEntity: function(id) { // int
 		return this.properties.entities.entities[id]; // Entity
@@ -131,6 +135,15 @@ var Universe = new Class({
 		return this.properties.graphics.canvasZoom; // double
 	},
 	
+	// Handles conversion of coordinate offsets between the universe and the canvas
+	findCanvasCoordinatesOffset: function(universeCoordinatesOffset) { // point as Vector
+		var canvasCoordinatesOffset = universeCoordinatesOffset.multiply(this.getCanvasZoom());
+		return new paper.Point([canvasCoordinatesOffset.e(1), canvasCoordinatesOffset.e(2)]); // point as Point
+	},
+	findUniverseCoordinatesOffset: function(canvasCoordinatesOffset) { // point as Point
+		return Vector.create([canvasCoordinatesOffset.x, canvasCoordinatesOffset.y]).multiply(1 / this.getCanvasZoom()); // point as Vector
+	},
+	
 	// Handles conversion of coordinates between the universe and the canvas
 	findCanvasCoordinates: function(universeCoordinates) { // point as Vector
 		var canvasCoordinates = universeCoordinates.subtract(this.getCenterOfCanvas()).multiply(this.getCanvasZoom()).add(Vector.create([view.viewSize.width, view.viewSize.height]).multiply(0.5));
@@ -138,5 +151,14 @@ var Universe = new Class({
 	},
 	findUniverseCoordinates: function(canvasCoordinates) { // point as Point
 		return Vector.create([canvasCoordinates.x, canvasCoordinates.y]).subtract(Vector.create([view.viewSize.width, view.viewSize.height]).multiply(0.5)).multiply(1 / this.getCanvasZoom()).add(this.getCenterOfCanvas()); // point as Vector
+	},
+	
+	// Handles the maximum number of digits after decimals to display
+	setDecimalPrecision: function(decimalPrecision) { // int
+		this.properties.text.decimalPrecision = decimalPrecision;
+		return true; // bool
+	},
+	getDecimalPrecision: function() {
+		return this.properties.text.decimalPrecision; // int
 	}
 });

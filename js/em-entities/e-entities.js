@@ -10,7 +10,7 @@ var ChargedPointEntity = new Class({
 		// Initialize charged-point-specific properties container
 		this.properties.charge = new Object();
 		// Handle charged-point-specific constants
-		this.type.push("Charge");
+		this.getType().push("Charge");
 		// Handle charged-point-specific variables
 		this.setCharge(properties.charge.charge);
 	},
@@ -48,7 +48,7 @@ var ChargedLineEntity = new Class({
 		// Initialize charged-line-specific properties container
 		this.properties.charge = new Object();
 		// Handle charged-line-specific constants
-		this.type.push("Charge");
+		this.getType().push("Charge");
 		// Handle charged-point-specific variables
 		this.setChargeDensity(properties.charge.chargeDensity);
 	},
@@ -90,7 +90,7 @@ var Electron = new Class({
 		// Send up to parent
 		this.parent(newProperties);
 		// Handle electron-specific constants
-		this.type.push("Electron");
+		this.getType().push("Electron");
 	}
 });
 var Positron = new Class({
@@ -104,7 +104,7 @@ var Positron = new Class({
 		// Send up to parent
 		this.parent(newProperties);
 		// Handle positron-specific constants
-		this.type.push("Positron");
+		this.getType().push("Positron");
 	}
 });
 var Proton = new Class({
@@ -118,7 +118,7 @@ var Proton = new Class({
 		// Send up to parent
 		this.parent(newProperties);
 		// Handle proton-specific constants
-		this.type.push("Proton");
+		this.getType().push("Proton");
 	}
 });
 var AntiProton = new Class({
@@ -132,7 +132,7 @@ var AntiProton = new Class({
 		// Send up to parent
 		this.parent(newProperties);
 		// Handle antiproton-specific constants
-		this.type.push("AntiProton");
+		this.getType().push("AntiProton");
 	}
 });
 var Muon = new Class({
@@ -146,7 +146,7 @@ var Muon = new Class({
 		// Send up to parent
 		this.parent(newProperties);
 		// Handle muon-specific constants
-		this.type.push("Muon");
+		this.getType().push("Muon");
 	}
 });
 var AntiMuon = new Class({
@@ -160,7 +160,7 @@ var AntiMuon = new Class({
 		// Send up to parent
 		this.parent(newProperties);
 		// Handle antimuon-specific constants
-		this.type.push("AntiMuon");
+		this.getType().push("AntiMuon");
 	}
 });
 var Tauon = new Class({
@@ -174,7 +174,7 @@ var Tauon = new Class({
 		// Send up to parent
 		this.parent(newProperties);
 		// Handle tauon-specific constants
-		this.type.push("Tauon");
+		this.getType().push("Tauon");
 	}
 });
 var AntiTau = new Class({
@@ -188,6 +188,6 @@ var AntiTau = new Class({
 		// Send up to parent
 		this.parent(newProperties);
 		// Handle antitau-specific constants
-		this.type.push("AntiTau");
+		this.getType().push("AntiTau");
 	}
 });

@@ -1,6 +1,6 @@
 // Definitions for all objects in the universe by shape
 
-// Models any object in the universe
+// Models any object, real or imaginary, in the universe that is displayed on the canvas
 var Entity = new Class({
 	initialize: function(properties) { // Object
 		// Initialize entity-specific properties container
@@ -13,9 +13,11 @@ var Entity = new Class({
 		this.setAnchored(properties.anchored);
 		this.setMass(properties.mass);
 		this.properties.graphics = new Object();
-		this.properties.graphics.group = new Group();
-		this.properties.graphics.clickable = new Group();
-		this.properties.graphics.group.addChild(this.properties.graphics.clickable);
+		this.setCanvasCoordinates(properties.graphics.canvasCoordinates);
+		this.getGraphics().group = new Group();
+		this.getGroup().associatedEntity = this;
+		this.getGraphics().clickable = new Group();
+		this.getGroup().addChild(this.getClickable());
 	},
 	
 	// Handles the entity's basic properties
@@ -25,14 +27,22 @@ var Entity = new Class({
 	getType: function() {
 		return this.properties.type; // String
 	},
-	
-	// Handles the entity's name
 	setName: function(name) { // String
 		this.properties.name = name;
 		return true; // bool
 	},
 	getName: function() {
 		return this.properties.name; // String
+	},
+	
+	// Handles properties in a bulk manner
+	setProperties: function(properties) { // Object
+		// FIXME: figure out how to clone better without ruining vectors and points
+		this.properties = Object.clone(properties);
+		return true; // bool
+	},
+	getProperties: function() {
+		return this.properties; // Object
 	},
 	
 	// Handles whether or not the entity is mobile
@@ -53,24 +63,25 @@ var Entity = new Class({
 		return this.properties.mass; // double
 	},
 	
-	// Handles properties in a bulk way
-	setProperties: function(properties) { // Object
-		this.properties = Object.clone(properties);
-		return true; // bool
-	},
-	getProperties: function() {
-		return this.properties; // Object
-	},
-	
 	// Handles graphics
 	getGraphics: function() {
 		return this.properties.graphics; // Group
 	},
 	getGroup: function() {
-		return this.properties.graphics.group; // Group
+		return this.getGraphics().group; // Group
 	},
 	getClickable: function() {
-		return this.properties.graphics.clickable; // Group
+		return this.getGraphics().clickable; // Group
+	},
+	setCanvasCoordinates: function(location) { // point as Point
+		this.getGraphics().canvasCoordinates = location;
+		return true; // boolean
+	},
+	getCanvasCoordinates: function () {
+		return this.getGraphics().canvasCoordinates; // point as Point
+	},
+	translateCanvasCoordinates: function(offset) { // vector as Point
+		return this.setCanvasCoordinates(this.getCanvasCoordinates().add(offset));
 	}
 });
 
@@ -78,26 +89,28 @@ var Entity = new Class({
 var PointEntity = new Class({
 	Extends: Entity,
 	
-	initialize: function(properties) { // Object
+	initialize: function(properties, universe) { // Object
+		// Handle preset properties
+		var newProperties = Object.clone(properties);
+		newProperties.graphics.canvasCoordinates = universe.findCanvasCoordinates(properties.point.location);
+		// Handle preset properties which don't clone properly with MooTools
 		// Send up to parent
-		this.parent(properties);
-		// Initialize point-specific properties container
-		this.properties.point = new Object();
+		this.parent(newProperties, universe);
 		// Handle point-specific constants
-		this.properties.type.push("Point");
-		// Handle point-specific variables
+		this.getType().push("Point");
+		// Handle point-specific properties
+		this.properties.point = new Object();
 		this.setLocation(properties.point.location);
-		this.getGraphics().canvasCoordinates = properties.graphics.canvasCoordinates;
 	},
 	initializeGraphics: function() { // Object
 		//// Draw the point
-		debug.debug("Drawing new point at", this.properties.graphics.canvasCoordinates);
-		var point = new Path.Circle(this.properties.graphics.canvasCoordinates, 2.5);
+		debug.debug("Drawing new point at", this.getCanvasCoordinates());
+		var point = new Path.Circle(this.getCanvasCoordinates(), 2.5);
 		point.style = {
 			fillColor: "black"
 		};
 		//// Commit graphics
-		this.getGraphics.point = point;
+		this.getGraphics().point = point;
 		//// Make clickable group and overall group
 		this.getClickable().addChild(point);
 		debug.debug("Finished initialization of point graphics", this.getGraphics());
@@ -117,6 +130,9 @@ var PointEntity = new Class({
 	getLocation: function() {
 		return this.properties.point.location; // point as Vector
 	},
+	translateLocation: function(offset) { // vector as Vector
+		return this.setLocation(this.getLocation().add(offset)); // bool
+	},
 
 	// Returns a vector from the location of the point entity to the given location
 	findVectorTo: function(location) { // point as Vector
@@ -124,33 +140,66 @@ var PointEntity = new Class({
 	},
 	
 	// Handles graphical display of the entity
-	updateLocation: function(location, canvasCoordinates) { // point as Vector, point as Point
-		if (this.setLocation(location)) {
-			// Determine how far to move
-			var canvasCoordinateOffset = canvasCoordinates.subtract(this.properties.graphics.canvasCoordinates);
-			// Translate
-			this.getGroup().translate(canvasCoordinateOffset);
-			// Update label
-			this.getGraphics().label.content = "(" + this.getLocation().e(1) + "m," + this.getLocation().e(2) + "m)";
-			// Update canvasCoordinates property
-			this.getGraphics().canvasCoordinates = canvasCoordinates;
-			return true; // bool
-		} else {
-			return false; // bool
+	updateLocation: function(location, universe) { // point as Vector or Point
+		if ("create" in location) { // location is a Vector
+			if (this.setLocation(location)) { // Successfully updated the location
+				// Determine how far to move on the canvas
+				var canvasCoordinatesOffset = universe.findCanvasCoordinates(location).subtract(this.getCanvasCoordinates());
+				// Translate
+				this.getGroup().translate(canvasCoordinatesOffset);
+				// Update the graphics
+				this.refreshLabel(universe);
+				this.setCanvasCoordinates(canvasCoordinates);
+				return true; // bool
+			} else {
+				return false; // bool
+			}
+		} else { // location is a Point
+			if (this.setLocation(universe.findUniverseCoordinates(location))) { // Successfully updated the location
+				// Determine how far to move on the canvas
+				var canvasCoordinatesOffset = location.subtract(this.getCanvasCoordinates());
+				// Translate
+				this.getGroup().translate(canvasCoordinatesOffset);
+				// Update the graphics
+				this.refreshLabel(universe);
+				this.setCanvasCoordinates(location);
+				return true; // bool
+			} else {
+				return false; // bool
+			}
 		}
 	},
-	updateLocationByOffset: function(locationOffset, canvasCoordinateOffset) { // vector as Vector, vector as Point
-		if (this.setLocation(this.getLocation().add(locationOffset))) {
-			// Translate
-			this.getGroup().translate(canvasCoordinateOffset);
-			// Update label
-			this.getGraphics().label.content = "(" + this.getLocation().e(1) + "m," + this.getLocation().e(2) + "m)";
-			// Update canvasCoordinates property
-			this.getGraphics().canvasCoordinates = this.properties.graphics.canvasCoordinates.add(canvasCoordinateOffset);
-			return true; // bool
-		} else {
-			return false; // bool
+	updateLocationByOffset: function(offset, universe) { // vector as Vector or Point
+		if ("create" in offset) { // location is a Vector
+			if (this.translateLocation(offset)) { // Successfully updated the location
+				// Determine how far to move on the canvas
+				var canvasCoordinatesOffset = universe.findCanvasCoordinatesOffset(offset);
+				// Translate
+				this.getGroup().translate(canvasCoordinatesOffset);
+				// Update the graphics
+				this.refreshLabel(universe);
+				this.translateCanvasCoordinates(canvasCoordinatesOffset);
+				return true; // bool
+			} else {
+				return false; // bool
+			}
+		} else { // location is a Point
+			if (this.translateLocation(universe.findUniverseCoordinatesOffset(offset))) { // Successfully updated the location
+				// Translate
+				this.getGroup().translate(offset);
+				// Update the graphics
+				this.refreshLabel(universe);
+				this.translateCanvasCoordinates(offset);
+				return true; // bool
+			} else {
+				return false; // bool
+			}
 		}
+	},
+	refreshLabel: function(universe) { // Universe
+		var decimalPrecision = universe.getDecimalPrecision();
+		this.getGraphics().label.content = "(" + parseFloat(this.getLocation().e(1).toFixed(decimalPrecision)) + "m," + parseFloat(this.getLocation().e(2).toFixed(decimalPrecision)) + "m)";
+		return true; // bool
 	}
 });
 
@@ -158,13 +207,13 @@ var PointEntity = new Class({
 var LineEntity = new Class({
 	Extends: Entity,
 	
-	initialize: function(properties) { // Object
+	initialize: function(properties, universe) { // Object
 		// Send up to parent
-		this.parent(properties);
+		this.parent(properties, universe);
 		// Initialize line-specific properties container
 		this.properties.line = new Object();
 		// Handle line-specific constants
-		this.properties.type.push("Line");
+		this.getType().push("Line");
 		// Handle line-specific variables
 		this.setLine(properties.line.line);
 	},
@@ -189,13 +238,13 @@ var LineEntity = new Class({
 var RayEntity = new Class({
 	Extends: LineEntity,
 	
-	initialize: function(properties) { // Object
+	initialize: function(properties, universe) { // Object
 		// Send up to parent
-		this.parent(properties);
+		this.parent(properties, universe);
 		// Initialize ray-specific properties container
 		this.properties.ray = new Object();
 		// Handle ray-specific constants
-		this.properties.type.push("Ray");
+		this.getType().push("Ray");
 		// Handle ray-specific variables
 		this.setRay(properties.ray.ray);
 	}
@@ -206,13 +255,13 @@ var RayEntity = new Class({
 var LineSegmentEntity = new Class({
 	Extends: LineEntity,
 	
-	initialize: function(properties) { // Object
+	initialize: function(properties, universe) { // Object
 		// Send up to parent
-		this.parent(properties);
+		this.parent(properties, universe);
 		// Initialize line-segment-specific properties container
 		this.properties.lineSegment = new Object();
 		// Handle line-segment-specific constants
-		this.properties.type.push("Segment");
+		this.getType().push("Segment");
 		// Handle line-segment-specific variables
 		this.setLineSegment(properties.lineSegment.lineSegment);
 	}
@@ -223,13 +272,13 @@ var LineSegmentEntity = new Class({
 var SolidEntity = new Class({
 	Extends: Entity,
 	
-	initialize: function(properties) { // Object
+	initialize: function(properties, universe) { // Object
 		// Send up to parent
-		this.parent(properties);
+		this.parent(properties, universe);
 		// Initialize solid-specific properties container
 		this.properties.solid = new Object();
 		// Handle solid-specific constants
-		this.properties.type.push("Solid");
+		this.getType().push("Solid");
 		// Handle line-segment-specific constants
 		this.setSolid(properties.solid.solid);
 	}
@@ -239,24 +288,23 @@ var SolidEntity = new Class({
 var UniverseLocation = new Class({
 	Extends: PointEntity,
 	
-	initialize: function(properties) { // Object
+	initialize: function(properties, universe) { // Object
 		// Handle preset properties
 		var newProperties = Object.clone(properties);
 		newProperties.mass = 0;
 		// Handle preset properties which don't clone properly with MooTools
 		newProperties.point.location = Vector.create(properties.point.location.elements);
-		newProperties.graphics.canvasCoordinates = new Point(properties.graphics.canvasCoordinates);
 		//debug.debug("Finished preset for universe location", newProperties);
 		// Send up to parent
-		this.parent(newProperties);
+		this.parent(newProperties, universe);
 		// Handle universe-location-specific constants
-		this.properties.type.push("Universe Location");
+		this.getType().push("Universe Location");
 		// Handle universe-location-specific properties
 	},
 	initializeGraphics: function() { // Object
-		this.parent(this.properties);
+		this.parent();
 		//// Draw the label
-		var label = new PointText(this.properties.graphics.canvasCoordinates.add(new Point(2, -2)));
+		var label = new PointText(this.getCanvasCoordinates().add(new Point(2, -2)));
 		label.fillColor = "black";
 		label.content = "(" + this.getLocation().e(1) + "m," + this.getLocation().e(2) + "m)";
 		//// Commit graphics
@@ -271,7 +319,7 @@ var UniverseLocation = new Class({
 var UniverseAnchorPoint = new Class({
 	Extends: UniverseLocation,
 	
-	initialize: function(properties) { // Object
+	initialize: function(properties, universe) { // Object
 		// Handle preset properties
 		var newProperties = Object.clone(properties);
 		newProperties.name = "Center of the Universe";
@@ -280,9 +328,9 @@ var UniverseAnchorPoint = new Class({
 		newProperties.point.location = Vector.create([0,0]);
 		//debug.debug("Finished preset for universe anchor point", newProperties);
 		// Send up to parent
-		this.parent(newProperties);
+		this.parent(newProperties, universe);
 		// Handle universe-anchor-point-specific constants
-		this.properties.type.push("Universe Anchor Point");
+		this.getType().push("Universe Anchor Point");
 		// Handle universe-anchor-point-specific properties
 	}
 });
