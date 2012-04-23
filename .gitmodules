@@ -13,9 +13,6 @@
 [submodule "js/libs/requirejs"]
 	path = js/libs/requirejs
 	url = git://github.com/jrburke/requirejs.git
-[submodule "js/libs/jquery"]
-	path = js/libs/jquery
-	url = git://github.com/jquery/jquery.git
 [submodule "js/libs/javascript-debug"]
 	path = js/libs/javascript-debug
 	url = git://github.com/cowboy/javascript-debug.git
