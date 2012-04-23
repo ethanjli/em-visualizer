@@ -105,9 +105,11 @@ var PointEntity = new Class({
 	initializeGraphics: function() { // Object
 		//// Draw the point
 		debug.debug("Drawing new point at", this.getCanvasCoordinates());
-		var point = new Path.Circle(this.getCanvasCoordinates(), 2.5);
+		var point = new Path.Circle(this.getCanvasCoordinates(), 2);
 		point.style = {
-			fillColor: "black"
+			fillColor: "black",
+			strokeColor: "black",
+			strokeWidth: 1.5
 		};
 		//// Commit graphics
 		this.getGraphics().point = point;
@@ -200,6 +202,20 @@ var PointEntity = new Class({
 		var decimalPrecision = universe.getDecimalPrecision();
 		this.getGraphics().label.content = "(" + parseFloat(this.getLocation().e(1).toFixed(decimalPrecision)) + "m," + parseFloat(this.getLocation().e(2).toFixed(decimalPrecision)) + "m)";
 		return true; // bool
+	},
+	
+	// Handles mouse events
+	setHovered: function() {
+		this.getClickable().strokeWidth = 15;
+		this.getClickable().strokeColor = "gray";
+	},
+	setSelected: function() {
+		this.getClickable().strokeWidth = 15;
+		this.getClickable().strokeColor = "black";
+	},
+	setUntouched: function() {
+		this.getClickable().strokeWidth = 1.5;
+		this.getClickable().strokeColor = "black";
 	}
 });
 

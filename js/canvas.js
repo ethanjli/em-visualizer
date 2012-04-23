@@ -62,68 +62,163 @@ var hitOptions = {
 	fill: true,
 	stroke: true,
 	segment: true,
-	tolerance: 5
+	tolerance: 10
 };
-//// Tool to select entities
-var selectionTool = new Tool();
-var hoveredGroup = null;
-var clickedGroup = null;
-selectionTool.onMouseMove = function(event) {
+//// Tool to select and move entities
+var selectAndDragTool = new Tool();
+var selectionToolsData = {
+	hoveredGroup: null,
+	clickedGroup: null,
+	unclickedGroup: null,
+	prepareToRemoveGroup: false
+};
+selectAndDragTool.onMouseMove = function(event) {
 	var hitResult = project.hitTest(event.point, hitOptions);
 	
 	if (hitResult && hitResult.item.parent) { // Hit a group!
-		hoveredGroup = hitResult.item.parent.parent;
-		hoveredGroup.selected = true;
-	} else if (hoveredGroup !== null && selectedGroups.indexOf(hoveredGroup) === -1) { // Just left a group which wasn't clicked
+		selectionToolsData.hoveredGroup = hitResult.item.parent.parent;
+		if (!selectedGroups.contains(selectionToolsData.hoveredGroup)) { // Hovering over a group which is not already in the selection
+			selectionToolsData.hoveredGroup.associatedEntity.setHovered();
+		}
+	} else if (selectionToolsData.hoveredGroup !== null && !selectedGroups.contains(selectionToolsData.hoveredGroup)) { // Just left a group which wasn't clicked and wasn't already in the selection
 		// Hide the selection box after the mouse moves off the group
-		hoveredGroup.selected = false;
-		hoveredGroup = null;
+		selectionToolsData.hoveredGroup.associatedEntity.setUntouched();
+		selectionToolsData.hoveredGroup = null;
 	}
 };
-selectionTool.onMouseDown = function(event) {
+selectAndDragTool.onMouseDown = function(event) {
 	var hitResult = project.hitTest(event.point, hitOptions);
 	if (hitResult && hitResult.item.parent) { // Hit a group!
-		var clickedGroup = hitResult.item.parent.parent;
-		if (event.modifiers.shift || event.modifiers.control) { // We want to add/remove the group to the current selection
-			var clickedGroupIndex = selectedGroups.indexOf(clickedGroup);
-			if (clickedGroupIndex === -1) { // If the group is not yet in the selection
-				// Add the group to the selection and show its selection box
-				selectedGroups.push(clickedGroup);
-				clickedGroup.selected = true;
-			} else {
-				// Remove the group from the selection and hide its selection box
-				selectedGroups.splice(clickedGroupIndex, 1);
-				clickedGroup.selected = false;
-			}
+		selectionToolsData.clickedGroup = hitResult.item.parent.parent;
+		if (!selectedGroups.contains(selectionToolsData.clickedGroup)) { // the clicked group is not already in the selection 
+			selectedGroups.include(selectionToolsData.clickedGroup);
+			selectionToolsData.clickedGroup.associatedEntity.setSelected();
+			selectionToolsData.prepareToRemoveGroup = false;
 		} else {
-			var clickedGroupIndex = selectedGroups.indexOf(clickedGroup);
-			if (clickedGroupIndex === -1) { // If the group is not yet in the selection
-				// Make the new group be the entire selection
-				project.activeLayer.selected = false;
-				selectedGroups = new Array(clickedGroup);
-				clickedGroup.selected = true;
-			} else {
-				movingTool.activate();
-			}
+			selectionToolsData.prepareToRemoveGroup = true;
 		}
 	} else {
 		// Clear the selection
-		project.activeLayer.selected = false;
-		selectedGroups = new Array();
-		clickedGroup = null;
+		selectedGroups.forEach(function(selectedGroup) {
+			selectedGroup.associatedEntity.setUntouched();
+		});
+		selectedGroups.empty();
+		selectionToolsData.clickedGroup = null;
+		selectionToolsData.prepareToRemoveGroup = false;
 	}
-	debug.debug("selection is now", selectedGroups);
 };
-selectionTool.onMouseDrag = function(event) {
-	movingTool.activate();
+selectAndDragTool.onMouseUp = function(event) {
+	if (selectionToolsData.prepareToRemoveGroup) { // If the mouse is released from a click (as opposed to a drag)
+		var hitResult = project.hitTest(event.point, hitOptions);
+		if (hitResult && hitResult.item.parent) { // Hit a group!
+			selectionToolsData.unclickedGroup = hitResult.item.parent.parent;
+			// Remove the group from the selection and hide its selection box
+			selectedGroups = selectedGroups.erase(selectionToolsData.unclickedGroup);
+			selectionToolsData.unclickedGroup.associatedEntity.setUntouched();
+		}
+	}
+	selectionToolsData.prepareToRemoveGroup = false;
 };
-//// Tool to move entities
-var movingTool = new Tool();
-movingTool.onMouseDrag = function(event) {
+selectAndDragTool.onMouseDrag = function(event) {
+	selectionToolsData.prepareToRemoveGroup = false;
 	selectedGroups.forEach(function(selectedGroup) {
-		selectedGroup.associatedEntity.updateLocationByOffset(event.delta, testUniverse);
+		if (!selectedGroup.associatedEntity.isAnchored()) {
+			selectedGroup.associatedEntity.updateLocationByOffset(event.delta, testUniverse);
+		}
 	});
 };
-movingTool.onMouseUp = function(event) {
-	selectionTool.activate();
+selectAndDragTool.onKeyDown = function(event) {
+	if (event.key == "up") {
+		selectedGroups.forEach(function(selectedGroup) {
+		if (!selectedGroup.associatedEntity.isAnchored()) {
+			selectedGroup.associatedEntity.updateLocationByOffset(new Point(0, -1), testUniverse);
+		}
+	});
+	} else if (event.key == "down") {
+		selectedGroups.forEach(function(selectedGroup) {
+		if (!selectedGroup.associatedEntity.isAnchored()) {
+			selectedGroup.associatedEntity.updateLocationByOffset(new Point(0, 1), testUniverse);
+		}
+	});
+	} else if (event.key == "left") {
+		selectedGroups.forEach(function(selectedGroup) {
+		if (!selectedGroup.associatedEntity.isAnchored()) {
+			selectedGroup.associatedEntity.updateLocationByOffset(new Point(-1, 0), testUniverse);
+		}
+	});
+	} else if (event.key == "right") {
+		selectedGroups.forEach(function(selectedGroup) {
+		if (!selectedGroup.associatedEntity.isAnchored()) {
+			selectedGroup.associatedEntity.updateLocationByOffset(new Point(1, 0), testUniverse);
+		}
+	});
+	}
+};
+//// Tool to select and move entities individually
+var dragIndividuallyTool = new Tool();
+dragIndividuallyTool.onMouseMove = function(event) {
+	var hitResult = project.hitTest(event.point, hitOptions);
+	
+	if (hitResult && hitResult.item.parent) { // Hit a group!
+		selectionToolsData.hoveredGroup = hitResult.item.parent.parent;
+		if (!selectedGroups.contains(selectionToolsData.hoveredGroup)) { // Hovering over a group which is not already in the selection
+			selectionToolsData.hoveredGroup.associatedEntity.setHovered();
+		}
+	} else if (selectionToolsData.hoveredGroup !== null && !selectedGroups.contains(selectionToolsData.hoveredGroup)) { // Just left a group which wasn't clicked and wasn't already in the selection
+		// Hide the selection box after the mouse moves off the group
+		selectionToolsData.hoveredGroup.associatedEntity.setUntouched();
+		selectionToolsData.hoveredGroup = null;
+	}
+};
+dragIndividuallyTool.onMouseDown = function(event) {
+	var hitResult = project.hitTest(event.point, hitOptions);
+	if (hitResult && hitResult.item.parent) { // Hit a group!
+		selectionToolsData.clickedGroup = hitResult.item.parent.parent;
+		if (selectedGroups.length > 0) {
+			selectedGroups.forEach(function(selectedGroup) {
+				selectedGroup.associatedEntity.setUntouched();
+			});
+		}
+		selectedGroups = [selectionToolsData.clickedGroup];
+		selectionToolsData.clickedGroup.associatedEntity.setSelected();
+	} else {
+		// Clear the selection
+		selectedGroups.forEach(function(selectedGroup) {
+			selectedGroup.associatedEntity.setUntouched();
+		});
+		selectedGroups.empty();
+		selectionToolsData.clickedGroup = null;
+	}
+};
+dragIndividuallyTool.onMouseDrag = function(event) {
+	if (!selectedGroups[0].associatedEntity.isAnchored()) {
+		selectedGroups[0].associatedEntity.updateLocationByOffset(event.delta, testUniverse);
+	}
+};
+dragIndividuallyTool.onKeyDown = function(event) {
+	if (event.key == "up") {
+		selectedGroups.forEach(function(selectedGroup) {
+		if (!selectedGroup.associatedEntity.isAnchored()) {
+			selectedGroup.associatedEntity.updateLocationByOffset(new Point(0, -1), testUniverse);
+		}
+	});
+	} else if (event.key == "down") {
+		selectedGroups.forEach(function(selectedGroup) {
+		if (!selectedGroup.associatedEntity.isAnchored()) {
+			selectedGroup.associatedEntity.updateLocationByOffset(new Point(0, 1), testUniverse);
+		}
+	});
+	} else if (event.key == "left") {
+		selectedGroups.forEach(function(selectedGroup) {
+		if (!selectedGroup.associatedEntity.isAnchored()) {
+			selectedGroup.associatedEntity.updateLocationByOffset(new Point(-1, 0), testUniverse);
+		}
+	});
+	} else if (event.key == "right") {
+		selectedGroups.forEach(function(selectedGroup) {
+		if (!selectedGroup.associatedEntity.isAnchored()) {
+			selectedGroup.associatedEntity.updateLocationByOffset(new Point(1, 0), testUniverse);
+		}
+	});
+	}
 };
