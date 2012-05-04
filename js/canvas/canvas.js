@@ -5,7 +5,7 @@ var canvas = document.getElementById('myCanvas');
 paper.setup(canvas);
 debug.info("Set up canvas view of", view.viewSize);
 
-var testUniverse = new Universe({
+var currentUniverse = new Universe({
 	id: 0,
 	name: "Test Universe",
 	physicalConstants: {
@@ -24,34 +24,34 @@ var testUniverse = new Universe({
 	}
 });
 entity0Preset = {
-	id: testUniverse.getNextEntityId(),
+	id: currentUniverse.getNextEntityId(),
 	name: "Second Location",
 	point: {
 		location: Vector.create([1, 0])
 	},
 	graphics: {
-		canvasCoordinates: testUniverse.findCanvasCoordinates(Vector.create([1, 0]))
+		canvasCoordinates: currentUniverse.findCanvasCoordinates(Vector.create([1, 0]))
 	}
 };
-testUniverse.addEntity(new UniverseLocation(entity0Preset, testUniverse));
+currentUniverse.addEntity(new UniverseLocation(entity0Preset, currentUniverse));
 entity1Preset = {
-	id: testUniverse.getNextEntityId(),
+	id: currentUniverse.getNextEntityId(),
 	name: "Third Location",
 	point: {
 		location: Vector.create([-1, 0])
 	},
 	graphics: {
-		canvasCoordinates: testUniverse.findCanvasCoordinates(Vector.create([-1, 0]))
+		canvasCoordinates: currentUniverse.findCanvasCoordinates(Vector.create([-1, 0]))
 	}
 };
-testUniverse.addEntity(new UniverseLocation(entity1Preset, testUniverse));
-testUniverse.getEntity(1).updateLocation(new Point(50, 50), testUniverse);
-testUniverse.getEntity(2).updateLocation(new Point(50, 50), testUniverse);
-testUniverse.getEntity(2).updateLocationByOffset(new Point(50, 50), testUniverse);
-debug.debug("Test universe now looks like", testUniverse);
+currentUniverse.addEntity(new UniverseLocation(entity1Preset, currentUniverse));
+currentUniverse.getEntity(1).updateLocation(new Point(50, 50), currentUniverse);
+currentUniverse.getEntity(2).updateLocation(new Point(50, 50), currentUniverse);
+currentUniverse.getEntity(2).updateLocationByOffset(new Point(50, 50), currentUniverse);
+debug.debug("Test universe now looks like", currentUniverse);
 
 // Set up view
 view.onFrame = function(event) {
-	//testUniverse.getEntity(2).updateLocationByOffset(new Point(5, 5), testUniverse);
+	//currentUniverse.getEntity(2).updateLocationByOffset(new Point(5, 5), currentUniverse);
 };
 // TODO: Add proper onResize handler
