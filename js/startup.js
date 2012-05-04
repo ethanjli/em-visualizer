@@ -34,6 +34,9 @@ $LAB.script("js/libs/sylvester/lib/sylvester-min.js")
 	.script("js/em-universe/em-universe.js").wait(function() {
 		debug.info("Finished loading core classes");
 	})
-	.script("js/canvas.js").wait(function() {
+	.script("js/canvas/canvas.js").wait(function() {
 		debug.info("Started up the canvas");
+	})
+	.script("js/canvas/canvas-tools.js").wait(function() {
+		debug.info("Set up mouse tools");
 	});
