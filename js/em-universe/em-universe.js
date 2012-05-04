@@ -18,7 +18,7 @@ var Universe = new Class({
 		//// Handle graphical display
 		this.properties.graphics = new Object();
 		this.setCenterOfCanvas(properties.graphics.locationOfCenterOfCanvas);
-		this.setCanvasZoom(properties.graphics.canvasZoom);
+		this.setCanvasZoomExponent(properties.graphics.canvasZoom);
 		//// Handle text display
 		this.properties.text = new Object();
 		this.setDecimalPrecision(properties.text.decimalPrecision);
@@ -125,14 +125,27 @@ var Universe = new Class({
 	getCenterOfCanvas: function() {
 		return this.properties.graphics.locationOfCenterOfCanvas; // point as Vector
 	},
+	translateCenterOfCanvas: function(offset) { // vector as Vector
+		return this.setCenterOfCanvas(this.getCenterOfCanvas().add(offset)); // bool
+	},
 	
 	// Handles the zoom of the canvas
-	setCanvasZoom: function(zoom) { // double
+	setCanvasZoomExponent: function(zoom) { // double
 		this.properties.graphics.canvasZoom = zoom;
 		return true; // bool
 	},
-	getCanvasZoom: function() {
+	getCanvasZoomExponent: function() {
 		return this.properties.graphics.canvasZoom; // double
+	},
+	getCanvasZoom: function() {
+		return Math.pow(Math.E, this.getCanvasZoomExponent()); // double
+	},
+	
+	// Refreshes the graphics for all entities
+	refreshGraphics: function(universe) { // Universe
+		this.getEntities().forEach(function(entity) {
+			entity.refreshGraphics(universe);
+		});
 	},
 	
 	// Handles conversion of coordinate offsets between the universe and the canvas

@@ -77,11 +77,14 @@ var Entity = new Class({
 		this.getGraphics().canvasCoordinates = location;
 		return true; // boolean
 	},
-	getCanvasCoordinates: function () {
+	getCanvasCoordinates: function() {
 		return this.getGraphics().canvasCoordinates; // point as Point
 	},
 	translateCanvasCoordinates: function(offset) { // vector as Point
 		return this.setCanvasCoordinates(this.getCanvasCoordinates().add(offset));
+	},
+	refreshGraphics: function() {
+		return true;
 	}
 });
 
@@ -201,6 +204,16 @@ var PointEntity = new Class({
 	refreshLabel: function(universe) { // Universe
 		var decimalPrecision = universe.getDecimalPrecision();
 		this.getGraphics().label.content = "(" + parseFloat(this.getLocation().e(1).toFixed(decimalPrecision)) + "m," + parseFloat(this.getLocation().e(2).toFixed(decimalPrecision)) + "m)";
+		return true; // bool
+	},
+	refreshGraphics: function(universe) { // Universe
+		// Determine how far to move on the canvas
+		var canvasCoordinatesOffset = universe.findCanvasCoordinates(this.getLocation()).subtract(this.getCanvasCoordinates());
+		this.setCanvasCoordinates(universe.findCanvasCoordinates(this.getLocation()));
+		// Translate
+		this.getGroup().translate(canvasCoordinatesOffset);
+		// Update the graphics
+		this.refreshLabel(universe);
 		return true; // bool
 	},
 	
