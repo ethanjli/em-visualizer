@@ -26,7 +26,6 @@ var ChargedPointEntity = new Class({
 		this.getGraphics().label = label;
 		//// Update overall group
 		this.getGroup().addChild(label);
-		debug.debug("Finished initialization of charged-point graphics", this.properties.graphics);
 	},
 	
 	// Handles the entity's electric charge
@@ -39,7 +38,7 @@ var ChargedPointEntity = new Class({
 	},
 
 	// Handles calculation of the electric field from the entity
-	findElectricFieldAt: function(location, vacuumPermittivity) { // point as Vector, int
+	findElectricFieldAt: function(location, vacuumPermittivity) { // point as Vector, double
 		// Find the displacement vector
 		var displacement = this.findVectorTo(location);
 		// Calculate the magnitude of the field vector
@@ -47,7 +46,7 @@ var ChargedPointEntity = new Class({
 		return displacement.toUnitVector().multiply(EMagnitude); // vector as Vector
 	},
 	// Handles calculation of the electric potential from the entity
-	findElectricPotentialAt: function(location, vacuumPermittivity) { // point as Vector, int
+	findElectricPotentialAt: function(location, vacuumPermittivity) { // point as Vector, double
 		return 1 / (4 * Math.PI * vacuumPermittivity) * this.getCharge() / this.findVectorTo(location).modulus(); // double
 	},
 	

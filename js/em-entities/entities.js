@@ -128,7 +128,7 @@ var PointEntity = new Class({
 	
 	// Handles the entity's location
 	setLocation: function(location) { // point as Vector
-		if (typeof(this.getLocation()) !== 'undefined' && this.isAnchored()) {
+		if (typeof(this.getLocation()) !== "undefined" && this.isAnchored()) {
 			debug.warn("Tried to set the location of anchored entity " + this.getId());
 			return false; // bool
 		} else {
@@ -346,7 +346,6 @@ var UniverseLocation = new Class({
 		this.getGraphics().label = label;
 		//// Update overall group
 		this.getGroup().addChild(label);
-		debug.debug("Finished initialization of universe-location graphics", this.properties.graphics);
 	}
 });
 

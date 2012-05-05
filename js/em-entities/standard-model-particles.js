@@ -14,7 +14,7 @@ var StandardModelParticle = new Class({
 	
 	// Override mutator methods to avoid changing charge and mass if they've already been initialized
 	setCharge: function(charge) {
-		if (typeof(this.getCharge()) !== 'undefined') {
+		if (typeof(this.getCharge()) !== "undefined") {
 			debug.warn("Tried to set the charge of standard model particle " + this.getId());
 			return false; // bool
 		} else {
@@ -22,7 +22,7 @@ var StandardModelParticle = new Class({
 		}
 	},
 	setMass: function(mass) {
-		if (typeof(this.getMass()) !== 'undefined') {
+		if (typeof(this.getMass()) !== "undefined") {
 			debug.warn("Tried to set the mass of standard model particle " + this.getId());
 			return false; // bool
 		} else {
