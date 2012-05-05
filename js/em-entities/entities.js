@@ -208,7 +208,7 @@ var PointEntity = new Class({
 	},
 	refreshLabel: function(universe) { // Universe
 		var decimalPrecision = universe.getDecimalPrecision();
-		this.getGraphics().label.content = "(" + parseFloat(this.getLocation().e(1).toFixed(decimalPrecision)) + "m," + parseFloat(this.getLocation().e(2).toFixed(decimalPrecision)) + "m)";
+		this.getGraphics().label.content = "(" + parseFloat(this.getLocation().e(1).toPrecision(decimalPrecision)) + "m," + parseFloat(this.getLocation().e(2).toPrecision(decimalPrecision)) + "m)";
 		return true; // bool
 	},
 	refreshGraphics: function(universe) { // Universe
@@ -338,8 +338,9 @@ var UniverseLocation = new Class({
 	initializeGraphics: function() { // Object
 		this.parent();
 		//// Draw the label
-		var label = new PointText(this.getCanvasCoordinates().add(new Point(2, -2)));
+		var label = new PointText(this.getCanvasCoordinates().add(new Point(5, -5)));
 		label.fillColor = "black";
+		label.characterStyle.font = "Segoe UI";
 		label.content = "(" + this.getLocation().e(1) + "m," + this.getLocation().e(2) + "m)";
 		//// Commit graphics
 		this.getGraphics().label = label;

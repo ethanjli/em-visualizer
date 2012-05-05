@@ -4,9 +4,9 @@
 var ChargedPointEntity = new Class({
 	Extends: PointEntity,
 	
-	initialize: function(properties) { // Object
+	initialize: function(properties, universe) { // Object
 		// Send up to parent
-		this.parent(properties);
+		this.parent(properties, universe);
 		// Initialize charged-point-specific properties container
 		this.properties.charge = new Object();
 		// Handle charged-point-specific constants
@@ -15,13 +15,27 @@ var ChargedPointEntity = new Class({
 		this.setCharge(properties.charge.charge);
 	},
 	
+	initializeGraphics: function() { // Object
+		this.parent();
+		//// Draw the label
+		var label = new PointText(this.getCanvasCoordinates().add(new Point(5, -5)));
+		label.fillColor = "black";
+		label.characterStyle.font = "Segoe UI";
+		label.content = this.getCharge() + "C";
+		//// Commit graphics
+		this.getGraphics().label = label;
+		//// Update overall group
+		this.getGroup().addChild(label);
+		debug.debug("Finished initialization of charged-point graphics", this.properties.graphics);
+	},
+	
 	// Handles the entity's electric charge
 	setCharge: function(charge) { // double
-		this.charge.charge = charge;
+		this.properties.charge.charge = charge;
 		return true; // bool
 	},
 	getCharge: function() {
-		return this.charge.charge; // double
+		return this.properties.charge.charge; // double
 	},
 
 	// Handles calculation of the electric field from the entity
@@ -35,16 +49,23 @@ var ChargedPointEntity = new Class({
 	// Handles calculation of the electric potential from the entity
 	findElectricPotentialAt: function(location, vacuumPermittivity) { // point as Vector, int
 		return 1 / (4 * Math.PI * vacuumPermittivity) * this.getCharge() / this.findVectorTo(location).modulus(); // double
-	}
+	},
+	
+	// Handles graphical display of the entity
+	refreshLabel: function(universe) { // Universe
+		var decimalPrecision = universe.getDecimalPrecision();
+		this.getGraphics().label.content = parseFloat(this.getCharge().toPrecision(decimalPrecision)) + "C";
+		return true; // bool
+	},
 });
 
 // Models any line charge in the universe
 var ChargedLineEntity = new Class({
 	Extends: LineEntity,
 	
-	initialize: function(properties) { // Object
+	initialize: function(properties, universe) { // Object
 		// Send up to parent
-		this.parent(properties);
+		this.parent(properties, universe);
 		// Initialize charged-line-specific properties container
 		this.properties.charge = new Object();
 		// Handle charged-line-specific constants
@@ -55,11 +76,11 @@ var ChargedLineEntity = new Class({
 	
 	// Handles the entity's electric charge density
 	setChargeDensity: function(chargeDensity) { // double
-		this.charge.chargeDensity = chargeDensity;
+		this.properties.charge.chargeDensity = chargeDensity;
 		return true; // bool
 	},
 	getChargeDensity: function() {
-		return this.charge.chargeDensity; // double
+		return this.properties.charge.chargeDensity; // double
 	},
 	
 	// Handles calculation of the electric field from the entity
