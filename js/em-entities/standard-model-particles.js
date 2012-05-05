@@ -5,8 +5,12 @@ var StandardModelParticle = new Class({
 	initialize: function(properties, universe) { // Object
 		// Send up to parent
 		this.parent(properties, universe);
+		// Initialize standard-model-particle-specific properties container
+		this.properties.standardModelParticle = new Object();
 		// Handle standard-model-particle-specific constants
 		this.getType().push("Standard Model Particle");
+		// Handle standard-model-particle-specific variables
+		this.properties.standardModelParticle.symbol = properties.standardModelParticle.symbol;
 	},
 	initializeGraphics: function(universe) { // Universe
 		this.parent(universe);
@@ -29,6 +33,17 @@ var StandardModelParticle = new Class({
 		} else {
 			return this.parent(mass); // bool
 		}
+	},
+	
+	// Returns the symbol used to represent the standard-model-particle
+	getStandardModelParticleSymbol: function() {
+		return this.properties.standardModelParticle.symbol // String
+	},
+	
+	// Handles graphical display of the entity
+	refreshGraphics: function(universe) { // Universe
+		this.getGraphics().label.content = this.getStandardModelParticleSymbol();
+		return true; // bool
 	}
 });
 
@@ -40,171 +55,139 @@ var Electron = new Class({
 		var newProperties = Object.clone(properties);
 		newProperties.charge.charge = -1.602176565 * Math.pow(10, -19);
 		newProperties.mass = 9.10938291 * Math.pow(10, -31);
+		newProperties.standardModelParticle = new Object();
+		newProperties.standardModelParticle.symbol = "e⁻";
 		// Handle preset properties which don't clone properly with MooTools
 		newProperties.point.location = Vector.create(properties.point.location.elements);
 		// Send up to parent
 		this.parent(newProperties, universe);
 		// Handle electron-specific constants
 		this.getType().push("Electron");
-	},
-	
-	// Handles graphical display of the entity
-	refreshGraphics: function(universe) { // Universe
-		this.getGraphics().label.content = "e⁻";
-		return true; // bool
 	}
 });
 var Positron = new Class({
-	Extends: ChargedPointEntity,
+	Extends: StandardModelParticle,
 	
 	initialize: function(properties, universe) { // Object
 		// Handle preset properties
 		var newProperties = Object.clone(properties);
 		newProperties.charge.charge = 1.602176565 * Math.pow(10, -19);
 		newProperties.mass = 9.10938291 * Math.pow(10, -31);
+		newProperties.standardModelParticle = new Object();
+		newProperties.standardModelParticle.symbol = "e⁺";
 		// Handle preset properties which don't clone properly with MooTools
 		newProperties.point.location = Vector.create(properties.point.location.elements);
 		// Send up to parent
 		this.parent(newProperties, universe);
 		// Handle positron-specific constants
 		this.getType().push("Positron");
-	},
-	
-	// Handles graphical display of the entity
-	refreshGraphics: function(universe) { // Universe
-		this.getGraphics().label.content = "e⁺";
-		return true; // bool
 	}
 });
 var Proton = new Class({
-	Extends: ChargedPointEntity,
+	Extends: StandardModelParticle,
 	
 	initialize: function(properties, universe) { // Object
 		// Handle preset properties
 		var newProperties = Object.clone(properties);
 		newProperties.charge.charge = 1.602176565 * Math.pow(10, -19);
 		newProperties.mass = 1.672621777 * Math.pow(10, -27);
+		newProperties.standardModelParticle = new Object();
+		newProperties.standardModelParticle.symbol = "p";
 		// Handle preset properties which don't clone properly with MooTools
 		newProperties.point.location = Vector.create(properties.point.location.elements);
 		// Send up to parent
 		this.parent(newProperties, universe);
 		// Handle proton-specific constants
 		this.getType().push("Proton");
-	},
-	
-	// Handles graphical display of the entity
-	refreshGraphics: function(universe) { // Universe
-		this.getGraphics().label.content = "p";
-		return true; // bool
 	}
 });
 var AntiProton = new Class({
-	Extends: ChargedPointEntity,
+	Extends: StandardModelParticle,
 	
 	initialize: function(properties, universe) { // Object
 		// Handle preset properties
 		var newProperties = Object.clone(properties);
 		newProperties.charge.charge = -1.602176565 * Math.pow(10, -19);
 		newProperties.mass = 1.672621777 * Math.pow(10, -27);
+		newProperties.standardModelParticle = new Object();
+		newProperties.standardModelParticle.symbol = "p̅";
 		// Handle preset properties which don't clone properly with MooTools
 		newProperties.point.location = Vector.create(properties.point.location.elements);
 		// Send up to parent
 		this.parent(newProperties, universe);
 		// Handle antiproton-specific constants
 		this.getType().push("AntiProton");
-	},
-	
-	// Handles graphical display of the entity
-	refreshGraphics: function(universe) { // Universe
-		this.getGraphics().label.content = "p̅";
-		return true; // bool
 	}
 });
 var Muon = new Class({
-	Extends: ChargedPointEntity,
+	Extends: StandardModelParticle,
 	
 	initialize: function(properties, universe) { // Object
 		// Handle preset properties
 		var newProperties = Object.clone(properties);
 		newProperties.charge.charge = -1.602176565 * Math.pow(10, -19);
 		newProperties.mass = 1.883531 * Math.pow(10, -28);
+		newProperties.standardModelParticle = new Object();
+		newProperties.standardModelParticle.symbol = "μ⁻";
 		// Handle preset properties which don't clone properly with MooTools
 		newProperties.point.location = Vector.create(properties.point.location.elements);
 		// Send up to parent
 		this.parent(newProperties, universe);
 		// Handle muon-specific constants
 		this.getType().push("Muon");
-	},
-	
-	// Handles graphical display of the entity
-	refreshGraphics: function(universe) { // Universe
-		this.getGraphics().label.content = "μ⁻";
-		return true; // bool
 	}
 });
 var AntiMuon = new Class({
-	Extends: ChargedPointEntity,
+	Extends: StandardModelParticle,
 	
 	initialize: function(properties, universe) { // Object
 		// Handle preset properties
 		var newProperties = Object.clone(properties);
 		newProperties.charge.charge = 1.602176565 * Math.pow(10, -19);
 		newProperties.mass = 1.883531 * Math.pow(10, -28);
+		newProperties.standardModelParticle = new Object();
+		newProperties.standardModelParticle.symbol = "μ⁺";
 		// Handle preset properties which don't clone properly with MooTools
 		newProperties.point.location = Vector.create(properties.point.location.elements);
 		// Send up to parent
 		this.parent(newProperties, universe);
 		// Handle antimuon-specific constants
 		this.getType().push("AntiMuon");
-	},
-	
-	// Handles graphical display of the entity
-	refreshGraphics: function(universe) { // Universe
-		this.getGraphics().label.content = "μ⁺";
-		return true; // bool
 	}
 });
 var Tauon = new Class({
-	Extends: ChargedPointEntity,
+	Extends: StandardModelParticle,
 	
 	initialize: function(properties, universe) { // Object
 		// Handle preset properties
 		var newProperties = Object.clone(properties);
 		newProperties.charge.charge = -1.602176565 * Math.pow(10, -19);
 		newProperites.mass = 3.16777 * Math.pow(10, -27);
+		newProperties.standardModelParticle = new Object();
+		newProperties.standardModelParticle.symbol = "τ⁻";
 		// Handle preset properties which don't clone properly with MooTools
 		newProperties.point.location = Vector.create(properties.point.location.elements);
 		// Send up to parent
 		this.parent(newProperties, universe);
 		// Handle tauon-specific constants
 		this.getType().push("Tauon");
-	},
-	
-	// Handles graphical display of the entity
-	refreshGraphics: function(universe) { // Universe
-		this.getGraphics().label.content = "τ⁻";
-		return true; // bool
 	}
 });
 var AntiTau = new Class({
-	Extends: ChargedPointEntity,
+	Extends: StandardModelParticle,
 	
 	initialize: function(properties, universe) { // Object
 		// Handle preset properties
 		var newProperties = Object.clone(properties);
 		newProperties.charge.charge = 1.602176565 * Math.pow(10, -19);
 		newProperites.mass = 3.16777 * Math.pow(10, -27);
+		newProperties.standardModelParticle = new Object();
+		newProperties.standardModelParticle.symbol = "τ⁺";
 		// Handle preset properties which don't clone properly with MooTools
 		newProperties.point.location = Vector.create(properties.point.location.elements);
 		// Send up to parent
 		this.parent(newProperties, universe);
 		// Handle antitau-specific constants
 		this.getType().push("AntiTau");
-	},
-	
-	// Handles graphical display of the entity
-	refreshGraphics: function(universe) { // Universe
-		this.getGraphics().label.content = "τ⁺";
-		return true; // bool
 	}
 });
