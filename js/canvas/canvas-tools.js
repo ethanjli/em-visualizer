@@ -149,7 +149,7 @@ dragIndividuallyTool.onMouseDown = function(event) {
 	}
 };
 dragIndividuallyTool.onMouseDrag = function(event) {
-	if (!selectedGroups[0].associatedEntity.isAnchored()) {
+	if (selectedGroups.length != 0 && !selectedGroups[0].associatedEntity.isAnchored()) {
 		selectedGroups[0].associatedEntity.updateLocationByOffset(event.delta, currentUniverse);
 	}
 };
