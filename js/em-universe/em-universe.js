@@ -95,7 +95,7 @@ var Universe = new Class({
 	},
 	removeEntity: function(entity) { // Entity
 		this.properties.entities.entities[entity.getId()] = null;
-		// FIXME: remove graphics. Maybe add a erase method to each entity? 
+		entity.remove();
 		return entity; // Entity
 	},
 	// TODO: add method to compress the entity list and entity ids by filling empty spots

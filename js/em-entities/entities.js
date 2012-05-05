@@ -35,6 +35,11 @@ var Entity = new Class({
 		return this.properties.name; // String
 	},
 	
+	// Method to remove the entity
+	remove: function() {
+		return this.getGroup().remove(); // bool
+	},
+	
 	// Handles properties in a bulk manner
 	setProperties: function(properties) { // Object
 		// FIXME: figure out how to clone better without ruining vectors and points

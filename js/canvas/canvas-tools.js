@@ -71,7 +71,21 @@ selectAndDragTool.onMouseDrag = function(event) {
 	});
 };
 selectAndDragTool.onKeyDown = function(event) {
-	if (event.key == "up") {
+	// Tool selectors
+	if (event.key == "v") {
+		dragIndividuallyTool.activate();
+	} else if (event.key == "h") {
+		handTool.activate();
+	} else if (event.key == "z") {
+		zoomTool.activate();
+	// Global actions
+	} else if (event.key == "delete") {
+		selectedGroups.forEach(function(selectedGroup) {
+			currentUniverse.removeEntity(selectedGroup.associatedEntity);
+			selectedGroups.erase(selectedGroup);
+		});
+	// Tool-specific actions
+	} else if (event.key == "up") {
 		selectedGroups.forEach(function(selectedGroup) {
 			if (!selectedGroup.associatedEntity.isAnchored()) {
 				selectedGroup.associatedEntity.updateLocationByOffset(new Point(0, -1), currentUniverse);
@@ -140,7 +154,21 @@ dragIndividuallyTool.onMouseDrag = function(event) {
 	}
 };
 dragIndividuallyTool.onKeyDown = function(event) {
-	if (event.key == "up") {
+	// Tool selectors
+	if (event.key == "v") {
+		selectAndDragTool.activate();
+	} else if (event.key == "h") {
+		handTool.activate();
+	} else if (event.key == "z") {
+		zoomTool.activate();
+	// Global actions
+	} else if (event.key == "delete") {
+		selectedGroups.forEach(function(selectedGroup) {
+			currentUniverse.removeEntity(selectedGroup.associatedEntity);
+			selectedGroups.erase(selectedGroup);
+		});
+	// Tool-specific actions
+	} else if (event.key == "up") {
 		selectedGroups.forEach(function(selectedGroup) {
 			if (!selectedGroup.associatedEntity.isAnchored()) {
 				selectedGroup.associatedEntity.updateLocationByOffset(new Point(0, -1), currentUniverse);
@@ -168,14 +196,26 @@ dragIndividuallyTool.onKeyDown = function(event) {
 };
 
 // Tool to pan the canvas
-var panTool = new Tool();
-panTool.onMouseDrag = function(event) {
+var handTool = new Tool();
+handTool.onMouseDrag = function(event) {
 	currentUniverse.translateCenterOfCanvas(currentUniverse.findUniverseCoordinatesOffset(event.delta).multiply(-1));
 	currentUniverse.refreshGraphics(currentUniverse);
 };
 
-panTool.onKeyDown = function(event) {
-	if (event.key == "up") {
+handTool.onKeyDown = function(event) {
+	// Tool selectors
+	if (event.key == "v") {
+		selectAndDragTool.activate();
+	} else if (event.key == "z") {
+		zoomTool.activate();
+	// Global actions
+	} else if (event.key == "delete") {
+		selectedGroups.forEach(function(selectedGroup) {
+			currentUniverse.removeEntity(selectedGroup.associatedEntity);
+			selectedGroups.erase(selectedGroup);
+		});
+	// Tool-specific actions
+	} else if (event.key == "up") {
 		currentUniverse.translateCenterOfCanvas(currentUniverse.findUniverseCoordinatesOffset(new Point(0, -1)).multiply(-1));
 	} else if (event.key == "down") {
 		currentUniverse.translateCenterOfCanvas(currentUniverse.findUniverseCoordinatesOffset(new Point(0, 1)).multiply(-1));
@@ -191,5 +231,26 @@ panTool.onKeyDown = function(event) {
 var zoomTool = new Tool();
 zoomTool.onMouseDrag = function(event) {
 	currentUniverse.setCanvasZoomExponent(currentUniverse.getCanvasZoomExponent() + event.delta.y / 100);
+	currentUniverse.refreshGraphics(currentUniverse);
+};
+
+zoomTool.onKeyDown = function(event) {
+	// Tool selectors
+	if (event.key == "v") {
+		selectAndDragTool.activate();
+	} else if (event.key == "h") {
+		handTool.activate();
+	// Global actions
+	} else if (event.key == "delete") {
+		selectedGroups.forEach(function(selectedGroup) {
+			currentUniverse.removeEntity(selectedGroup.associatedEntity);
+			selectedGroups.erase(selectedGroup);
+		});
+	// Tool-specific actions
+	} else if (event.key == "up") {
+		currentUniverse.setCanvasZoomExponent(currentUniverse.getCanvasZoomExponent() + 10 / 100);
+	} else if (event.key == "down") {
+		currentUniverse.setCanvasZoomExponent(currentUniverse.getCanvasZoomExponent() - 10 / 100);
+	}
 	currentUniverse.refreshGraphics(currentUniverse);
 };
