@@ -69,6 +69,7 @@ selectAndDragTool.onMouseDrag = function(event) {
 			selectedGroup.associatedEntity.updateLocationByOffset(event.delta, currentUniverse);
 		}
 	});
+	currentUniverse.refreshProbeGraphics(currentUniverse);
 };
 selectAndDragTool.onKeyDown = function(event) {
 	// Tool selectors
@@ -83,6 +84,7 @@ selectAndDragTool.onKeyDown = function(event) {
 		selectedGroups.forEach(function(selectedGroup) {
 			currentUniverse.removeEntity(selectedGroup.associatedEntity);
 			selectedGroups.erase(selectedGroup);
+			currentUniverse.refreshProbeGraphics(currentUniverse);
 		});
 	// Tool-specific actions
 	} else if (event.key == "up") {
@@ -152,6 +154,7 @@ dragIndividuallyTool.onMouseDrag = function(event) {
 	if (selectedGroups.length != 0 && !selectedGroups[0].associatedEntity.isAnchored()) {
 		selectedGroups[0].associatedEntity.updateLocationByOffset(event.delta, currentUniverse);
 	}
+	currentUniverse.refreshProbeGraphics(currentUniverse);
 };
 dragIndividuallyTool.onKeyDown = function(event) {
 	// Tool selectors
@@ -166,6 +169,7 @@ dragIndividuallyTool.onKeyDown = function(event) {
 		selectedGroups.forEach(function(selectedGroup) {
 			currentUniverse.removeEntity(selectedGroup.associatedEntity);
 			selectedGroups.erase(selectedGroup);
+			currentUniverse.refreshProbeGraphics(currentUniverse);
 		});
 	// Tool-specific actions
 	} else if (event.key == "up") {
@@ -213,6 +217,7 @@ handTool.onKeyDown = function(event) {
 		selectedGroups.forEach(function(selectedGroup) {
 			currentUniverse.removeEntity(selectedGroup.associatedEntity);
 			selectedGroups.erase(selectedGroup);
+			currentUniverse.refreshProbeGraphics(currentUniverse);
 		});
 	// Tool-specific actions
 	} else if (event.key == "up") {
@@ -245,6 +250,7 @@ zoomTool.onKeyDown = function(event) {
 		selectedGroups.forEach(function(selectedGroup) {
 			currentUniverse.removeEntity(selectedGroup.associatedEntity);
 			selectedGroups.erase(selectedGroup);
+			currentUniverse.refreshProbeGraphics(currentUniverse);
 		});
 	// Tool-specific actions
 	} else if (event.key == "up") {

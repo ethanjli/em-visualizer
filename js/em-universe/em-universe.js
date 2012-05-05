@@ -85,6 +85,11 @@ var Universe = new Class({
 	getEntities: function() {
 		return this.properties.entities.entities; // Entity[]
 	},
+	getProbeEntities: function() {
+		return this.properties.entities.entities.filter(function(entity) {
+			return typeof(entity.measure) !== "undefined";
+		}); // Entity[]
+	},
 	addEntity: function(entity) {
 		this.properties.entities.entities[entity.getId()] = entity;
 		entity.initializeGraphics();
@@ -94,7 +99,7 @@ var Universe = new Class({
 		return this.properties.entities.entities[id]; // Entity
 	},
 	removeEntity: function(entity) { // Entity
-		this.properties.entities.entities[entity.getId()] = null;
+		delete this.properties.entities.entities[entity.getId()];
 		entity.remove();
 		return entity; // Entity
 	},
@@ -102,19 +107,25 @@ var Universe = new Class({
 	
 	// Calculates the electric field in the universe at a given spot by superpositioning
 	findElectricFieldAt: function(location) { // point as Vector
-		return entities.reduce(function(totalElectricField, currentValue, index, array) { // vector as Vector // double, Entity, int, Entity[]
-			if (findElectricFieldAt in currentValue) {
-				return totalElectricField.add(currentValue.findElectricFieldAt(location, this.getVacuumPermittivity())); // vector as Vector
+		var vacuumPermittivity = this.getVacuumPermittivity();
+		return this.properties.entities.entities.reduce(function(totalElectricField, currentEntity, index, entities) { // vector as Vector, Entity, int, Entity[] // vector as Vector
+			if (typeof(currentEntity.findElectricFieldAt) !== "undefined") {
+				return totalElectricField.add(currentEntity.findElectricFieldAt(location, vacuumPermittivity)); // vector as Vector
+			} else {
+				return totalElectricField;
 			}
-		});
+		}, Vector.create([0, 0]));
 	},
 	// Calculates the electric potential in the universe at a given spot by superpositioning
 	findElectricPotentialAt: function(location) { // point as Vector
-		return entities.reduce(function(totalElectricPotential, currentValue, index, array) { // double // double, Entity, int, Entity[]
-			if (findElectricPotentialAt in currentValue) {
-				return totalElectricPotential + currentValue.findElectricPotentialAt(location, this.getVacuumPermittivity()); // double
+		var vacuumPermittivity = this.getVacuumPermittivity();
+		return this.properties.entities.entities.reduce(function(totalElectricPotential, currentEntity, index, array) { // double // double, Entity, int, Entity[] // double
+			if (typeof(currentEntity.findElectricPotentialAt) !== "undefined") {
+				return totalElectricPotential + currentEntity.findElectricPotentialAt(location, vacuumPermittivity); // double
+			} else {
+				return totalElectricPotential;
 			}
-		});
+		}, 0);
 	},
 	
 	// Handles the location in the universe where the center of the canvas is
@@ -141,9 +152,14 @@ var Universe = new Class({
 		return Math.pow(Math.E, this.getCanvasZoomExponent()); // double
 	},
 	
-	// Refreshes the graphics for all entities
+	// Refreshes the graphics for entities
 	refreshGraphics: function(universe) { // Universe
 		this.getEntities().forEach(function(entity) {
+			entity.refreshGraphics(universe);
+		});
+	},
+	refreshProbeGraphics: function(universe) { // Universe
+		this.getProbeEntities().forEach(function(entity) {
 			entity.refreshGraphics(universe);
 		});
 	},

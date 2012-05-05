@@ -9,8 +9,8 @@ var currentUniverse = new Universe({
 	id: 0,
 	name: "Test Universe",
 	physicalConstants: {
-		vacuumPermittivity: 1.0 / (4 * Math.Pi * Math.pow(10, -7) * Math.pow(299792458, 2)),
-		vacuumPermeability: 4 * Math.Pi * Math.pow(10, -7)
+		vacuumPermittivity: 1.0 / (4 * Math.PI * Math.pow(10, -7) * Math.pow(299792458, 2)),
+		vacuumPermeability: 4 * Math.PI * Math.pow(10, -7)
 	},
 	entities: {
 		
@@ -45,6 +45,56 @@ entity1Preset = {
 	}
 };
 currentUniverse.addEntity(new UniverseLocation(entity1Preset, currentUniverse));
+electronPreset = {
+	id: currentUniverse.getNextEntityId(),
+	name: "First Electron",
+	point: {
+		location: Vector.create([0.5, 0])
+	},
+	graphics: {
+		canvasCoordinates: currentUniverse.findCanvasCoordinates(Vector.create([0.5, 0]))
+	},
+	charge: {
+		
+	}
+};
+currentUniverse.addEntity(new Electron(electronPreset, currentUniverse));
+antiProtonPreset = {
+	id: currentUniverse.getNextEntityId(),
+	name: "First Proton",
+	point: {
+		location: Vector.create([-0.5, 0])
+	},
+	graphics: {
+		canvasCoordinates: currentUniverse.findCanvasCoordinates(Vector.create([-0.5, 0]))
+	},
+	charge: {
+		
+	}
+};
+currentUniverse.addEntity(new AntiProton(antiProtonPreset, currentUniverse));
+eMagnitudeProbePreset = {
+	id: currentUniverse.getNextEntityId(),
+	name: "First E Magnitude Probe",
+	point: {
+		location: Vector.create([-0.2, 0])
+	},
+	graphics: {
+		canvasCoordinates: currentUniverse.findCanvasCoordinates(Vector.create([-0.2, 0]))
+	}
+};
+currentUniverse.addEntity(new EFieldMagnitude(eMagnitudeProbePreset, currentUniverse));
+ePotentialProbePreset = {
+	id: currentUniverse.getNextEntityId(),
+	name: "First E Potential Probe",
+	point: {
+		location: Vector.create([0.2, 0])
+	},
+	graphics: {
+		canvasCoordinates: currentUniverse.findCanvasCoordinates(Vector.create([0.2, 0]))
+	}
+};
+currentUniverse.addEntity(new EPotential(ePotentialProbePreset, currentUniverse));
 currentUniverse.getEntity(1).updateLocation(new Point(50, 50), currentUniverse);
 currentUniverse.getEntity(2).updateLocation(new Point(50, 50), currentUniverse);
 currentUniverse.getEntity(2).updateLocationByOffset(new Point(50, 50), currentUniverse);
