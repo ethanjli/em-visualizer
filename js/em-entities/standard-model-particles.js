@@ -8,8 +8,9 @@ var StandardModelParticle = new Class({
 		// Handle standard-model-particle-specific constants
 		this.getType().push("Standard Model Particle");
 	},
-	initializeGraphics: function() { // Object
-		this.parent();
+	initializeGraphics: function(universe) { // Universe
+		this.parent(universe);
+		this.refreshGraphics(universe);
 	},
 	
 	// Override mutator methods to avoid changing charge and mass if they've already been initialized
@@ -46,14 +47,9 @@ var Electron = new Class({
 		// Handle electron-specific constants
 		this.getType().push("Electron");
 	},
-	initializeGraphics: function() {
-		this.parent();
-		// Draw the label
-		this.getGraphics().label.content = "e⁻";
-	},
 	
 	// Handles graphical display of the entity
-	refreshLabel: function() { // Universe
+	refreshGraphics: function(universe) { // Universe
 		this.getGraphics().label.content = "e⁻";
 		return true; // bool
 	}
@@ -73,14 +69,9 @@ var Positron = new Class({
 		// Handle positron-specific constants
 		this.getType().push("Positron");
 	},
-	initializeGraphics: function() {
-		this.parent();
-		// Draw the label
-		this.getGraphics().label.content = "e⁺";
-	},
 	
 	// Handles graphical display of the entity
-	refreshLabel: function() { // Universe
+	refreshGraphics: function(universe) { // Universe
 		this.getGraphics().label.content = "e⁺";
 		return true; // bool
 	}
@@ -100,14 +91,9 @@ var Proton = new Class({
 		// Handle proton-specific constants
 		this.getType().push("Proton");
 	},
-	initializeGraphics: function() {
-		this.parent();
-		// Draw the label
-		this.getGraphics().label.content = "p";
-	},
 	
 	// Handles graphical display of the entity
-	refreshLabel: function() { // Universe
+	refreshGraphics: function(universe) { // Universe
 		this.getGraphics().label.content = "p";
 		return true; // bool
 	}
@@ -127,14 +113,9 @@ var AntiProton = new Class({
 		// Handle antiproton-specific constants
 		this.getType().push("AntiProton");
 	},
-	initializeGraphics: function() {
-		this.parent();
-		// Draw the label
-		this.getGraphics().label.content = "p̅";
-	},
 	
 	// Handles graphical display of the entity
-	refreshLabel: function() { // Universe
+	refreshGraphics: function(universe) { // Universe
 		this.getGraphics().label.content = "p̅";
 		return true; // bool
 	}
@@ -154,14 +135,9 @@ var Muon = new Class({
 		// Handle muon-specific constants
 		this.getType().push("Muon");
 	},
-	initializeGraphics: function() {
-		this.parent();
-		// Draw the label
-		this.getGraphics().label.content = "μ⁻";
-	},
 	
 	// Handles graphical display of the entity
-	refreshLabel: function() { // Universe
+	refreshGraphics: function(universe) { // Universe
 		this.getGraphics().label.content = "μ⁻";
 		return true; // bool
 	}
@@ -181,14 +157,9 @@ var AntiMuon = new Class({
 		// Handle antimuon-specific constants
 		this.getType().push("AntiMuon");
 	},
-	initializeGraphics: function() {
-		this.parent();
-		// Draw the label
-		this.getGraphics().label.content = "μ⁺";
-	},
 	
 	// Handles graphical display of the entity
-	refreshLabel: function() { // Universe
+	refreshGraphics: function(universe) { // Universe
 		this.getGraphics().label.content = "μ⁺";
 		return true; // bool
 	}
@@ -208,14 +179,9 @@ var Tauon = new Class({
 		// Handle tauon-specific constants
 		this.getType().push("Tauon");
 	},
-	initializeGraphics: function() {
-		this.parent();
-		// Draw the label
-		this.getGraphics().label.content = "τ⁻";
-	},
 	
 	// Handles graphical display of the entity
-	refreshLabel: function() { // Universe
+	refreshGraphics: function(universe) { // Universe
 		this.getGraphics().label.content = "τ⁻";
 		return true; // bool
 	}
@@ -235,14 +201,9 @@ var AntiTau = new Class({
 		// Handle antitau-specific constants
 		this.getType().push("AntiTau");
 	},
-	initializeGraphics: function() {
-		this.parent();
-		// Draw the label
-		this.getGraphics().label.content = "τ⁺";
-	},
 	
 	// Handles graphical display of the entity
-	refreshLabel: function() { // Universe
+	refreshGraphics: function(universe) { // Universe
 		this.getGraphics().label.content = "τ⁺";
 		return true; // bool
 	}

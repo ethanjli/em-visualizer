@@ -93,8 +93,8 @@ var Universe = new Class({
 	},
 	addEntity: function(entity) {
 		this.properties.entities.entities[entity.getId()] = entity;
-		entity.initializeGraphics();
-		return this; // Entity
+		entity.initializeGraphics(this);
+		return true; // Entity
 	},
 	getEntity: function(id) { // int
 		return this.properties.entities.entities[id]; // Entity
@@ -154,9 +154,9 @@ var Universe = new Class({
 	},
 	
 	// Refreshes the graphics for entities
-	refreshGraphics: function(universe) { // Universe
+	refreshCanvasPositions: function(universe) { // Universe
 		this.getEntities().forEach(function(entity) {
-			entity.refreshGraphics(universe);
+			entity.refreshCanvasPosition(universe);
 		});
 	},
 	refreshProbeGraphics: function(universe) { // Universe

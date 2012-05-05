@@ -19,6 +19,9 @@ var Entity = new Class({
 		this.getGraphics().clickable = new Group();
 		this.getGroup().addChild(this.getClickable());
 	},
+	initializeGraphics: function(universe) { // Universe
+		return true;
+	},
 	
 	// Handles the entity's basic properties
 	getId: function() {
@@ -90,6 +93,9 @@ var Entity = new Class({
 	},
 	refreshGraphics: function() {
 		return true;
+	},
+	refreshCanvasPosition: function() {
+		return true;
 	}
 });
 
@@ -110,7 +116,7 @@ var PointEntity = new Class({
 		this.properties.point = new Object();
 		this.setLocation(properties.point.location);
 	},
-	initializeGraphics: function() { // Object
+	initializeGraphics: function(universe) { // Object
 		// Draw the point
 		debug.debug("Drawing new point at", this.getCanvasCoordinates());
 		var point = new Path.Circle(this.getCanvasCoordinates(), 2);
@@ -165,7 +171,7 @@ var PointEntity = new Class({
 				// Translate
 				this.getGroup().translate(canvasCoordinatesOffset);
 				// Update the graphics
-				this.refreshLabel(universe);
+				this.refreshGraphics(universe);
 				this.setCanvasCoordinates(canvasCoordinates);
 				return true; // bool
 			} else {
@@ -178,7 +184,7 @@ var PointEntity = new Class({
 				// Translate
 				this.getGroup().translate(canvasCoordinatesOffset);
 				// Update the graphics
-				this.refreshLabel(universe);
+				this.refreshGraphics(universe);
 				this.setCanvasCoordinates(location);
 				return true; // bool
 			} else {
@@ -194,7 +200,7 @@ var PointEntity = new Class({
 				// Translate
 				this.getGroup().translate(canvasCoordinatesOffset);
 				// Update the graphics
-				this.refreshLabel(universe);
+				this.refreshGraphics(universe);
 				this.translateCanvasCoordinates(canvasCoordinatesOffset);
 				return true; // bool
 			} else {
@@ -205,7 +211,7 @@ var PointEntity = new Class({
 				// Translate
 				this.getGroup().translate(offset);
 				// Update the graphics
-				this.refreshLabel(universe);
+				this.refreshGraphics(universe);
 				this.translateCanvasCoordinates(offset);
 				return true; // bool
 			} else {
@@ -213,19 +219,16 @@ var PointEntity = new Class({
 			}
 		}
 	},
-	refreshLabel: function(universe) { // Universe
-		var decimalEpsilonPrecision = universe.getDecimalEpsilonPrecision();
-		this.getGraphics().label.content = "(" + parseFloat(this.getLocation().e(1).toPrecision(decimalEpsilonPrecision)) + "m," + parseFloat(this.getLocation().e(2).toPrecision(decimalEpsilonPrecision)) + "m)";
+	refreshGraphics: function(universe) { // Universe
+		this.getGraphics().label.content = this.getName();
 		return true; // bool
 	},
-	refreshGraphics: function(universe) { // Universe
+	refreshCanvasPosition: function(universe) { // Universe
 		// Determine how far to move on the canvas
 		var canvasCoordinatesOffset = universe.findCanvasCoordinates(this.getLocation()).subtract(this.getCanvasCoordinates());
 		this.setCanvasCoordinates(universe.findCanvasCoordinates(this.getLocation()));
 		// Translate
 		this.getGroup().translate(canvasCoordinatesOffset);
-		// Update the graphics
-		this.refreshLabel(universe);
 		return true; // bool
 	},
 	
@@ -342,11 +345,17 @@ var UniverseLocation = new Class({
 		this.getType().push("Universe Location");
 		// Handle universe-location-specific properties
 	},
-	initializeGraphics: function() { // Object
-		this.parent();
-		// Draw the label
-		this.getGraphics().label.content = "(" + this.getLocation().e(1) + "m," + this.getLocation().e(2) + "m)";
-	}
+	initializeGraphics: function(universe) { // Universe
+		this.parent(universe);
+		this.refreshGraphics(universe);
+	},
+	
+	// Handles graphical display of the entity
+	refreshGraphics: function(universe) { // Universe
+		var decimalEpsilonPrecision = universe.getDecimalEpsilonPrecision();
+		this.getGraphics().label.content = "(" + parseFloat(this.getLocation().e(1).toPrecision(decimalEpsilonPrecision)) + "m," + parseFloat(this.getLocation().e(2).toPrecision(decimalEpsilonPrecision)) + "m)";
+		return true; // bool
+	},
 });
 
 // Models the (0,0) anchor in the universe

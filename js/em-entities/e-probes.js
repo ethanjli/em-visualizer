@@ -43,10 +43,9 @@ var EFieldMagnitude = new Class({
 		this.getType().push("E Field Magnitude");
 		// Handle e-field-magnitude-probe-specific variables
 	},	
-	initializeGraphics: function() { // Object
-		this.parent();
-		// Draw the label
-		this.getGraphics().label.content = "???N/C";
+	initializeGraphics: function(universe) { // Universe
+		this.parent(universe);
+		this.refreshGraphics(universe);
 	},
 	
 	measure: function(universe) { // Universe
@@ -54,7 +53,7 @@ var EFieldMagnitude = new Class({
 	},
 	
 	// Handles graphical display of the entity
-	refreshLabel: function(universe) { // Universe
+	refreshGraphics: function(universe) { // Universe
 		var decimalPrecision = universe.getDecimalPrecision();
 		this.getGraphics().label.content = parseFloat(this.measure(universe).toPrecision(decimalPrecision)) + "N/C";
 		return true; // bool
@@ -72,10 +71,9 @@ var EPotential = new Class({
 		this.getType().push("E Potential");
 		// Handle e-field-magnitude-probe-specific variables
 	},	
-	initializeGraphics: function() { // Object
-		this.parent();
-		// Draw the Label
-		this.getGraphics().label.content = "???V";
+	initializeGraphics: function(universe) { // Universe
+		this.parent(universe);
+		this.refreshGraphics(universe);
 	},
 	
 	measure: function(universe) { // Universe
@@ -83,7 +81,7 @@ var EPotential = new Class({
 	},
 	
 	// Handles graphical display of the entity
-	refreshLabel: function(universe) { // Universe
+	refreshGraphics: function(universe) { // Universe
 		var decimalPrecision = universe.getDecimalPrecision();
 		this.getGraphics().label.content = parseFloat(this.measure(universe).toPrecision(decimalPrecision)) + "V";
 		return true; // bool

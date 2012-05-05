@@ -203,7 +203,7 @@ dragIndividuallyTool.onKeyDown = function(event) {
 var handTool = new Tool();
 handTool.onMouseDrag = function(event) {
 	currentUniverse.translateCenterOfCanvas(currentUniverse.findUniverseCoordinatesOffset(event.delta).multiply(-1));
-	currentUniverse.refreshGraphics(currentUniverse);
+	currentUniverse.refreshCanvasPositions(currentUniverse);
 };
 
 handTool.onKeyDown = function(event) {
@@ -229,14 +229,14 @@ handTool.onKeyDown = function(event) {
 	} else if (event.key == "right") {
 		currentUniverse.translateCenterOfCanvas(currentUniverse.findUniverseCoordinatesOffset(new Point(1, 0)).multiply(-1));
 	}
-	currentUniverse.refreshGraphics(currentUniverse);
+	currentUniverse.refreshCanvasPositions(currentUniverse);
 };
 
 // Tool to zoom the canvas
 var zoomTool = new Tool();
 zoomTool.onMouseDrag = function(event) {
 	currentUniverse.setCanvasZoomExponent(currentUniverse.getCanvasZoomExponent() + event.delta.y / 100);
-	currentUniverse.refreshGraphics(currentUniverse);
+	currentUniverse.refreshCanvasPositions(currentUniverse);
 };
 
 zoomTool.onKeyDown = function(event) {
@@ -258,5 +258,5 @@ zoomTool.onKeyDown = function(event) {
 	} else if (event.key == "down") {
 		currentUniverse.setCanvasZoomExponent(currentUniverse.getCanvasZoomExponent() - 10 / 100);
 	}
-	currentUniverse.refreshGraphics(currentUniverse);
+	currentUniverse.refreshCanvasPositions(currentUniverse);
 };

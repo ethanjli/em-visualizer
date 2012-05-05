@@ -15,10 +15,9 @@ var ChargedPointEntity = new Class({
 		this.setCharge(properties.charge.charge);
 	},
 	
-	initializeGraphics: function() { // Object
-		this.parent();
-		// Draw the label
-		this.getGraphics().label.content = this.getCharge() + "C";
+	initializeGraphics: function(universe) { // Universe
+		this.parent(universe);
+		this.refreshGraphics(universe);
 	},
 	
 	// Handles the entity's electric charge
@@ -44,7 +43,7 @@ var ChargedPointEntity = new Class({
 	},
 	
 	// Handles graphical display of the entity
-	refreshLabel: function(universe) { // Universe
+	refreshGraphics: function(universe) { // Universe
 		var decimalPrecision = universe.getDecimalPrecision();
 		this.getGraphics().label.content = parseFloat(this.getCharge().toPrecision(decimalPrecision)) + "C";
 		return true; // bool
