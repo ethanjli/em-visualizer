@@ -83,9 +83,9 @@ selectAndDragTool.onKeyDown = function(event) {
 	} else if (event.key == "delete") {
 		selectedGroups.forEach(function(selectedGroup) {
 			currentUniverse.removeEntity(selectedGroup.associatedEntity);
-			selectedGroups.erase(selectedGroup);
 			currentUniverse.refreshProbeGraphics(currentUniverse);
 		});
+		selectedGroups.empty();
 	// Tool-specific actions
 	} else if (event.key == "up") {
 		selectedGroups.forEach(function(selectedGroup) {
@@ -168,9 +168,9 @@ dragIndividuallyTool.onKeyDown = function(event) {
 	} else if (event.key == "delete") {
 		selectedGroups.forEach(function(selectedGroup) {
 			currentUniverse.removeEntity(selectedGroup.associatedEntity);
-			selectedGroups.erase(selectedGroup);
 			currentUniverse.refreshProbeGraphics(currentUniverse);
 		});
+		selectedGroups.empty();
 	// Tool-specific actions
 	} else if (event.key == "up") {
 		selectedGroups.forEach(function(selectedGroup) {
@@ -216,9 +216,9 @@ handTool.onKeyDown = function(event) {
 	} else if (event.key == "delete") {
 		selectedGroups.forEach(function(selectedGroup) {
 			currentUniverse.removeEntity(selectedGroup.associatedEntity);
-			selectedGroups.erase(selectedGroup);
 			currentUniverse.refreshProbeGraphics(currentUniverse);
 		});
+		selectedGroups.empty();
 	// Tool-specific actions
 	} else if (event.key == "up") {
 		currentUniverse.translateCenterOfCanvas(currentUniverse.findUniverseCoordinatesOffset(new Point(0, -1)).multiply(-1));
@@ -249,9 +249,9 @@ zoomTool.onKeyDown = function(event) {
 	} else if (event.key == "delete") {
 		selectedGroups.forEach(function(selectedGroup) {
 			currentUniverse.removeEntity(selectedGroup.associatedEntity);
-			selectedGroups.erase(selectedGroup);
 			currentUniverse.refreshProbeGraphics(currentUniverse);
 		});
+		selectedGroups.empty();
 	// Tool-specific actions
 	} else if (event.key == "up") {
 		currentUniverse.setCanvasZoomExponent(currentUniverse.getCanvasZoomExponent() + 10 / 100);

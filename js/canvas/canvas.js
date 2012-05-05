@@ -28,10 +28,10 @@ entity0Preset = {
 	id: currentUniverse.getNextEntityId(),
 	name: "Second Location",
 	point: {
-		location: Vector.create([1, 0])
+		location: Vector.create([0, 0.4])
 	},
 	graphics: {
-		canvasCoordinates: currentUniverse.findCanvasCoordinates(Vector.create([1, 0]))
+		canvasCoordinates: currentUniverse.findCanvasCoordinates(Vector.create([0, 0.4]))
 	}
 };
 currentUniverse.addEntity(new UniverseLocation(entity0Preset, currentUniverse));
@@ -39,10 +39,10 @@ entity1Preset = {
 	id: currentUniverse.getNextEntityId(),
 	name: "Third Location",
 	point: {
-		location: Vector.create([-1, 0])
+		location: Vector.create([0, -0.4])
 	},
 	graphics: {
-		canvasCoordinates: currentUniverse.findCanvasCoordinates(Vector.create([-1, 0]))
+		canvasCoordinates: currentUniverse.findCanvasCoordinates(Vector.create([0, -0.4]))
 	}
 };
 currentUniverse.addEntity(new UniverseLocation(entity1Preset, currentUniverse));
@@ -96,9 +96,6 @@ ePotentialProbePreset = {
 	}
 };
 currentUniverse.addEntity(new EPotential(ePotentialProbePreset, currentUniverse));
-currentUniverse.getEntity(1).updateLocation(new Point(50, 50), currentUniverse);
-currentUniverse.getEntity(2).updateLocation(new Point(50, 50), currentUniverse);
-currentUniverse.getEntity(2).updateLocationByOffset(new Point(50, 50), currentUniverse);
 debug.debug("Test universe now looks like", currentUniverse);
 
 // Set up view
