@@ -20,7 +20,8 @@ var currentUniverse = new Universe({
 		canvasZoom: Math.log(500)
 	},
 	text: {
-		decimalPrecision: 10
+		decimalPrecision: 5,
+		decimalEpsilonPrecision: 10
 	}
 });
 entity0Preset = {

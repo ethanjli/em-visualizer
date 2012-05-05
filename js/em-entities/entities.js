@@ -111,7 +111,7 @@ var PointEntity = new Class({
 		this.setLocation(properties.point.location);
 	},
 	initializeGraphics: function() { // Object
-		//// Draw the point
+		// Draw the point
 		debug.debug("Drawing new point at", this.getCanvasCoordinates());
 		var point = new Path.Circle(this.getCanvasCoordinates(), 2);
 		point.style = {
@@ -119,10 +119,17 @@ var PointEntity = new Class({
 			strokeColor: "black",
 			strokeWidth: 1.5
 		};
-		//// Commit graphics
+		// Draw the label
+		var label = new PointText(this.getCanvasCoordinates().add(new Point(5, -5)));
+		label.fillColor = "black";
+		label.characterStyle.font = "Segoe UI";
+		label.content = this.getName();
+		// Commit graphics
 		this.getGraphics().point = point;
-		//// Make clickable group and overall group
+		this.getGraphics().label = label;
+		// Make clickable group and overall group
 		this.getClickable().addChild(point);
+		this.getGroup().addChild(label);
 		debug.debug("Finished initialization of point graphics", this.getGraphics());
 	},
 	
@@ -207,8 +214,8 @@ var PointEntity = new Class({
 		}
 	},
 	refreshLabel: function(universe) { // Universe
-		var decimalPrecision = universe.getDecimalPrecision();
-		this.getGraphics().label.content = "(" + parseFloat(this.getLocation().e(1).toPrecision(decimalPrecision)) + "m," + parseFloat(this.getLocation().e(2).toPrecision(decimalPrecision)) + "m)";
+		var decimalEpsilonPrecision = universe.getDecimalEpsilonPrecision();
+		this.getGraphics().label.content = "(" + parseFloat(this.getLocation().e(1).toPrecision(decimalEpsilonPrecision)) + "m," + parseFloat(this.getLocation().e(2).toPrecision(decimalEpsilonPrecision)) + "m)";
 		return true; // bool
 	},
 	refreshGraphics: function(universe) { // Universe
@@ -337,15 +344,8 @@ var UniverseLocation = new Class({
 	},
 	initializeGraphics: function() { // Object
 		this.parent();
-		//// Draw the label
-		var label = new PointText(this.getCanvasCoordinates().add(new Point(5, -5)));
-		label.fillColor = "black";
-		label.characterStyle.font = "Segoe UI";
-		label.content = "(" + this.getLocation().e(1) + "m," + this.getLocation().e(2) + "m)";
-		//// Commit graphics
-		this.getGraphics().label = label;
-		//// Update overall group
-		this.getGroup().addChild(label);
+		// Draw the label
+		this.getGraphics().label.content = "(" + this.getLocation().e(1) + "m," + this.getLocation().e(2) + "m)";
 	}
 });
 

@@ -45,15 +45,8 @@ var EFieldMagnitude = new Class({
 	},	
 	initializeGraphics: function() { // Object
 		this.parent();
-		//// Draw the label
-		var label = new PointText(this.getCanvasCoordinates().add(new Point(5, -5)));
-		label.fillColor = "black";
-		label.characterStyle.font = "Segoe UI";
-		label.content = "???N/C";
-		//// Commit graphics
-		this.getGraphics().label = label;
-		//// Update overall group
-		this.getGroup().addChild(label);
+		// Draw the label
+		this.getGraphics().label.content = "???N/C";
 	},
 	
 	measure: function(universe) { // Universe
@@ -81,15 +74,8 @@ var EPotential = new Class({
 	},	
 	initializeGraphics: function() { // Object
 		this.parent();
-		//// Draw the label
-		var label = new PointText(this.getCanvasCoordinates().add(new Point(5, -5)));
-		label.fillColor = "black";
-		label.characterStyle.font = "Segoe UI";
-		label.content = "???V";
-		//// Commit graphics
-		this.getGraphics().label = label;
-		//// Update overall group
-		this.getGroup().addChild(label);
+		// Draw the Label
+		this.getGraphics().label.content = "???V";
 	},
 	
 	measure: function(universe) { // Universe

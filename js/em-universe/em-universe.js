@@ -22,6 +22,7 @@ var Universe = new Class({
 		//// Handle text display
 		this.properties.text = new Object();
 		this.setDecimalPrecision(properties.text.decimalPrecision);
+		this.setDecimalEpsilonPrecision(properties.text.decimalEpsilonPrecision);
 		//// Populate the universe with initial entities
 		////// Add the (0,0) anchor point
 		this.addEntity(new UniverseAnchorPoint({
@@ -189,5 +190,12 @@ var Universe = new Class({
 	},
 	getDecimalPrecision: function() {
 		return this.properties.text.decimalPrecision; // int
+	},
+	setDecimalEpsilonPrecision: function(decimalEpsilonPrecision) { // int
+		this.properties.text.decimalEpsilonPrecision = decimalEpsilonPrecision;
+		return true; // bool
+	},
+	getDecimalEpsilonPrecision: function() {
+		return this.properties.text.decimalEpsilonPrecision; // int
 	}
 });

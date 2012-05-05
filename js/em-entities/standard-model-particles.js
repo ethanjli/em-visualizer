@@ -48,7 +48,7 @@ var Electron = new Class({
 	},
 	initializeGraphics: function() {
 		this.parent();
-		//// Draw the label
+		// Draw the label
 		this.getGraphics().label.content = "e⁻";
 	},
 	
@@ -75,7 +75,7 @@ var Positron = new Class({
 	},
 	initializeGraphics: function() {
 		this.parent();
-		//// Draw the label
+		// Draw the label
 		this.getGraphics().label.content = "e⁺";
 	},
 	
@@ -102,7 +102,7 @@ var Proton = new Class({
 	},
 	initializeGraphics: function() {
 		this.parent();
-		//// Draw the label
+		// Draw the label
 		this.getGraphics().label.content = "p";
 	},
 	
@@ -129,7 +129,7 @@ var AntiProton = new Class({
 	},
 	initializeGraphics: function() {
 		this.parent();
-		//// Draw the label
+		// Draw the label
 		this.getGraphics().label.content = "p̅";
 	},
 	
@@ -156,7 +156,7 @@ var Muon = new Class({
 	},
 	initializeGraphics: function() {
 		this.parent();
-		//// Draw the label
+		// Draw the label
 		this.getGraphics().label.content = "μ⁻";
 	},
 	
@@ -183,7 +183,7 @@ var AntiMuon = new Class({
 	},
 	initializeGraphics: function() {
 		this.parent();
-		//// Draw the label
+		// Draw the label
 		this.getGraphics().label.content = "μ⁺";
 	},
 	
@@ -210,7 +210,7 @@ var Tauon = new Class({
 	},
 	initializeGraphics: function() {
 		this.parent();
-		//// Draw the label
+		// Draw the label
 		this.getGraphics().label.content = "τ⁻";
 	},
 	
@@ -237,7 +237,7 @@ var AntiTau = new Class({
 	},
 	initializeGraphics: function() {
 		this.parent();
-		//// Draw the label
+		// Draw the label
 		this.getGraphics().label.content = "τ⁺";
 	},
 	
