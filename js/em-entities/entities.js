@@ -118,7 +118,6 @@ var PointEntity = new Class({
 	},
 	initializeGraphics: function(universe) { // Object
 		// Draw the point
-		debug.debug("Drawing new point at", this.getCanvasCoordinates());
 		var point = new Path.Circle(this.getCanvasCoordinates(), 2);
 		point.style = {
 			fillColor: "black",
@@ -136,7 +135,6 @@ var PointEntity = new Class({
 		// Make clickable group and overall group
 		this.getClickable().addChild(point);
 		this.getGroup().addChild(label);
-		debug.debug("Finished initialization of point graphics", this.getGraphics());
 	},
 	
 	// Handles the entity's location
@@ -338,7 +336,6 @@ var UniverseLocation = new Class({
 		newProperties.mass = 0;
 		// Handle preset properties which don't clone properly with MooTools
 		newProperties.point.location = Vector.create(properties.point.location.elements);
-		//debug.debug("Finished preset for universe location", newProperties);
 		// Send up to parent
 		this.parent(newProperties, universe);
 		// Handle universe-location-specific constants
@@ -369,7 +366,6 @@ var UniverseAnchorPoint = new Class({
 		newProperties.anchored = true;
 		newProperties.point = new Object();
 		newProperties.point.location = Vector.create([0,0]);
-		//debug.debug("Finished preset for universe anchor point", newProperties);
 		// Send up to parent
 		this.parent(newProperties, universe);
 		// Handle universe-anchor-point-specific constants

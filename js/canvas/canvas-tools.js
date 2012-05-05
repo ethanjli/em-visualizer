@@ -260,3 +260,5 @@ zoomTool.onKeyDown = function(event) {
 	}
 	currentUniverse.refreshCanvasPositions(currentUniverse);
 };
+
+dragIndividuallyTool.activate();
