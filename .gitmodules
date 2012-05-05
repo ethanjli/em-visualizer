@@ -22,3 +22,6 @@
 [submodule "js/libs/sylvester"]
 	path = js/libs/sylvester
 	url = git://github.com/jcoglan/sylvester.git
+[submodule "js/libs/stats.js"]
+	path = js/libs/stats.js
+	url = git://github.com/mrdoob/stats.js.git
