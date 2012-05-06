@@ -53,9 +53,14 @@ var Electron = new Class({
 	initialize: function(properties, universe) { // Object
 		// Handle preset properties
 		var newProperties = Object.clone(properties);
+		if (typeof(newProperties.charge) === "undefined") {
+			newProperties.charge = new Object();
+		}
 		newProperties.charge.charge = -1.602176565 * Math.pow(10, -19);
 		newProperties.mass = 9.10938291 * Math.pow(10, -31);
-		newProperties.standardModelParticle = new Object();
+		if (typeof(newProperties.standardModelParticle) === "undefined") {
+			newProperties.standardModelParticle = new Object();
+		}
 		newProperties.standardModelParticle.symbol = "e⁻";
 		// Handle preset properties which don't clone properly with MooTools
 		newProperties.point.location = Vector.create(properties.point.location.elements);
@@ -71,9 +76,14 @@ var Positron = new Class({
 	initialize: function(properties, universe) { // Object
 		// Handle preset properties
 		var newProperties = Object.clone(properties);
+		if (typeof(newProperties.charge) === "undefined") {
+			newProperties.charge = new Object();
+		}
 		newProperties.charge.charge = 1.602176565 * Math.pow(10, -19);
 		newProperties.mass = 9.10938291 * Math.pow(10, -31);
-		newProperties.standardModelParticle = new Object();
+		if (typeof(newProperties.standardModelParticle) === "undefined") {
+			newProperties.standardModelParticle = new Object();
+		}
 		newProperties.standardModelParticle.symbol = "e⁺";
 		// Handle preset properties which don't clone properly with MooTools
 		newProperties.point.location = Vector.create(properties.point.location.elements);
@@ -89,9 +99,14 @@ var Proton = new Class({
 	initialize: function(properties, universe) { // Object
 		// Handle preset properties
 		var newProperties = Object.clone(properties);
+		if (typeof(newProperties.charge) === "undefined") {
+			newProperties.charge = new Object();
+		}
 		newProperties.charge.charge = 1.602176565 * Math.pow(10, -19);
 		newProperties.mass = 1.672621777 * Math.pow(10, -27);
-		newProperties.standardModelParticle = new Object();
+		if (typeof(newProperties.standardModelParticle) === "undefined") {
+			newProperties.standardModelParticle = new Object();
+		}
 		newProperties.standardModelParticle.symbol = "p";
 		// Handle preset properties which don't clone properly with MooTools
 		newProperties.point.location = Vector.create(properties.point.location.elements);
@@ -107,9 +122,14 @@ var AntiProton = new Class({
 	initialize: function(properties, universe) { // Object
 		// Handle preset properties
 		var newProperties = Object.clone(properties);
+		if (typeof(newProperties.charge) === "undefined") {
+			newProperties.charge = new Object();
+		}
 		newProperties.charge.charge = -1.602176565 * Math.pow(10, -19);
 		newProperties.mass = 1.672621777 * Math.pow(10, -27);
-		newProperties.standardModelParticle = new Object();
+		if (typeof(newProperties.standardModelParticle) === "undefined") {
+			newProperties.standardModelParticle = new Object();
+		}
 		newProperties.standardModelParticle.symbol = "p̅";
 		// Handle preset properties which don't clone properly with MooTools
 		newProperties.point.location = Vector.create(properties.point.location.elements);
@@ -125,9 +145,14 @@ var Muon = new Class({
 	initialize: function(properties, universe) { // Object
 		// Handle preset properties
 		var newProperties = Object.clone(properties);
+		if (typeof(newProperties.charge) === "undefined") {
+			newProperties.charge = new Object();
+		}
 		newProperties.charge.charge = -1.602176565 * Math.pow(10, -19);
 		newProperties.mass = 1.883531 * Math.pow(10, -28);
-		newProperties.standardModelParticle = new Object();
+		if (typeof(newProperties.standardModelParticle) === "undefined") {
+			newProperties.standardModelParticle = new Object();
+		}
 		newProperties.standardModelParticle.symbol = "μ⁻";
 		// Handle preset properties which don't clone properly with MooTools
 		newProperties.point.location = Vector.create(properties.point.location.elements);
@@ -143,9 +168,14 @@ var AntiMuon = new Class({
 	initialize: function(properties, universe) { // Object
 		// Handle preset properties
 		var newProperties = Object.clone(properties);
+		if (typeof(newProperties.charge) === "undefined") {
+			newProperties.charge = new Object();
+		}
 		newProperties.charge.charge = 1.602176565 * Math.pow(10, -19);
 		newProperties.mass = 1.883531 * Math.pow(10, -28);
-		newProperties.standardModelParticle = new Object();
+		if (typeof(newProperties.standardModelParticle) === "undefined") {
+			newProperties.standardModelParticle = new Object();
+		}
 		newProperties.standardModelParticle.symbol = "μ⁺";
 		// Handle preset properties which don't clone properly with MooTools
 		newProperties.point.location = Vector.create(properties.point.location.elements);
@@ -161,9 +191,14 @@ var Tauon = new Class({
 	initialize: function(properties, universe) { // Object
 		// Handle preset properties
 		var newProperties = Object.clone(properties);
+		if (typeof(newProperties.charge) === "undefined") {
+			newProperties.charge = new Object();
+		}
 		newProperties.charge.charge = -1.602176565 * Math.pow(10, -19);
 		newProperites.mass = 3.16777 * Math.pow(10, -27);
-		newProperties.standardModelParticle = new Object();
+		if (typeof(newProperties.standardModelParticle) === "undefined") {
+			newProperties.standardModelParticle = new Object();
+		}
 		newProperties.standardModelParticle.symbol = "τ⁻";
 		// Handle preset properties which don't clone properly with MooTools
 		newProperties.point.location = Vector.create(properties.point.location.elements);
@@ -179,9 +214,14 @@ var AntiTau = new Class({
 	initialize: function(properties, universe) { // Object
 		// Handle preset properties
 		var newProperties = Object.clone(properties);
+		if (typeof(newProperties.charge) === "undefined") {
+			newProperties.charge = new Object();
+		}
 		newProperties.charge.charge = 1.602176565 * Math.pow(10, -19);
 		newProperites.mass = 3.16777 * Math.pow(10, -27);
-		newProperties.standardModelParticle = new Object();
+		if (typeof(newProperties.standardModelParticle) === "undefined") {
+			newProperties.standardModelParticle = new Object();
+		}
 		newProperties.standardModelParticle.symbol = "τ⁺";
 		// Handle preset properties which don't clone properly with MooTools
 		newProperties.point.location = Vector.create(properties.point.location.elements);

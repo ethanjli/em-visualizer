@@ -12,9 +12,6 @@ var currentUniverse = new Universe({
 		vacuumPermittivity: 1.0 / (4 * Math.PI * Math.pow(10, -7) * Math.pow(299792458, 2)),
 		vacuumPermeability: 4 * Math.PI * Math.pow(10, -7)
 	},
-	entities: {
-		
-	},
 	graphics: {
 		locationOfCenterOfCanvas: Vector.create([0, 0]),
 		canvasZoom: Math.log(500)
@@ -29,9 +26,6 @@ entity0Preset = {
 	name: "Second Location",
 	point: {
 		location: Vector.create([0, 0.4])
-	},
-	graphics: {
-		canvasCoordinates: currentUniverse.findCanvasCoordinates(Vector.create([0, 0.4]))
 	}
 };
 currentUniverse.addEntity(new UniverseLocation(entity0Preset, currentUniverse));
@@ -40,9 +34,6 @@ entity1Preset = {
 	name: "Third Location",
 	point: {
 		location: Vector.create([0, -0.4])
-	},
-	graphics: {
-		canvasCoordinates: currentUniverse.findCanvasCoordinates(Vector.create([0, -0.4]))
 	}
 };
 currentUniverse.addEntity(new UniverseLocation(entity1Preset, currentUniverse));
@@ -50,13 +41,7 @@ electronPreset = {
 	id: currentUniverse.getNextEntityId(),
 	name: "First Electron",
 	point: {
-		location: Vector.create([0.5, 0])
-	},
-	graphics: {
-		canvasCoordinates: currentUniverse.findCanvasCoordinates(Vector.create([0.5, 0]))
-	},
-	charge: {
-		
+		location: Vector.create([0.5, 0.2])
 	}
 };
 currentUniverse.addEntity(new Electron(electronPreset, currentUniverse));
@@ -64,13 +49,7 @@ antiProtonPreset = {
 	id: currentUniverse.getNextEntityId(),
 	name: "First Proton",
 	point: {
-		location: Vector.create([-0.5, 0])
-	},
-	graphics: {
-		canvasCoordinates: currentUniverse.findCanvasCoordinates(Vector.create([-0.5, 0]))
-	},
-	charge: {
-		
+		location: Vector.create([-0.5, 0.2])
 	}
 };
 currentUniverse.addEntity(new AntiProton(antiProtonPreset, currentUniverse));
@@ -78,10 +57,7 @@ eMagnitudeProbePreset = {
 	id: currentUniverse.getNextEntityId(),
 	name: "First E Magnitude Probe",
 	point: {
-		location: Vector.create([-0.2, 0])
-	},
-	graphics: {
-		canvasCoordinates: currentUniverse.findCanvasCoordinates(Vector.create([-0.2, 0]))
+		location: Vector.create([0, 0.2])
 	}
 };
 currentUniverse.addEntity(new EFieldMagnitude(eMagnitudeProbePreset, currentUniverse));
@@ -90,9 +66,6 @@ ePotentialProbePreset = {
 	name: "First E Potential Probe",
 	point: {
 		location: Vector.create([0.2, 0])
-	},
-	graphics: {
-		canvasCoordinates: currentUniverse.findCanvasCoordinates(Vector.create([0.2, 0]))
 	}
 };
 currentUniverse.addEntity(new EPotential(ePotentialProbePreset, currentUniverse));

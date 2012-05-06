@@ -32,7 +32,7 @@ var Universe = new Class({
 			}
 		}, this));
 		////// Put all the other entities in if the entity list is not undefined
-		if (typeof(properties.entities.entities) !== 'undefined' && properties.entities.entities.length != 0) {
+		if (typeof(properties.entities) !== "undefined" && typeof(properties.entities.entities) !== "undefined" && properties.entities.entities.length != 0) {
 			this.setEntities(properties.entities.entities);
 		} 
 	},

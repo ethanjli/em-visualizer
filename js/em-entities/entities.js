@@ -106,6 +106,9 @@ var PointEntity = new Class({
 	initialize: function(properties, universe) { // Object
 		// Handle preset properties
 		var newProperties = Object.clone(properties);
+		if (typeof(newProperties.graphics) === "undefined") {
+			newProperties.graphics = new Object();
+		}
 		newProperties.graphics.canvasCoordinates = universe.findCanvasCoordinates(properties.point.location);
 		// Handle preset properties which don't clone properly with MooTools
 		// Send up to parent
@@ -364,7 +367,9 @@ var UniverseAnchorPoint = new Class({
 		var newProperties = Object.clone(properties);
 		newProperties.name = "Center of the Universe";
 		newProperties.anchored = true;
-		newProperties.point = new Object();
+		if (typeof(newProperties.point) === "undefined") {
+			newProperties.point = new Object();
+		}
 		newProperties.point.location = Vector.create([0,0]);
 		// Send up to parent
 		this.parent(newProperties, universe);
