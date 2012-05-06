@@ -209,7 +209,7 @@ handTool.onMouseDrag = function(event) {
 handTool.onKeyDown = function(event) {
 	// Tool selectors
 	if (event.key == "v") {
-		selectAndDragTool.activate();
+		dragIndividuallyTool.activate();
 	} else if (event.key == "z") {
 		zoomTool.activate();
 	// Global actions
@@ -242,7 +242,7 @@ zoomTool.onMouseDrag = function(event) {
 zoomTool.onKeyDown = function(event) {
 	// Tool selectors
 	if (event.key == "v") {
-		selectAndDragTool.activate();
+		dragIndividuallyTool.activate();
 	} else if (event.key == "h") {
 		handTool.activate();
 	// Global actions
