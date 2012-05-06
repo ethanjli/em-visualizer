@@ -168,19 +168,23 @@ var Universe = new Class({
 	// Handles conversion of coordinate offsets between the universe and the canvas
 	findCanvasCoordinatesOffset: function(universeCoordinatesOffset) { // point as Vector
 		var canvasCoordinatesOffset = universeCoordinatesOffset.multiply(this.getCanvasZoom());
-		return new paper.Point([canvasCoordinatesOffset.e(1), canvasCoordinatesOffset.e(2)]); // point as Point
+		return new paper.Point([canvasCoordinatesOffset.e(1), canvasCoordinatesOffset.e(2) * -1]); // point as Point
 	},
 	findUniverseCoordinatesOffset: function(canvasCoordinatesOffset) { // point as Point
-		return Vector.create([canvasCoordinatesOffset.x, canvasCoordinatesOffset.y]).multiply(1 / this.getCanvasZoom()); // point as Vector
+		return Vector.create([canvasCoordinatesOffset.x, canvasCoordinatesOffset.y * -1]).multiply(1 / this.getCanvasZoom()); // point as Vector
 	},
 	
 	// Handles conversion of coordinates between the universe and the canvas
 	findCanvasCoordinates: function(universeCoordinates) { // point as Vector
-		var canvasCoordinates = universeCoordinates.subtract(this.getCenterOfCanvas()).multiply(this.getCanvasZoom()).add(Vector.create([view.viewSize.width, view.viewSize.height]).multiply(0.5));
-		return new paper.Point([canvasCoordinates.e(1), canvasCoordinates.e(2)]); // point as Point
+		var relativeCanvasCoordinates = universeCoordinates.subtract(this.getCenterOfCanvas()).multiply(this.getCanvasZoom());
+		relativeCanvasCoordinates.elements[1] = relativeCanvasCoordinates.e(2) * -1;
+		var absoluteCanvasCoordinates = relativeCanvasCoordinates.add(Vector.create([view.viewSize.width, view.viewSize.height]).multiply(0.5));
+		return new paper.Point([absoluteCanvasCoordinates.e(1), absoluteCanvasCoordinates.e(2)]); // point as Point
 	},
 	findUniverseCoordinates: function(canvasCoordinates) { // point as Point
-		return Vector.create([canvasCoordinates.x, canvasCoordinates.y]).subtract(Vector.create([view.viewSize.width, view.viewSize.height]).multiply(0.5)).multiply(1 / this.getCanvasZoom()).add(this.getCenterOfCanvas()); // point as Vector
+		var relativeUniverseCoordinates = Vector.create([canvasCoordinates.x, canvasCoordinates.y]).subtract(Vector.create([view.viewSize.width, view.viewSize.height]).multiply(0.5)).multiply(1 / this.getCanvasZoom());
+		relativeUniverseCoordinates.y *= -1;
+		return relativeUniverseCoordinates.add(this.getCenterOfCanvas()); // point as Vector
 	},
 	
 	// Handles the maximum number of digits after decimals to display
