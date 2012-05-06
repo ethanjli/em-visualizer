@@ -21,6 +21,8 @@ var Universe = new Class({
 		this.setCanvasZoomExponent(properties.graphics.canvasZoom);
 		//// Handle text display
 		this.properties.text = new Object();
+		this.setTypeface(properties.text.typeface);
+		this.setFontSize(properties.text.fontSize);
 		this.setDecimalPrecision(properties.text.decimalPrecision);
 		this.setDecimalEpsilonPrecision(properties.text.decimalEpsilonPrecision);
 		//// Populate the universe with initial entities
@@ -185,6 +187,20 @@ var Universe = new Class({
 		var relativeUniverseCoordinates = Vector.create([canvasCoordinates.x, canvasCoordinates.y]).subtract(Vector.create([view.viewSize.width, view.viewSize.height]).multiply(0.5)).multiply(1 / this.getCanvasZoom());
 		relativeUniverseCoordinates.y *= -1;
 		return relativeUniverseCoordinates.add(this.getCenterOfCanvas()); // point as Vector
+	},
+	
+	// Handles text display
+	setTypeface: function(typeface) { // String
+		this.properties.text.typeface = typeface;
+	},
+	getTypeface: function() {
+		return this.properties.text.typeface; // String
+	},
+	setFontSize: function(fontSize) { // int
+		this.properties.text.fontSize = fontSize;
+	},
+	getFontSize: function() {
+		return this.properties.text.fontSize; // int
 	},
 	
 	// Handles the maximum number of digits after decimals to display

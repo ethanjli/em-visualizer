@@ -127,17 +127,39 @@ var PointEntity = new Class({
 			strokeColor: "black",
 			strokeWidth: 1.5
 		};
+		// Draw the hovered-border for the point
+		var hoveredBorder = new Path.Circle(this.getCanvasCoordinates(), 6);
+		hoveredBorder.style = {
+			fillColor: "white",
+			strokeWidth: 3,
+			strokeColor: "gray"
+		};
+		hoveredBorder.fillColor.alpha = 0;
+		// Draw the selected-border for the point
+		var selectedBorder = new Path.Circle(this.getCanvasCoordinates(), 6);
+		selectedBorder.style = {
+			fillColor: "white",
+			strokeWidth: 3,
+			strokeColor: "black"
+		};
+		selectedBorder.fillColor.alpha = 0;
 		// Draw the label
 		var label = new PointText(this.getCanvasCoordinates().add(new Point(5, -5)));
 		label.fillColor = "black";
-		label.characterStyle.font = "Segoe UI";
+		label.characterStyle.font = universe.getTypeface();
+		label.characterStyle.fontSize = universe.getFontSize();
 		label.content = this.getName();
 		// Commit graphics
 		this.getGraphics().point = point;
 		this.getGraphics().label = label;
+		this.getGraphics().hoveredBorder = hoveredBorder;
+		this.getGraphics().selectedBorder = selectedBorder;
 		// Make clickable group and overall group
-		this.getClickable().addChild(point);
+		this.getClickable().addChild(point)
+		this.getClickable().addChild(hoveredBorder)
+		this.getClickable().addChild(selectedBorder);
 		this.getGroup().addChild(label);
+		this.setUntouched();
 	},
 	
 	// Handles the entity's location
@@ -235,16 +257,16 @@ var PointEntity = new Class({
 	
 	// Handles mouse events
 	setHovered: function() {
-		this.getClickable().strokeWidth = 15;
-		this.getClickable().strokeColor = "gray";
+		this.getGraphics().selectedBorder.visible = false;
+		this.getGraphics().hoveredBorder.visible = true;
 	},
 	setSelected: function() {
-		this.getClickable().strokeWidth = 15;
-		this.getClickable().strokeColor = "black";
+		this.getGraphics().hoveredBorder.visible = false;
+		this.getGraphics().selectedBorder.visible = true;
 	},
 	setUntouched: function() {
-		this.getClickable().strokeWidth = 1.5;
-		this.getClickable().strokeColor = "black";
+		this.getGraphics().hoveredBorder.visible = false;
+		this.getGraphics().selectedBorder.visible = false;
 	}
 });
 
