@@ -10,9 +10,18 @@ var Entity = new Class({
 		this.properties.type = ["Object"];
 		// Handle entity-specific variables
 		this.setName(properties.name);
+		if (typeof(properties.anchored) == "undefined" || !properties.anchored) {
+			properties.anchored = false;
+		}
 		this.setAnchored(properties.anchored);
+		if (typeof(properties.mass) == "undefined" || !properties.mass) {
+			properties.mass = 0;
+		}
 		this.setMass(properties.mass);
 		this.properties.graphics = new Object();
+		if (typeof(properties.graphics) === "undefined") {
+			properties.graphics = new Object();
+		}
 		this.setCanvasCoordinates(properties.graphics.canvasCoordinates);
 		this.getGraphics().group = new Group();
 		this.getGroup().associatedEntity = this;
