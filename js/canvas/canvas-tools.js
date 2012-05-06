@@ -85,28 +85,20 @@ selectAndDragTool.onKeyDown = function(event) {
 		});
 		selectedGroups.empty();
 	// Tool-specific actions
-	} else if (event.key == "up") {
+	} else if (event.key == "up" || event.key == "down" || event.key == "left" || event.key == "right") {
+		// Choose an offset
+		if (event.key == "up") {
+			var offset = new Point(0, -1);
+		} else if (event.key == "down") {
+			var offset = new Point(0, 1);
+		} else if (event.key == "left") {
+			var offset = new Point(-1, 0);
+		} else if (event.key == "right") {
+			var offset = new Point(1, 0);
+		}
 		selectedGroups.forEach(function(selectedGroup) {
 			if (!selectedGroup.associatedEntity.isAnchored()) {
-				selectedGroup.associatedEntity.updateLocationByOffset(new Point(0, -1), currentUniverse);
-			}
-		});
-	} else if (event.key == "down") {
-		selectedGroups.forEach(function(selectedGroup) {
-			if (!selectedGroup.associatedEntity.isAnchored()) {
-				selectedGroup.associatedEntity.updateLocationByOffset(new Point(0, 1), currentUniverse);
-			}
-		});
-	} else if (event.key == "left") {
-		selectedGroups.forEach(function(selectedGroup) {
-			if (!selectedGroup.associatedEntity.isAnchored()) {
-				selectedGroup.associatedEntity.updateLocationByOffset(new Point(-1, 0), currentUniverse);
-			}
-		});
-	} else if (event.key == "right") {
-		selectedGroups.forEach(function(selectedGroup) {
-			if (!selectedGroup.associatedEntity.isAnchored()) {
-				selectedGroup.associatedEntity.updateLocationByOffset(new Point(1, 0), currentUniverse);
+				selectedGroup.associatedEntity.updateLocationByOffset(offset, currentUniverse);
 			}
 		});
 	}
@@ -170,28 +162,20 @@ dragIndividuallyTool.onKeyDown = function(event) {
 		});
 		selectedGroups.empty();
 	// Tool-specific actions
-	} else if (event.key == "up") {
+	} else if (event.key == "up" || event.key == "down" || event.key == "left" || event.key == "right") {
+		// Choose an offset
+		if (event.key == "up") {
+			var offset = new Point(0, -1);
+		} else if (event.key == "down") {
+			var offset = new Point(0, 1);
+		} else if (event.key == "left") {
+			var offset = new Point(-1, 0);
+		} else if (event.key == "right") {
+			var offset = new Point(1, 0);
+		}
 		selectedGroups.forEach(function(selectedGroup) {
 			if (!selectedGroup.associatedEntity.isAnchored()) {
-				selectedGroup.associatedEntity.updateLocationByOffset(new Point(0, -1), currentUniverse);
-			}
-		});
-	} else if (event.key == "down") {
-		selectedGroups.forEach(function(selectedGroup) {
-			if (!selectedGroup.associatedEntity.isAnchored()) {
-				selectedGroup.associatedEntity.updateLocationByOffset(new Point(0, 1), currentUniverse);
-			}
-		});
-	} else if (event.key == "left") {
-		selectedGroups.forEach(function(selectedGroup) {
-			if (!selectedGroup.associatedEntity.isAnchored()) {
-				selectedGroup.associatedEntity.updateLocationByOffset(new Point(-1, 0), currentUniverse);
-			}
-		});
-	} else if (event.key == "right") {
-		selectedGroups.forEach(function(selectedGroup) {
-			if (!selectedGroup.associatedEntity.isAnchored()) {
-				selectedGroup.associatedEntity.updateLocationByOffset(new Point(1, 0), currentUniverse);
+				selectedGroup.associatedEntity.updateLocationByOffset(offset, currentUniverse);
 			}
 		});
 	} else if (event.key == "j" || event.key == "k") {
@@ -255,14 +239,18 @@ handTool.onKeyDown = function(event) {
 		});
 		selectedGroups.empty();
 	// Tool-specific actions
-	} else if (event.key == "up") {
-		currentUniverse.translateCenterOfCanvas(currentUniverse.findUniverseCoordinatesOffset(new Point(0, -1)).multiply(-1));
-	} else if (event.key == "down") {
-		currentUniverse.translateCenterOfCanvas(currentUniverse.findUniverseCoordinatesOffset(new Point(0, 1)).multiply(-1));
-	} else if (event.key == "left") {
-		currentUniverse.translateCenterOfCanvas(currentUniverse.findUniverseCoordinatesOffset(new Point(-1, 0)).multiply(-1));
-	} else if (event.key == "right") {
-		currentUniverse.translateCenterOfCanvas(currentUniverse.findUniverseCoordinatesOffset(new Point(1, 0)).multiply(-1));
+	} else if (event.key == "up" || event.key == "down" || event.key == "left" || event.key == "right") {
+		// Choose an offset
+		if (event.key == "up") {
+			var offset = new Point(0, -1);
+		} else if (event.key == "down") {
+			var offset = new Point(0, 1);
+		} else if (event.key == "left") {
+			var offset = new Point(-1, 0);
+		} else if (event.key == "right") {
+			var offset = new Point(1, 0);
+		}
+		currentUniverse.translateCenterOfCanvas(currentUniverse.findUniverseCoordinatesOffset(offset));
 	}
 	currentUniverse.refreshCanvasPositions(currentUniverse);
 };
@@ -288,10 +276,13 @@ zoomTool.onKeyDown = function(event) {
 		});
 		selectedGroups.empty();
 	// Tool-specific actions
-	} else if (event.key == "up") {
-		currentUniverse.setCanvasZoomExponent(currentUniverse.getCanvasZoomExponent() + 10 / 100);
-	} else if (event.key == "down") {
-		currentUniverse.setCanvasZoomExponent(currentUniverse.getCanvasZoomExponent() - 10 / 100);
+	} else if (event.key == "up" || event.key == "down") {
+		if (event.key == "up") {
+			var delta = 10 / 100;
+		} else if (event.key == "down") {
+			var delta = -1 * 10 / 100;
+		}
+		currentUniverse.setCanvasZoomExponent(currentUniverse.getCanvasZoomExponent() + delta);
 	}
 	currentUniverse.refreshCanvasPositions(currentUniverse);
 };
