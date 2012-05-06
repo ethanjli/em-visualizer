@@ -16,22 +16,7 @@ var selectionToolsData = {
 	prepareToRemoveGroup: false
 };
 selectAndDragTool.onMouseMove = function(event) {
-	var hitResult = project.hitTest(event.point, hitOptions);
-	
-	if (hitResult && hitResult.item.parent) { // Hit a group!
-		if (selectionToolsData.hoveredGroup != null && selectionToolsData.hoveredGroup != hitResult.item.parent.parent) { // Moved from a group onto a different one
-			debug.info("moved from one group onto another");
-			selectionToolsData.hoveredGroup.associatedEntity.setUnhovered();
-			selectionToolsData.hoveredGroup = hitResult.item.parent.parent;
-			selectionToolsData.hoveredGroup.associatedEntity.setHovered();
-		} else if (selectionToolsData.hoveredGroup == null) { // Move from blank canvas onto a group
-			selectionToolsData.hoveredGroup = hitResult.item.parent.parent;
-			selectionToolsData.hoveredGroup.associatedEntity.setHovered();
-		}
-	} else if (selectionToolsData.hoveredGroup != null) { // Moved from a group and onto blank canvas
-		selectionToolsData.hoveredGroup.associatedEntity.setUnhovered();
-		selectionToolsData.hoveredGroup = null;
-	}
+	canvasToolsActions.hover(event);
 };
 selectAndDragTool.onMouseDown = function(event) {
 	var hitResult = project.hitTest(event.point, hitOptions);
@@ -59,7 +44,7 @@ selectAndDragTool.onMouseUp = function(event) {
 		var hitResult = project.hitTest(event.point, hitOptions);
 		if (hitResult && hitResult.item.parent) { // Hit a group!
 			selectionToolsData.unclickedGroup = hitResult.item.parent.parent;
-			// Remove the group from the selection and hide its selection box
+			// Remove the group from the selection
 			selectedGroups = selectedGroups.erase(selectionToolsData.unclickedGroup);
 			selectionToolsData.unclickedGroup.associatedEntity.setUnselected();
 		}
@@ -85,50 +70,17 @@ selectAndDragTool.onKeyDown = function(event) {
 		zoomTool.activate();
 	// Global actions
 	} else if (event.key == "delete") {
-		selectedGroups.forEach(function(selectedGroup) {
-			currentUniverse.removeEntity(selectedGroup.associatedEntity);
-			currentUniverse.refreshProbeGraphics(currentUniverse);
-		});
-		selectedGroups.empty();
+		canvasToolsActions.deleteSelection(event);
 	// Tool-specific actions
 	} else if (event.key == "up" || event.key == "down" || event.key == "left" || event.key == "right") {
-		// Choose an offset
-		if (event.key == "up") {
-			var offset = new Point(0, -1);
-		} else if (event.key == "down") {
-			var offset = new Point(0, 1);
-		} else if (event.key == "left") {
-			var offset = new Point(-1, 0);
-		} else if (event.key == "right") {
-			var offset = new Point(1, 0);
-		}
-		selectedGroups.forEach(function(selectedGroup) {
-			if (!selectedGroup.associatedEntity.isAnchored()) {
-				selectedGroup.associatedEntity.updateLocationByOffset(offset, currentUniverse);
-			}
-		});
+		canvasToolsActions.moveSelection(event);
 	}
 };
 
 // Tool to select and move entities individually
 var dragIndividuallyTool = new Tool();
 dragIndividuallyTool.onMouseMove = function(event) {
-	var hitResult = project.hitTest(event.point, hitOptions);
-	
-	if (hitResult && hitResult.item.parent) { // Hit a group!
-		if (selectionToolsData.hoveredGroup != null && selectionToolsData.hoveredGroup != hitResult.item.parent.parent) { // Moved from a group onto a different one
-			debug.info("moved from one group onto another");
-			selectionToolsData.hoveredGroup.associatedEntity.setUnhovered();
-			selectionToolsData.hoveredGroup = hitResult.item.parent.parent;
-			selectionToolsData.hoveredGroup.associatedEntity.setHovered();
-		} else if (selectionToolsData.hoveredGroup == null) { // Move from blank canvas onto a group
-			selectionToolsData.hoveredGroup = hitResult.item.parent.parent;
-			selectionToolsData.hoveredGroup.associatedEntity.setHovered();
-		}
-	} else if (selectionToolsData.hoveredGroup != null) { // Moved from a group and onto blank canvas
-		selectionToolsData.hoveredGroup.associatedEntity.setUnhovered();
-		selectionToolsData.hoveredGroup = null;
-	}
+	canvasToolsActions.hover(event);
 };
 dragIndividuallyTool.onMouseDown = function(event) {
 	var hitResult = project.hitTest(event.point, hitOptions);
@@ -168,28 +120,10 @@ dragIndividuallyTool.onKeyDown = function(event) {
 		zoomTool.activate();
 	// Global actions
 	} else if (event.key == "delete") {
-		selectedGroups.forEach(function(selectedGroup) {
-			currentUniverse.removeEntity(selectedGroup.associatedEntity);
-			currentUniverse.refreshProbeGraphics(currentUniverse);
-		});
-		selectedGroups.empty();
+		canvasToolsActions.deleteSelection(event);
 	// Tool-specific actions
 	} else if (event.key == "up" || event.key == "down" || event.key == "left" || event.key == "right") {
-		// Choose an offset
-		if (event.key == "up") {
-			var offset = new Point(0, -1);
-		} else if (event.key == "down") {
-			var offset = new Point(0, 1);
-		} else if (event.key == "left") {
-			var offset = new Point(-1, 0);
-		} else if (event.key == "right") {
-			var offset = new Point(1, 0);
-		}
-		selectedGroups.forEach(function(selectedGroup) {
-			if (!selectedGroup.associatedEntity.isAnchored()) {
-				selectedGroup.associatedEntity.updateLocationByOffset(offset, currentUniverse);
-			}
-		});
+		canvasToolsActions.moveSelection(event);
 	} else if (event.key == "j" || event.key == "k") {
 		if (selectedGroups.length == 0) { // there is no selection yet
 			var indexOfLastSelectedGroup = 0;
@@ -245,11 +179,7 @@ handTool.onKeyDown = function(event) {
 		zoomTool.activate();
 	// Global actions
 	} else if (event.key == "delete") {
-		selectedGroups.forEach(function(selectedGroup) {
-			currentUniverse.removeEntity(selectedGroup.associatedEntity);
-			currentUniverse.refreshProbeGraphics(currentUniverse);
-		});
-		selectedGroups.empty();
+		canvasToolsActions.deleteSelection(event);
 	// Tool-specific actions
 	} else if (event.key == "up" || event.key == "down" || event.key == "left" || event.key == "right") {
 		// Choose an offset
@@ -282,11 +212,7 @@ zoomTool.onKeyDown = function(event) {
 		handTool.activate();
 	// Global actions
 	} else if (event.key == "delete") {
-		selectedGroups.forEach(function(selectedGroup) {
-			currentUniverse.removeEntity(selectedGroup.associatedEntity);
-			currentUniverse.refreshProbeGraphics(currentUniverse);
-		});
-		selectedGroups.empty();
+		canvasToolsActions.deleteSelection(event);
 	// Tool-specific actions
 	} else if (event.key == "up" || event.key == "down") {
 		if (event.key == "up") {
