@@ -16,7 +16,7 @@ var selectionToolsData = {
 	prepareToRemoveGroup: false
 };
 selectAndDragTool.onMouseMove = function(event) {
-	canvasToolsActions.hover(event);
+	canvasToolsActions.mouseActions.hover(event);
 };
 selectAndDragTool.onMouseDown = function(event) {
 	var hitResult = project.hitTest(event.point, hitOptions);
@@ -70,17 +70,19 @@ selectAndDragTool.onKeyDown = function(event) {
 		zoomTool.activate();
 	// Global actions
 	} else if (event.key == "delete") {
-		canvasToolsActions.deleteSelection(event);
+		canvasToolsActions.tools.deleteSelection();
+	} else if (event.key == "=" || event.key == "-") {
+		canvasToolsActions.keyActions.zoom(event);
 	// Tool-specific actions
 	} else if (event.key == "up" || event.key == "down" || event.key == "left" || event.key == "right") {
-		canvasToolsActions.moveSelection(event);
+		canvasToolsActions.keyActions.moveSelection(event);
 	}
 };
 
 // Tool to select and move entities individually
 var dragIndividuallyTool = new Tool();
 dragIndividuallyTool.onMouseMove = function(event) {
-	canvasToolsActions.hover(event);
+	canvasToolsActions.mouseActions.hover(event);
 };
 dragIndividuallyTool.onMouseDown = function(event) {
 	var hitResult = project.hitTest(event.point, hitOptions);
@@ -120,47 +122,14 @@ dragIndividuallyTool.onKeyDown = function(event) {
 		zoomTool.activate();
 	// Global actions
 	} else if (event.key == "delete") {
-		canvasToolsActions.deleteSelection(event);
+		canvasToolsActions.tools.deleteSelection();
+	} else if (event.key == "=" || event.key == "-") {
+		canvasToolsActions.keyActions.zoom(event);
 	// Tool-specific actions
 	} else if (event.key == "up" || event.key == "down" || event.key == "left" || event.key == "right") {
-		canvasToolsActions.moveSelection(event);
+		canvasToolsActions.keyActions.moveSelection(event);
 	} else if (event.key == "j" || event.key == "k") {
-		if (selectedGroups.length == 0) { // there is no selection yet
-			var indexOfLastSelectedGroup = 0;
-			var remainingEntities = currentUniverse.getEntities().filter(function(entity) {
-				return typeof(entity) !== "undefined" && entity !== null;
-			});
-		} else {
-			var indexOfLastSelectedGroup = selectedGroups[selectedGroups.length - 1].associatedEntity.getId();
-			var allEntities = currentUniverse.getEntities();
-			// Rearrange the entities list
-			if (event.key == "j") {
-				var rearrangedEntities = allEntities.slice(indexOfLastSelectedGroup + 1).concat(allEntities.slice(0, indexOfLastSelectedGroup + 1));
-			} else if (event.key == "k") {
-				var rearrangedEntities = allEntities.slice(indexOfLastSelectedGroup).concat(allEntities.slice(0, indexOfLastSelectedGroup)); 
-			}
-			// Ignore non-existent entities
-			var remainingEntities = rearrangedEntities.filter(function(entity) {
-				return typeof(entity) !== "undefined" && entity !== null;
-			});
-			// Clear the selection
-			selectedGroups.forEach(function(selectedGroup) {
-				selectedGroup.associatedEntity.setUnselected();
-			});
-		}
-		if (remainingEntities.length == 0) {
-			debug.error("There is nothing in the universe to select!");
-			return false;
-		}
-		// Choose the new selection
-		if (event.key == "j") {
-			selectionToolsData.clickedGroup = remainingEntities[0].getGroup();
-		} else if (event.key == "k") {
-			selectionToolsData.clickedGroup = remainingEntities[remainingEntities.length - 1].getGroup();
-		}
-		// Make the new selection
-		selectedGroups = [selectionToolsData.clickedGroup];
-		selectionToolsData.clickedGroup.associatedEntity.setSelected();
+		canvasToolsActions.keyActions.selectNextOrPrevious(event);
 	}
 };
 
@@ -179,22 +148,13 @@ handTool.onKeyDown = function(event) {
 		zoomTool.activate();
 	// Global actions
 	} else if (event.key == "delete") {
-		canvasToolsActions.deleteSelection(event);
+		canvasToolsActions.tools.deleteSelection();
+	} else if (event.key == "=" || event.key == "-") {
+		canvasToolsActions.keyActions.zoom(event);
 	// Tool-specific actions
 	} else if (event.key == "up" || event.key == "down" || event.key == "left" || event.key == "right") {
-		// Choose an offset
-		if (event.key == "up") {
-			var offset = new Point(0, -1);
-		} else if (event.key == "down") {
-			var offset = new Point(0, 1);
-		} else if (event.key == "left") {
-			var offset = new Point(-1, 0);
-		} else if (event.key == "right") {
-			var offset = new Point(1, 0);
-		}
-		currentUniverse.translateCenterOfCanvas(currentUniverse.findUniverseCoordinatesOffset(offset));
+		canvasToolsActions.keyActions.pan(event);
 	}
-	currentUniverse.refreshCanvasPositions(currentUniverse);
 };
 
 // Tool to zoom the canvas
@@ -212,17 +172,11 @@ zoomTool.onKeyDown = function(event) {
 		handTool.activate();
 	// Global actions
 	} else if (event.key == "delete") {
-		canvasToolsActions.deleteSelection(event);
+		canvasToolsActions.tools.deleteSelection();
 	// Tool-specific actions
-	} else if (event.key == "up" || event.key == "down") {
-		if (event.key == "up") {
-			var delta = 10 / 100;
-		} else if (event.key == "down") {
-			var delta = -1 * 10 / 100;
-		}
-		currentUniverse.setCanvasZoomExponent(currentUniverse.getCanvasZoomExponent() + delta);
+	} else if (event.key == "up" || event.key == "down" || event.key == "=" || event.key == "-") {
+		canvasToolsActions.keyActions.zoom(event);
 	}
-	currentUniverse.refreshCanvasPositions(currentUniverse);
 };
 
 dragIndividuallyTool.activate();
