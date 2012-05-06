@@ -20,12 +20,10 @@ selectAndDragTool.onMouseMove = function(event) {
 	
 	if (hitResult && hitResult.item.parent) { // Hit a group!
 		selectionToolsData.hoveredGroup = hitResult.item.parent.parent;
-		if (!selectedGroups.contains(selectionToolsData.hoveredGroup)) { // Hovering over a group which is not already in the selection
-			selectionToolsData.hoveredGroup.associatedEntity.setHovered();
-		}
-	} else if (selectionToolsData.hoveredGroup !== null && !selectedGroups.contains(selectionToolsData.hoveredGroup)) { // Just left a group which wasn't clicked and wasn't already in the selection
+		selectionToolsData.hoveredGroup.associatedEntity.setHovered();
+	} else if (selectionToolsData.hoveredGroup !== null) { // Just left a group which wasn't clicked and wasn't already in the selection
 		// Hide the selection box after the mouse moves off the group
-		selectionToolsData.hoveredGroup.associatedEntity.setUntouched();
+		selectionToolsData.hoveredGroup.associatedEntity.setUnhovered();
 		selectionToolsData.hoveredGroup = null;
 	}
 };
@@ -43,7 +41,7 @@ selectAndDragTool.onMouseDown = function(event) {
 	} else {
 		// Clear the selection
 		selectedGroups.forEach(function(selectedGroup) {
-			selectedGroup.associatedEntity.setUntouched();
+			selectedGroup.associatedEntity.setUnselected();
 		});
 		selectedGroups.empty();
 		selectionToolsData.clickedGroup = null;
@@ -57,7 +55,7 @@ selectAndDragTool.onMouseUp = function(event) {
 			selectionToolsData.unclickedGroup = hitResult.item.parent.parent;
 			// Remove the group from the selection and hide its selection box
 			selectedGroups = selectedGroups.erase(selectionToolsData.unclickedGroup);
-			selectionToolsData.unclickedGroup.associatedEntity.setUntouched();
+			selectionToolsData.unclickedGroup.associatedEntity.setUnselected();
 		}
 	}
 	selectionToolsData.prepareToRemoveGroup = false;
@@ -121,12 +119,10 @@ dragIndividuallyTool.onMouseMove = function(event) {
 	
 	if (hitResult && hitResult.item.parent) { // Hit a group!
 		selectionToolsData.hoveredGroup = hitResult.item.parent.parent;
-		if (!selectedGroups.contains(selectionToolsData.hoveredGroup)) { // Hovering over a group which is not already in the selection
-			selectionToolsData.hoveredGroup.associatedEntity.setHovered();
-		}
-	} else if (selectionToolsData.hoveredGroup !== null && !selectedGroups.contains(selectionToolsData.hoveredGroup)) { // Just left a group which wasn't clicked and wasn't already in the selection
+		selectionToolsData.hoveredGroup.associatedEntity.setHovered();
+	} else if (selectionToolsData.hoveredGroup !== null) { // Just left a group which wasn't clicked and wasn't already in the selection
 		// Hide the selection box after the mouse moves off the group
-		selectionToolsData.hoveredGroup.associatedEntity.setUntouched();
+		selectionToolsData.hoveredGroup.associatedEntity.setUnhovered();
 		selectionToolsData.hoveredGroup = null;
 	}
 };
@@ -136,7 +132,7 @@ dragIndividuallyTool.onMouseDown = function(event) {
 		selectionToolsData.clickedGroup = hitResult.item.parent.parent;
 		if (selectedGroups.length > 0) {
 			selectedGroups.forEach(function(selectedGroup) {
-				selectedGroup.associatedEntity.setUntouched();
+				selectedGroup.associatedEntity.setUnselected();
 			});
 		}
 		selectedGroups = [selectionToolsData.clickedGroup];
@@ -144,7 +140,7 @@ dragIndividuallyTool.onMouseDown = function(event) {
 	} else {
 		// Clear the selection
 		selectedGroups.forEach(function(selectedGroup) {
-			selectedGroup.associatedEntity.setUntouched();
+			selectedGroup.associatedEntity.setUnselected();
 		});
 		selectedGroups.empty();
 		selectionToolsData.clickedGroup = null;

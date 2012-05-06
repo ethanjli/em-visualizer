@@ -128,21 +128,24 @@ var PointEntity = new Class({
 			strokeWidth: 1.5
 		};
 		// Draw the hovered-border for the point
-		var hoveredBorder = new Path.Circle(this.getCanvasCoordinates(), 6);
+		var hoveredBorder = new Path.Circle(this.getCanvasCoordinates(), 5);
 		hoveredBorder.style = {
 			fillColor: "white",
 			strokeWidth: 3,
 			strokeColor: "gray"
 		};
 		hoveredBorder.fillColor.alpha = 0;
+		hoveredBorder.strokeColor.alpha = 0.5;
+		hoveredBorder.insertBelow(point);
 		// Draw the selected-border for the point
-		var selectedBorder = new Path.Circle(this.getCanvasCoordinates(), 6);
+		var selectedBorder = new Path.Circle(this.getCanvasCoordinates(), 8);
 		selectedBorder.style = {
 			fillColor: "white",
 			strokeWidth: 3,
 			strokeColor: "black"
 		};
 		selectedBorder.fillColor.alpha = 0;
+		selectedBorder.insertBelow(point);
 		// Draw the label
 		var label = new PointText(this.getCanvasCoordinates().add(new Point(5, -5)));
 		label.fillColor = "black";
@@ -155,9 +158,9 @@ var PointEntity = new Class({
 		this.getGraphics().hoveredBorder = hoveredBorder;
 		this.getGraphics().selectedBorder = selectedBorder;
 		// Make clickable group and overall group
-		this.getClickable().addChild(point)
 		this.getClickable().addChild(hoveredBorder)
 		this.getClickable().addChild(selectedBorder);
+		this.getClickable().addChild(point)
 		this.getGroup().addChild(label);
 		this.setUntouched();
 	},
@@ -257,16 +260,20 @@ var PointEntity = new Class({
 	
 	// Handles mouse events
 	setHovered: function() {
-		this.getGraphics().selectedBorder.visible = false;
 		this.getGraphics().hoveredBorder.visible = true;
 	},
-	setSelected: function() {
+	setUnhovered: function() {
 		this.getGraphics().hoveredBorder.visible = false;
+	},
+	setSelected: function() {
 		this.getGraphics().selectedBorder.visible = true;
 	},
-	setUntouched: function() {
-		this.getGraphics().hoveredBorder.visible = false;
+	setUnselected: function() {
 		this.getGraphics().selectedBorder.visible = false;
+	},
+	setUntouched: function() {
+		this.setUnhovered();
+		this.setUnselected();
 	}
 });
 
