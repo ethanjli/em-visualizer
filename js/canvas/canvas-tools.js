@@ -147,9 +147,11 @@ dragIndividuallyTool.onMouseDown = function(event) {
 	}
 };
 dragIndividuallyTool.onMouseDrag = function(event) {
-	if (selectedGroups.length != 0 && !selectedGroups[0].associatedEntity.isAnchored()) {
-		selectedGroups[0].associatedEntity.updateLocationByOffset(event.delta, currentUniverse);
-	}
+	selectedGroups.forEach(function(selectedGroup) {
+		if (!selectedGroup.associatedEntity.isAnchored()) {
+			selectedGroup.associatedEntity.updateLocationByOffset(event.delta, currentUniverse);
+		}
+	});
 	currentUniverse.refreshProbeGraphics(currentUniverse);
 };
 dragIndividuallyTool.onKeyDown = function(event) {
@@ -192,6 +194,43 @@ dragIndividuallyTool.onKeyDown = function(event) {
 				selectedGroup.associatedEntity.updateLocationByOffset(new Point(1, 0), currentUniverse);
 			}
 		});
+	} else if (event.key == "j" || event.key == "k") {
+		if (selectedGroups.length == 0) { // there is no selection yet
+			var indexOfLastSelectedGroup = 0;
+			var remainingEntities = currentUniverse.getEntities().filter(function(entity) {
+				return typeof(entity) !== "undefined" && entity !== null;
+			});
+		} else {
+			var indexOfLastSelectedGroup = selectedGroups[selectedGroups.length - 1].associatedEntity.getId();
+			var allEntities = currentUniverse.getEntities();
+			// Rearrange the entities list
+			if (event.key == "j") {
+				var rearrangedEntities = allEntities.slice(indexOfLastSelectedGroup + 1).concat(allEntities.slice(0, indexOfLastSelectedGroup + 1));
+			} else if (event.key == "k") {
+				var rearrangedEntities = allEntities.slice(indexOfLastSelectedGroup).concat(allEntities.slice(0, indexOfLastSelectedGroup)); 
+			}
+			// Ignore non-existent entities
+			var remainingEntities = rearrangedEntities.filter(function(entity) {
+				return typeof(entity) !== "undefined" && entity !== null;
+			});
+			// Clear the selection
+			selectedGroups.forEach(function(selectedGroup) {
+				selectedGroup.associatedEntity.setUnselected();
+			});
+		}
+		if (remainingEntities.length == 0) {
+			debug.error("There is nothing in the universe to select!");
+			return false;
+		}
+		// Choose the new selection
+		if (event.key == "j") {
+			selectionToolsData.clickedGroup = remainingEntities[0].getGroup();
+		} else if (event.key == "k") {
+			selectionToolsData.clickedGroup = remainingEntities[remainingEntities.length - 1].getGroup();
+		}
+		// Make the new selection
+		selectedGroups = [selectionToolsData.clickedGroup];
+		selectionToolsData.clickedGroup.associatedEntity.setSelected();
 	}
 };
 
