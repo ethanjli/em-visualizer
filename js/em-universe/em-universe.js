@@ -185,7 +185,7 @@ var Universe = new Class({
 	},
 	findUniverseCoordinates: function(canvasCoordinates) { // point as Point
 		var relativeUniverseCoordinates = Vector.create([canvasCoordinates.x, canvasCoordinates.y]).subtract(Vector.create([view.viewSize.width, view.viewSize.height]).multiply(0.5)).multiply(1 / this.getCanvasZoom());
-		relativeUniverseCoordinates.y *= -1;
+		relativeUniverseCoordinates.elements[1] = relativeUniverseCoordinates.e(2) * -1;
 		return relativeUniverseCoordinates.add(this.getCenterOfCanvas()); // point as Vector
 	},
 	
