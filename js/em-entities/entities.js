@@ -18,6 +18,12 @@ var Entity = new Class({
 		this.getGroup().associatedEntity = this;
 		this.getGraphics().clickable = new Group();
 		this.getGroup().addChild(this.getClickable());
+		this.getGraphics().hovered = new Group();
+		this.getGroup().addChild(this.getHovered());
+		this.getHovered().insertBelow(this.getClickable());
+		this.getGraphics().selected = new Group();
+		this.getGroup().addChild(this.getSelected());
+		this.getSelected().insertBelow(this.getClickable());
 	},
 	initializeGraphics: function(universe) { // Universe
 		return true;
@@ -81,6 +87,12 @@ var Entity = new Class({
 	getClickable: function() {
 		return this.getGraphics().clickable; // Group
 	},
+	getHovered: function() {
+		return this.getGraphics().hovered; // Group
+	},
+	getSelected: function() {
+		return this.getGraphics().selected; // Group
+	},
 	setCanvasCoordinates: function(location) { // point as Point
 		this.getGraphics().canvasCoordinates = location;
 		return true; // boolean
@@ -136,7 +148,6 @@ var PointEntity = new Class({
 		};
 		hoveredBorder.fillColor.alpha = 0;
 		hoveredBorder.strokeColor.alpha = 0.5;
-		hoveredBorder.insertBelow(point);
 		// Draw the selected-border for the point
 		var selectedBorder = new Path.Circle(this.getCanvasCoordinates(), 8);
 		selectedBorder.style = {
@@ -144,8 +155,8 @@ var PointEntity = new Class({
 			strokeWidth: 3,
 			strokeColor: "black"
 		};
-		selectedBorder.fillColor.alpha = 0;
-		selectedBorder.insertBelow(point);
+		selectedBorder.fillColor.alpha = 0.5;
+		selectedBorder.strokeColor.alpha = 0.5;
 		// Draw the label
 		var label = new PointText(this.getCanvasCoordinates().add(new Point(5, -5)));
 		label.fillColor = "black";
@@ -158,8 +169,8 @@ var PointEntity = new Class({
 		this.getGraphics().hoveredBorder = hoveredBorder;
 		this.getGraphics().selectedBorder = selectedBorder;
 		// Make clickable group and overall group
-		this.getClickable().addChild(hoveredBorder)
-		this.getClickable().addChild(selectedBorder);
+		this.getHovered().addChild(hoveredBorder)
+		this.getSelected().addChild(selectedBorder);
 		this.getClickable().addChild(point)
 		this.getGroup().addChild(label);
 		this.setUntouched();
@@ -260,16 +271,16 @@ var PointEntity = new Class({
 	
 	// Handles mouse events
 	setHovered: function() {
-		this.getGraphics().hoveredBorder.visible = true;
+		this.getHovered().visible = true;
 	},
 	setUnhovered: function() {
-		this.getGraphics().hoveredBorder.visible = false;
+		this.getHovered().visible = false;
 	},
 	setSelected: function() {
-		this.getGraphics().selectedBorder.visible = true;
+		this.getSelected().visible = true;
 	},
 	setUnselected: function() {
-		this.getGraphics().selectedBorder.visible = false;
+		this.getSelected().visible = false;
 	},
 	setUntouched: function() {
 		this.setUnhovered();
