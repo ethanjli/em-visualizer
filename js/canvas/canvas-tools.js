@@ -19,10 +19,16 @@ selectAndDragTool.onMouseMove = function(event) {
 	var hitResult = project.hitTest(event.point, hitOptions);
 	
 	if (hitResult && hitResult.item.parent) { // Hit a group!
-		selectionToolsData.hoveredGroup = hitResult.item.parent.parent;
-		selectionToolsData.hoveredGroup.associatedEntity.setHovered();
-	} else if (selectionToolsData.hoveredGroup !== null) { // Just left a group which wasn't clicked and wasn't already in the selection
-		// Hide the selection box after the mouse moves off the group
+		if (selectionToolsData.hoveredGroup != null && selectionToolsData.hoveredGroup != hitResult.item.parent.parent) { // Moved from a group onto a different one
+			debug.info("moved from one group onto another");
+			selectionToolsData.hoveredGroup.associatedEntity.setUnhovered();
+			selectionToolsData.hoveredGroup = hitResult.item.parent.parent;
+			selectionToolsData.hoveredGroup.associatedEntity.setHovered();
+		} else if (selectionToolsData.hoveredGroup == null) { // Move from blank canvas onto a group
+			selectionToolsData.hoveredGroup = hitResult.item.parent.parent;
+			selectionToolsData.hoveredGroup.associatedEntity.setHovered();
+		}
+	} else if (selectionToolsData.hoveredGroup != null) { // Moved from a group and onto blank canvas
 		selectionToolsData.hoveredGroup.associatedEntity.setUnhovered();
 		selectionToolsData.hoveredGroup = null;
 	}
@@ -110,10 +116,16 @@ dragIndividuallyTool.onMouseMove = function(event) {
 	var hitResult = project.hitTest(event.point, hitOptions);
 	
 	if (hitResult && hitResult.item.parent) { // Hit a group!
-		selectionToolsData.hoveredGroup = hitResult.item.parent.parent;
-		selectionToolsData.hoveredGroup.associatedEntity.setHovered();
-	} else if (selectionToolsData.hoveredGroup !== null) { // Just left a group which wasn't clicked and wasn't already in the selection
-		// Hide the selection box after the mouse moves off the group
+		if (selectionToolsData.hoveredGroup != null && selectionToolsData.hoveredGroup != hitResult.item.parent.parent) { // Moved from a group onto a different one
+			debug.info("moved from one group onto another");
+			selectionToolsData.hoveredGroup.associatedEntity.setUnhovered();
+			selectionToolsData.hoveredGroup = hitResult.item.parent.parent;
+			selectionToolsData.hoveredGroup.associatedEntity.setHovered();
+		} else if (selectionToolsData.hoveredGroup == null) { // Move from blank canvas onto a group
+			selectionToolsData.hoveredGroup = hitResult.item.parent.parent;
+			selectionToolsData.hoveredGroup.associatedEntity.setHovered();
+		}
+	} else if (selectionToolsData.hoveredGroup != null) { // Moved from a group and onto blank canvas
 		selectionToolsData.hoveredGroup.associatedEntity.setUnhovered();
 		selectionToolsData.hoveredGroup = null;
 	}
