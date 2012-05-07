@@ -5,7 +5,6 @@ var canvasToolsActions = {
 			
 			if (hitResult && hitResult.item.parent) { // Hit a group!
 				if (selectionToolsData.hoveredGroup != null && selectionToolsData.hoveredGroup != hitResult.item.parent.parent) { // Moved from a group onto a different one
-					debug.info("moved from one group onto another");
 					selectionToolsData.hoveredGroup.associatedEntity.setUnhovered();
 					selectionToolsData.hoveredGroup = hitResult.item.parent.parent;
 					selectionToolsData.hoveredGroup.associatedEntity.setHovered();
@@ -17,17 +16,33 @@ var canvasToolsActions = {
 				selectionToolsData.hoveredGroup.associatedEntity.setUnhovered();
 				selectionToolsData.hoveredGroup = null;
 			}
+		},
+		moveSelection: function(event) {
+			selectionToolsData.selectedGroups.forEach(function(selectedGroup) {
+				if (!selectedGroup.associatedEntity.isAnchored()) {
+					selectedGroup.associatedEntity.updateLocationByOffset(event.delta, currentUniverse);
+				}
+			});
+			currentUniverse.refreshProbeGraphics(currentUniverse);
+		},
+		pan: function(event) {
+			currentUniverse.translateCenterOfCanvas(currentUniverse.findUniverseCoordinatesOffset(event.delta).multiply(-1));
+			currentUniverse.refreshCanvasPositions(currentUniverse);
+		},
+		zoom: function(event) {
+			currentUniverse.setCanvasZoomExponent(currentUniverse.getCanvasZoomExponent() + event.delta.y / 100);
+			currentUniverse.refreshCanvasPositions(currentUniverse);
 		}
 	},
 	keyActions: {
 		selectNextOrPrevious: function(event) {
-			if (selectedGroups.length == 0) { // there is no selection yet
+			if (selectionToolsData.selectedGroups.length == 0) { // there is no selection yet
 				var indexOfLastSelectedGroup = 0;
 				var remainingEntities = currentUniverse.getEntities().filter(function(entity) {
 					return typeof(entity) !== "undefined" && entity !== null;
 				});
 			} else {
-				var indexOfLastSelectedGroup = selectedGroups[selectedGroups.length - 1].associatedEntity.getId();
+				var indexOfLastSelectedGroup = selectionToolsData.selectedGroups[selectionToolsData.selectedGroups.length - 1].associatedEntity.getId();
 				var allEntities = currentUniverse.getEntities();
 				// Rearrange the entities list
 				if (event.key == "j") {
@@ -40,7 +55,7 @@ var canvasToolsActions = {
 					return typeof(entity) !== "undefined" && entity !== null;
 				});
 				// Clear the selection
-				selectedGroups.forEach(function(selectedGroup) {
+				selectionToolsData.selectedGroups.forEach(function(selectedGroup) {
 					selectedGroup.associatedEntity.setUnselected();
 				});
 			}
@@ -55,7 +70,7 @@ var canvasToolsActions = {
 				selectionToolsData.clickedGroup = remainingEntities[remainingEntities.length - 1].getGroup();
 			}
 			// Make the new selection
-			selectedGroups = [selectionToolsData.clickedGroup];
+			selectionToolsData.selectedGroups = [selectionToolsData.clickedGroup];
 			selectionToolsData.clickedGroup.associatedEntity.setSelected();
 		},
 		moveSelection: function(event) {
@@ -69,7 +84,7 @@ var canvasToolsActions = {
 			} else if (event.key == "right") {
 				var offset = new Point(1, 0);
 			}
-			selectedGroups.forEach(function(selectedGroup) {
+			selectionToolsData.selectedGroups.forEach(function(selectedGroup) {
 				if (!selectedGroup.associatedEntity.isAnchored()) {
 					selectedGroup.associatedEntity.updateLocationByOffset(offset, currentUniverse);
 				}
@@ -100,11 +115,25 @@ var canvasToolsActions = {
 		}
 	},
 	tools: {
+		addToSelection: function(group) {
+			selectionToolsData.selectedGroups.include(group);
+			group.associatedEntity.setSelected();
+		},
+		removeFromSelection: function(group) {
+			selectionToolsData.selectedGroups = selectionToolsData.selectedGroups.erase(group);
+			group.associatedEntity.setUnselected();
+		},
+		clearSelection: function() {
+			selectionToolsData.selectedGroups.forEach(function(selectedGroup) {
+				selectedGroup.associatedEntity.setUnselected();
+			});
+			selectionToolsData.selectedGroups.empty();
+		},
 		deleteSelection: function() {
-			selectedGroups.forEach(function(selectedGroup) {
+			selectionToolsData.selectedGroups.forEach(function(selectedGroup) {
 				currentUniverse.removeEntity(selectedGroup.associatedEntity);
 			});
-			selectedGroups.empty();
+			selectionToolsData.selectedGroups.empty();
 			currentUniverse.refreshProbeGraphics(currentUniverse);
 			currentUniverse.refreshCanvasPositions(currentUniverse);
 		}

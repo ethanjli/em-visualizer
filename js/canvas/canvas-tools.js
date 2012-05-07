@@ -1,5 +1,4 @@
 // Set up tools
-var selectedGroups = new Array();
 var hitOptions = {
 	fill: true,
 	stroke: true,
@@ -10,33 +9,34 @@ var hitOptions = {
 // Tool to select and move entities
 var selectAndDragTool = new Tool();
 var selectionToolsData = {
+	selectedGroups: new Array(),
 	hoveredGroup: null,
 	clickedGroup: null,
 	unclickedGroup: null,
-	prepareToRemoveGroup: false
+	prepareToRemoveGroup: false,
+	prepareToPan: false
 };
 selectAndDragTool.onMouseMove = function(event) {
 	canvasToolsActions.mouseActions.hover(event);
 };
 selectAndDragTool.onMouseDown = function(event) {
-	var hitResult = project.hitTest(event.point, hitOptions);
-	if (hitResult && hitResult.item.parent) { // Hit a group!
-		selectionToolsData.clickedGroup = hitResult.item.parent.parent;
-		if (!selectedGroups.contains(selectionToolsData.clickedGroup)) { // the clicked group is not already in the selection 
-			selectedGroups.include(selectionToolsData.clickedGroup);
-			selectionToolsData.clickedGroup.associatedEntity.setSelected();
-			selectionToolsData.prepareToRemoveGroup = false;
-		} else {
-			selectionToolsData.prepareToRemoveGroup = true;
-		}
+	if (Key.isDown("space")) {
+		selectionToolsData.prepareToPan = true;
 	} else {
-		// Clear the selection
-		selectedGroups.forEach(function(selectedGroup) {
-			selectedGroup.associatedEntity.setUnselected();
-		});
-		selectedGroups.empty();
-		selectionToolsData.clickedGroup = null;
-		selectionToolsData.prepareToRemoveGroup = false;
+		var hitResult = project.hitTest(event.point, hitOptions);
+		if (hitResult && hitResult.item.parent) { // Hit a group!
+			selectionToolsData.clickedGroup = hitResult.item.parent.parent;
+			if (!selectionToolsData.selectedGroups.contains(selectionToolsData.clickedGroup)) { // the clicked group is not already in the selection 
+				canvasToolsActions.tools.addToSelection(selectionToolsData.clickedGroup);
+				selectionToolsData.prepareToRemoveGroup = false;
+			} else {
+				selectionToolsData.prepareToRemoveGroup = true;
+			}
+		} else {
+			canvasToolsActions.tools.clearSelection();
+			selectionToolsData.clickedGroup = null;
+			selectionToolsData.prepareToRemoveGroup = false;
+		}
 	}
 };
 selectAndDragTool.onMouseUp = function(event) {
@@ -44,21 +44,19 @@ selectAndDragTool.onMouseUp = function(event) {
 		var hitResult = project.hitTest(event.point, hitOptions);
 		if (hitResult && hitResult.item.parent) { // Hit a group!
 			selectionToolsData.unclickedGroup = hitResult.item.parent.parent;
-			// Remove the group from the selection
-			selectedGroups = selectedGroups.erase(selectionToolsData.unclickedGroup);
-			selectionToolsData.unclickedGroup.associatedEntity.setUnselected();
+			canvasToolsActions.tools.removeFromSelection(selectionToolsData.unclickedGroup);
 		}
 	}
 	selectionToolsData.prepareToRemoveGroup = false;
+	selectionToolsData.prepareToPan = false;
 };
 selectAndDragTool.onMouseDrag = function(event) {
-	selectionToolsData.prepareToRemoveGroup = false;
-	selectedGroups.forEach(function(selectedGroup) {
-		if (!selectedGroup.associatedEntity.isAnchored()) {
-			selectedGroup.associatedEntity.updateLocationByOffset(event.delta, currentUniverse);
-		}
-	});
-	currentUniverse.refreshProbeGraphics(currentUniverse);
+	if (selectionToolsData.prepareToPan) {
+		canvasToolsActions.mouseActions.pan(event);
+	} else {
+		selectionToolsData.prepareToRemoveGroup = false;
+		canvasToolsActions.mouseActions.moveSelection(event);
+	}
 };
 selectAndDragTool.onKeyDown = function(event) {
 	// Tool selectors
@@ -74,8 +72,10 @@ selectAndDragTool.onKeyDown = function(event) {
 	} else if (event.key == "=" || event.key == "-") {
 		canvasToolsActions.keyActions.zoom(event);
 	// Tool-specific actions
-	} else if (event.key == "up" || event.key == "down" || event.key == "left" || event.key == "right") {
+	} else if (!Key.isDown("shift") && (event.key == "up" || event.key == "down" || event.key == "left" || event.key == "right")) {
 		canvasToolsActions.keyActions.moveSelection(event);
+	} else if (Key.isDown("shift") && (event.key == "up" || event.key == "down" || event.key == "left" || event.key == "right")) {
+		canvasToolsActions.keyActions.pan(event);
 	}
 };
 
@@ -85,32 +85,31 @@ dragIndividuallyTool.onMouseMove = function(event) {
 	canvasToolsActions.mouseActions.hover(event);
 };
 dragIndividuallyTool.onMouseDown = function(event) {
-	var hitResult = project.hitTest(event.point, hitOptions);
-	if (hitResult && hitResult.item.parent) { // Hit a group!
-		selectionToolsData.clickedGroup = hitResult.item.parent.parent;
-		if (selectedGroups.length > 0) {
-			selectedGroups.forEach(function(selectedGroup) {
-				selectedGroup.associatedEntity.setUnselected();
-			});
-		}
-		selectedGroups = [selectionToolsData.clickedGroup];
-		selectionToolsData.clickedGroup.associatedEntity.setSelected();
+	if (Key.isDown("space")) {
+		selectionToolsData.prepareToPan = true;
 	} else {
-		// Clear the selection
-		selectedGroups.forEach(function(selectedGroup) {
-			selectedGroup.associatedEntity.setUnselected();
-		});
-		selectedGroups.empty();
-		selectionToolsData.clickedGroup = null;
+		var hitResult = project.hitTest(event.point, hitOptions);
+		if (hitResult && hitResult.item.parent) { // Hit a group!
+			selectionToolsData.clickedGroup = hitResult.item.parent.parent;
+			if (selectionToolsData.selectedGroups.length > 0) {
+				canvasToolsActions.tools.clearSelection();
+			}
+			canvasToolsActions.tools.addToSelection(selectionToolsData.clickedGroup);
+		} else {
+			canvasToolsActions.tools.clearSelection();
+			selectionToolsData.clickedGroup = null;
+		}
 	}
 };
+dragIndividuallyTool.onMouseUp = function(event) {
+	selectionToolsData.prepareToPan = false;
+};
 dragIndividuallyTool.onMouseDrag = function(event) {
-	selectedGroups.forEach(function(selectedGroup) {
-		if (!selectedGroup.associatedEntity.isAnchored()) {
-			selectedGroup.associatedEntity.updateLocationByOffset(event.delta, currentUniverse);
-		}
-	});
-	currentUniverse.refreshProbeGraphics(currentUniverse);
+	if (selectionToolsData.prepareToPan) {
+		canvasToolsActions.mouseActions.pan(event);
+	} else {
+		canvasToolsActions.mouseActions.moveSelection(event);
+	}
 };
 dragIndividuallyTool.onKeyDown = function(event) {
 	// Tool selectors
@@ -126,8 +125,10 @@ dragIndividuallyTool.onKeyDown = function(event) {
 	} else if (event.key == "=" || event.key == "-") {
 		canvasToolsActions.keyActions.zoom(event);
 	// Tool-specific actions
-	} else if (event.key == "up" || event.key == "down" || event.key == "left" || event.key == "right") {
+	} else if (!Key.isDown("shift") && (event.key == "up" || event.key == "down" || event.key == "left" || event.key == "right")) {
 		canvasToolsActions.keyActions.moveSelection(event);
+	} else if (Key.isDown("shift") && (event.key == "up" || event.key == "down" || event.key == "left" || event.key == "right")) {
+		canvasToolsActions.keyActions.pan(event);
 	} else if (event.key == "j" || event.key == "k") {
 		canvasToolsActions.keyActions.selectNextOrPrevious(event);
 	}
@@ -136,10 +137,8 @@ dragIndividuallyTool.onKeyDown = function(event) {
 // Tool to pan the canvas
 var handTool = new Tool();
 handTool.onMouseDrag = function(event) {
-	currentUniverse.translateCenterOfCanvas(currentUniverse.findUniverseCoordinatesOffset(event.delta).multiply(-1));
-	currentUniverse.refreshCanvasPositions(currentUniverse);
+	canvasToolsActions.mouseActions.pan(event);
 };
-
 handTool.onKeyDown = function(event) {
 	// Tool selectors
 	if (event.key == "v") {
@@ -152,18 +151,30 @@ handTool.onKeyDown = function(event) {
 	} else if (event.key == "=" || event.key == "-") {
 		canvasToolsActions.keyActions.zoom(event);
 	// Tool-specific actions
-	} else if (event.key == "up" || event.key == "down" || event.key == "left" || event.key == "right") {
+	} else if (!Key.isDown("shift") && (event.key == "up" || event.key == "down" || event.key == "left" || event.key == "right")) {
 		canvasToolsActions.keyActions.pan(event);
+	} else if (Key.isDown("shift") && (event.key == "up" || event.key == "down" || event.key == "left" || event.key == "right")) {
+		canvasToolsActions.keyActions.moveSelection(event);
 	}
 };
 
 // Tool to zoom the canvas
 var zoomTool = new Tool();
-zoomTool.onMouseDrag = function(event) {
-	currentUniverse.setCanvasZoomExponent(currentUniverse.getCanvasZoomExponent() + event.delta.y / 100);
-	currentUniverse.refreshCanvasPositions(currentUniverse);
+zoomTool.onMouseDown = function(event) {
+	if (Key.isDown("space")) {
+		selectionToolsData.prepareToPan = true;
+	}
 };
-
+zoomTool.onMouseUp = function(event) {
+	selectionToolsData.prepareToPan = false;
+};
+zoomTool.onMouseDrag = function(event) {
+	if (selectionToolsData.prepareToPan) {
+		canvasToolsActions.mouseActions.pan(event);
+	} else {
+		canvasToolsActions.mouseActions.zoom(event);
+	}
+};
 zoomTool.onKeyDown = function(event) {
 	// Tool selectors
 	if (event.key == "v") {
@@ -173,9 +184,13 @@ zoomTool.onKeyDown = function(event) {
 	// Global actions
 	} else if (event.key == "delete") {
 		canvasToolsActions.tools.deleteSelection();
-	// Tool-specific actions
-	} else if (event.key == "up" || event.key == "down" || event.key == "=" || event.key == "-") {
+	} else if (event.key == "=" || event.key == "-") {
 		canvasToolsActions.keyActions.zoom(event);
+	// Tool-specific actions
+	} else if (!Key.isDown("shift") && (event.key == "up" || event.key == "down")) {
+		canvasToolsActions.keyActions.zoom(event);
+	} else if (Key.isDown("shift") && (event.key == "up" || event.key == "down" || event.key == "left" || event.key == "right")) {
+		canvasToolsActions.keyActions.pan(event);
 	}
 };
 
