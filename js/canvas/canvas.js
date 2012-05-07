@@ -71,6 +71,14 @@ eFieldVectorProbePreset = {
 	}
 };
 currentUniverse.addEntity(new EFieldVector(eFieldVectorProbePreset, currentUniverse));
+eFieldDirectionProbePreset = {
+	id: currentUniverse.getNextEntityId(),
+	name: "First E Field Direction Probe",
+	point: {
+		location: Vector.create([0, -0.2])
+	}
+};
+currentUniverse.addEntity(new EFieldDirection(eFieldDirectionProbePreset, currentUniverse));
 ePotentialProbePreset = {
 	id: currentUniverse.getNextEntityId(),
 	name: "First E Potential Probe",

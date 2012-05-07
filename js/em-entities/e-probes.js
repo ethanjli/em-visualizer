@@ -108,7 +108,7 @@ var EFieldDirection = new Class({
 	},
 	
 	measure: function(universe) { // Universe
-		return this.parent(universe).toUnitVector(); // vector as Vector
+		return this.parent(universe).toUnitVector().multiply(Math.pow(10, -8)); // vector as Vector
 	}
 });
 
