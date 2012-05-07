@@ -47,14 +47,14 @@ electronPreset = {
 	}
 };
 currentUniverse.addEntity(new Electron(electronPreset, currentUniverse));
-antiProtonPreset = {
+protonPreset = {
 	id: currentUniverse.getNextEntityId(),
 	name: "First Proton",
 	point: {
 		location: Vector.create([-0.5, 0.2])
 	}
 };
-currentUniverse.addEntity(new AntiProton(antiProtonPreset, currentUniverse));
+currentUniverse.addEntity(new Proton(protonPreset, currentUniverse));
 eMagnitudeProbePreset = {
 	id: currentUniverse.getNextEntityId(),
 	name: "First E Magnitude Probe",
@@ -63,6 +63,14 @@ eMagnitudeProbePreset = {
 	}
 };
 currentUniverse.addEntity(new EFieldMagnitude(eMagnitudeProbePreset, currentUniverse));
+eFieldVectorProbePreset = {
+	id: currentUniverse.getNextEntityId(),
+	name: "First E Field Probe",
+	point: {
+		location: Vector.create([-0.2, 0])
+	}
+};
+currentUniverse.addEntity(new EFieldVector(eFieldVectorProbePreset, currentUniverse));
 ePotentialProbePreset = {
 	id: currentUniverse.getNextEntityId(),
 	name: "First E Potential Probe",
