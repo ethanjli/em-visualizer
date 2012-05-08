@@ -19,6 +19,7 @@ var Universe = new Class({
 		this.properties.graphics = new Object();
 		this.setCenterOfCanvas(properties.graphics.locationOfCenterOfCanvas);
 		this.setCanvasZoomExponent(properties.graphics.canvasZoom);
+		this.setVectorScalingExponent(properties.graphics.vectorScaling);
 		//// Handle text display
 		this.properties.text = new Object();
 		this.setTypeface(properties.text.typeface);
@@ -152,7 +153,18 @@ var Universe = new Class({
 		return this.properties.graphics.canvasZoom; // double
 	},
 	getCanvasZoom: function() {
-		return Math.pow(Math.E, this.getCanvasZoomExponent()); // double
+		return Math.pow(10, this.getCanvasZoomExponent()); // double
+	},
+	
+	// Handles the scaling of vectors in the canvas
+	setVectorScalingExponent: function(vectorScaling) { // double
+		this.properties.graphics.vectorScaling = vectorScaling;
+	},
+	getVectorScalingExponent: function() { // double
+		return this.properties.graphics.vectorScaling
+	},
+	getVectorScaling: function() {
+		return Math.pow(10, this.getVectorScalingExponent()); // double
 	},
 	
 	// Refreshes the graphics for entities

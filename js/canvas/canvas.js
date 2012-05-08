@@ -14,7 +14,8 @@ var currentUniverse = new Universe({
 	},
 	graphics: {
 		locationOfCenterOfCanvas: Vector.create([0, 0]),
-		canvasZoom: Math.log(500)
+		canvasZoom: 2,
+		vectorScaling: 9
 	},
 	text: {
 		typeface: "Segoe UI",

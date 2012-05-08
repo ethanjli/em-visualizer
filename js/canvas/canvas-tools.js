@@ -69,8 +69,10 @@ selectAndDragTool.onKeyDown = function(event) {
 	// Global actions
 	} else if (event.key == "delete") {
 		canvasToolsActions.tools.deleteSelection();
-	} else if (event.key == "=" || event.key == "-") {
+	} else if (!Key.isDown("shift") && (event.key == "=" || event.key == "-")) {
 		canvasToolsActions.keyActions.zoom(event);
+	} else if (event.key == "+" || event.key == "_") {
+		canvasToolsActions.keyActions.scaleVectors(event);
 	// Tool-specific actions
 	} else if (!Key.isDown("shift") && (event.key == "up" || event.key == "down" || event.key == "left" || event.key == "right")) {
 		canvasToolsActions.keyActions.moveSelection(event);
@@ -122,8 +124,10 @@ dragIndividuallyTool.onKeyDown = function(event) {
 	// Global actions
 	} else if (event.key == "delete") {
 		canvasToolsActions.tools.deleteSelection();
-	} else if (event.key == "=" || event.key == "-") {
+	} else if (!Key.isDown("shift") && (event.key == "=" || event.key == "-")) {
 		canvasToolsActions.keyActions.zoom(event);
+	} else if (event.key == "+" || event.key == "_") {
+		canvasToolsActions.keyActions.scaleVectors(event);
 	// Tool-specific actions
 	} else if (!Key.isDown("shift") && (event.key == "up" || event.key == "down" || event.key == "left" || event.key == "right")) {
 		canvasToolsActions.keyActions.moveSelection(event);
@@ -148,8 +152,10 @@ handTool.onKeyDown = function(event) {
 	// Global actions
 	} else if (event.key == "delete") {
 		canvasToolsActions.tools.deleteSelection();
-	} else if (event.key == "=" || event.key == "-") {
+	} else if (!Key.isDown("shift") && (event.key == "=" || event.key == "-")) {
 		canvasToolsActions.keyActions.zoom(event);
+	} else if (event.key == "+" || event.key == "_") {
+		canvasToolsActions.keyActions.scaleVectors(event);
 	// Tool-specific actions
 	} else if (!Key.isDown("shift") && (event.key == "up" || event.key == "down" || event.key == "left" || event.key == "right")) {
 		canvasToolsActions.keyActions.pan(event);
@@ -184,11 +190,15 @@ zoomTool.onKeyDown = function(event) {
 	// Global actions
 	} else if (event.key == "delete") {
 		canvasToolsActions.tools.deleteSelection();
-	} else if (event.key == "=" || event.key == "-") {
+	} else if (!Key.isDown("shift") && (event.key == "=" || event.key == "-")) {
 		canvasToolsActions.keyActions.zoom(event);
+	} else if (event.key == "+" || event.key == "_") {
+		canvasToolsActions.keyActions.scaleVectors(event);
 	// Tool-specific actions
 	} else if (!Key.isDown("shift") && (event.key == "up" || event.key == "down")) {
 		canvasToolsActions.keyActions.zoom(event);
+	} else if (!Key.isDown("shift") && (event.key == "right" || event.key == "left")) {
+		canvasToolsActions.keyActions.scaleVectors(event);
 	} else if (Key.isDown("shift") && (event.key == "up" || event.key == "down" || event.key == "left" || event.key == "right")) {
 		canvasToolsActions.keyActions.pan(event);
 	}

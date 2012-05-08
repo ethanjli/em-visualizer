@@ -63,14 +63,14 @@ var EFieldVector = new Class({
 		// Prepare for updating the vector arrow
 		var vectorData = this.measure(universe).to3D();
 		// Determine information about vector arrow
-		var vectorMagnitude = vectorData.modulus() * Math.pow(10, 9);
-		if (vectorMagnitude > Math.pow(10, 20) || vectorMagnitude < 1) { // If the electric field is effectively zero, or effectively too large to handle
+		var vectorMagnitude = vectorData.modulus() * universe.getVectorScaling();
+		if (vectorMagnitude < 1 || vectorMagnitude > Math.pow(10, 20)) { // If the electric field is effectively zero or too large to handle
 			vectorMagnitude = 0;
 			vectorAngle = 0;
 		} else {
 			var vectorOrientation = -1 * Vector.i.cross(vectorData).toUnitVector().e(3); // Direction of 1 means the arrow is clockwise from j; direction of -1 means the arrow is counterclockwise from j
 			var vectorAngle = vectorOrientation * vectorData.angleFrom(Vector.i) * 180 / Math.PI;
-		}		
+		}
 		var previousMagnitude = this.getGraphics().vector.magnitude;
 		var previousAngle = this.getGraphics().vector.angle;
 		// Modify the graphics

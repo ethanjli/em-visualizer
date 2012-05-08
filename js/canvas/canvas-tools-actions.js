@@ -105,13 +105,23 @@ var canvasToolsActions = {
 			currentUniverse.refreshCanvasPositions(currentUniverse);
 		},
 		zoom: function(event) {
-			if (event.key == "up" || event.key == "=") {
-				var delta = 10 / 100;
-			} else if (event.key == "down" || event.key == "-") {
-				var delta = -1 * 10 / 100;
+			if (event.key == "up" || event.key == "right" || event.key == "=") {
+				var delta = 0.2;
+			} else if (event.key == "down" || event.key == "left" || event.key == "-") {
+				var delta = -0.2;
 			}
 			currentUniverse.setCanvasZoomExponent(currentUniverse.getCanvasZoomExponent() + delta);
 			currentUniverse.refreshCanvasPositions(currentUniverse);
+		},
+		scaleVectors: function(event) {
+			debug.debug("yay");
+			if (event.key == "up" || event.key == "right" || event.key == "=" || event.key == "+") {
+				var delta = 0.1;
+			} else if (event.key == "down" || event.key == "left" || event.key == "-" || event.key == "_") {
+				var delta = -0.1;
+			}
+			currentUniverse.setVectorScalingExponent(currentUniverse.getVectorScalingExponent() + delta);
+			currentUniverse.refreshProbeGraphics(currentUniverse);
 		}
 	},
 	tools: {
