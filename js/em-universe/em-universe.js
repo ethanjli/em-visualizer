@@ -31,7 +31,7 @@ var Universe = new Class({
 		this.addEntity(new UniverseAnchorPoint({
 			id: this.getNextEntityId(),
 			graphics: {
-				canvasCoordinates: this.findCanvasCoordinates(Vector.create([0, 0]))
+				canvasCoordinates: this.findCanvasCoordinates(Vector.Zero(2))
 			}
 		}, this));
 		////// Put all the other entities in if the entity list is not undefined
@@ -118,7 +118,7 @@ var Universe = new Class({
 			} else {
 				return totalElectricField;
 			}
-		}, Vector.create([0, 0]));
+		}, Vector.Zero(2));
 	},
 	// Calculates the electric potential in the universe at a given spot by superpositioning
 	findElectricPotentialAt: function(location) { // point as Vector
@@ -134,7 +134,7 @@ var Universe = new Class({
 	
 	// Handles the location in the universe where the center of the canvas is
 	setCenterOfCanvas: function(location) { // point as Vector
-		this.properties.graphics.locationOfCenterOfCanvas = Vector.create(location.elements);
+		this.properties.graphics.locationOfCenterOfCanvas = location.dup();
 		return true; // bool
 	},
 	getCenterOfCanvas: function() {

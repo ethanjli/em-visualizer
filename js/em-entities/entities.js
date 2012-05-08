@@ -387,7 +387,7 @@ var UniverseLocation = new Class({
 		var newProperties = Object.clone(properties);
 		newProperties.mass = 0;
 		// Handle preset properties which don't clone properly with MooTools
-		newProperties.point.location = Vector.create(properties.point.location.elements);
+		newProperties.point.location = properties.point.location.dup();
 		// Send up to parent
 		this.parent(newProperties, universe);
 		// Handle universe-location-specific constants
@@ -419,7 +419,7 @@ var UniverseAnchorPoint = new Class({
 		if (typeof(newProperties.point) === "undefined") {
 			newProperties.point = new Object();
 		}
-		newProperties.point.location = Vector.create([0,0]);
+		newProperties.point.location = Vector.Zero(2);
 		// Send up to parent
 		this.parent(newProperties, universe);
 		// Handle universe-anchor-point-specific constants

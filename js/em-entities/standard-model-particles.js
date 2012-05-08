@@ -63,7 +63,7 @@ var Electron = new Class({
 		}
 		newProperties.standardModelParticle.symbol = "e⁻";
 		// Handle preset properties which don't clone properly with MooTools
-		newProperties.point.location = Vector.create(properties.point.location.elements);
+		newProperties.point.location = properties.point.location.dup();
 		// Send up to parent
 		this.parent(newProperties, universe);
 		// Handle electron-specific constants
@@ -86,7 +86,7 @@ var Positron = new Class({
 		}
 		newProperties.standardModelParticle.symbol = "e⁺";
 		// Handle preset properties which don't clone properly with MooTools
-		newProperties.point.location = Vector.create(properties.point.location.elements);
+		newProperties.point.location = properties.point.location.dup();
 		// Send up to parent
 		this.parent(newProperties, universe);
 		// Handle positron-specific constants
@@ -109,7 +109,7 @@ var Proton = new Class({
 		}
 		newProperties.standardModelParticle.symbol = "p";
 		// Handle preset properties which don't clone properly with MooTools
-		newProperties.point.location = Vector.create(properties.point.location.elements);
+		newProperties.point.location = properties.point.location.dup();
 		// Send up to parent
 		this.parent(newProperties, universe);
 		// Handle proton-specific constants
@@ -132,7 +132,7 @@ var AntiProton = new Class({
 		}
 		newProperties.standardModelParticle.symbol = "p̅";
 		// Handle preset properties which don't clone properly with MooTools
-		newProperties.point.location = Vector.create(properties.point.location.elements);
+		newProperties.point.location = properties.point.location.dup();
 		// Send up to parent
 		this.parent(newProperties, universe);
 		// Handle antiproton-specific constants
@@ -155,7 +155,7 @@ var Muon = new Class({
 		}
 		newProperties.standardModelParticle.symbol = "μ⁻";
 		// Handle preset properties which don't clone properly with MooTools
-		newProperties.point.location = Vector.create(properties.point.location.elements);
+		newProperties.point.location = properties.point.location.dup();
 		// Send up to parent
 		this.parent(newProperties, universe);
 		// Handle muon-specific constants
@@ -178,7 +178,7 @@ var AntiMuon = new Class({
 		}
 		newProperties.standardModelParticle.symbol = "μ⁺";
 		// Handle preset properties which don't clone properly with MooTools
-		newProperties.point.location = Vector.create(properties.point.location.elements);
+		newProperties.point.location = properties.point.location.dup();
 		// Send up to parent
 		this.parent(newProperties, universe);
 		// Handle antimuon-specific constants
@@ -201,7 +201,7 @@ var Tauon = new Class({
 		}
 		newProperties.standardModelParticle.symbol = "τ⁻";
 		// Handle preset properties which don't clone properly with MooTools
-		newProperties.point.location = Vector.create(properties.point.location.elements);
+		newProperties.point.location = properties.point.location.dup();
 		// Send up to parent
 		this.parent(newProperties, universe);
 		// Handle tauon-specific constants
@@ -224,7 +224,7 @@ var AntiTau = new Class({
 		}
 		newProperties.standardModelParticle.symbol = "τ⁺";
 		// Handle preset properties which don't clone properly with MooTools
-		newProperties.point.location = Vector.create(properties.point.location.elements);
+		newProperties.point.location = properties.point.location.dup();
 		// Send up to parent
 		this.parent(newProperties, universe);
 		// Handle antitau-specific constants
