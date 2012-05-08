@@ -44,7 +44,7 @@ electronPreset = {
 	id: currentUniverse.getNextEntityId(),
 	name: "First Electron",
 	point: {
-		location: Vector.create([0.5, 0.2])
+		location: Vector.create([0.2, 0.2])
 	}
 };
 currentUniverse.addEntity(new Electron(electronPreset, currentUniverse));
@@ -52,7 +52,7 @@ protonPreset = {
 	id: currentUniverse.getNextEntityId(),
 	name: "First Proton",
 	point: {
-		location: Vector.create([-0.5, 0.2])
+		location: Vector.create([-0.2, 0.2])
 	}
 };
 currentUniverse.addEntity(new Proton(protonPreset, currentUniverse));
@@ -88,6 +88,14 @@ ePotentialProbePreset = {
 	}
 };
 currentUniverse.addEntity(new EPotential(ePotentialProbePreset, currentUniverse));
+antiProtonPreset = {
+	id: currentUniverse.getNextEntityId(),
+	name: "First Antiproton",
+	point: {
+		location: Vector.create([-0.2, -0.2])
+	}
+};
+currentUniverse.addEntity(new AntiProton(antiProtonPreset, currentUniverse));
 debug.debug("Test universe now looks like", currentUniverse);
 
 // Set up view

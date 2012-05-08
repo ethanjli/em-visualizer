@@ -45,10 +45,13 @@ var EFieldVector = new Class({
 			strokeWidth: 2
 		};
 		// Commit graphics
+		var arrow = new Group();
 		this.getGraphics().vector.arrowhead = arrowhead;
-		this.getClickable().addChild(arrowhead);
+		arrow.addChild(arrowhead);
 		this.getGraphics().vector.arrowtail = arrowtail;
-		this.getClickable().addChild(arrowtail);
+		arrow.addChild(arrowtail);
+		this.getGraphics().vector.arrow = arrow;
+		this.getGroup().addChild(arrow);
 		// Initialize other stuff
 		this.getGraphics().vector.magnitude = 0;
 		this.getGraphics().vector.angle = 0;
@@ -97,8 +100,7 @@ var EFieldVector = new Class({
 		}
 		if (vectorMagnitude != 0 || previousMagnitude != 0) { // i.e. the graphics must be changed
 			// Rotate the arrow accordingly
-			this.getGraphics().vector.arrowtail.rotate(vectorAngle - previousAngle, this.getGraphics().vector.arrowtail.firstSegment.point);
-			this.getGraphics().vector.arrowhead.rotate(vectorAngle - previousAngle, this.getGraphics().vector.arrowtail.firstSegment.point);
+			this.getGraphics().vector.arrow.rotate(vectorAngle - previousAngle, this.getGraphics().vector.arrowtail.firstSegment.point);
 			// Store info for next graphics update
 			this.getGraphics().vector.magnitude = vectorMagnitude;
 			this.getGraphics().vector.angle = vectorAngle;
@@ -138,10 +140,13 @@ var EFieldDirection = new Class({
 			strokeWidth: 2
 		};
 		// Commit graphics
+		var arrow = new Group();
 		this.getGraphics().vector.arrowhead = arrowhead;
-		this.getClickable().addChild(arrowhead);
+		arrow.addChild(arrowhead);
 		this.getGraphics().vector.arrowtail = arrowtail;
-		this.getClickable().addChild(arrowtail);
+		arrow.addChild(arrowtail);
+		this.getGraphics().vector.arrow = arrow;
+		this.getGroup().addChild(arrow);
 		// Initialize other stuff
 		this.getGraphics().vector.magnitude = 0;
 		this.getGraphics().vector.angle = 0;
@@ -184,8 +189,7 @@ var EFieldDirection = new Class({
 		if (vectorMagnitude != 0 || previousMagnitude != 0) { // i.e. the graphics must be changed
 			// Rotate the arrow accordingly
 			var midpoint = this.getGraphics().vector.arrowtail.firstSegment.point.add(this.getGraphics().vector.arrowtail.lastSegment.point.subtract(this.getGraphics().vector.arrowtail.firstSegment.point).multiply(0.5));
-			this.getGraphics().vector.arrowtail.rotate(vectorAngle - previousAngle, midpoint);
-			this.getGraphics().vector.arrowhead.rotate(vectorAngle - previousAngle, midpoint);
+			this.getGraphics().vector.arrow.rotate(vectorAngle - previousAngle, midpoint);
 			// Store info for next graphics update
 			this.getGraphics().vector.magnitude = vectorMagnitude;
 			this.getGraphics().vector.angle = vectorAngle;

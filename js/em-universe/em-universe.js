@@ -97,6 +97,7 @@ var Universe = new Class({
 	addEntity: function(entity) {
 		this.properties.entities.entities[entity.getId()] = entity;
 		entity.initializeGraphics(this);
+		this.refreshProbeGraphics(this);
 		return true; // Entity
 	},
 	getEntity: function(id) { // int
