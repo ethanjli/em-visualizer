@@ -28,9 +28,12 @@ var EFieldVector = new Class({
 	},
 	initializeGraphics: function(universe) { // Universe
 		this.parent(universe);
-		// Create container for vector arrow display
-		this.getGraphics().vector = new Object();
-		// Draw the arrowhead for the vector
+		// Set up storage
+		this.getGroup().arrow = {
+			group: new Group()
+		};
+		this.getGroup().group.appendBottom(this.getArrow().group);
+		// Draw the arrowhead
 		var arrowhead = new Path.RegularPolygon(this.getCanvasCoordinates(), 3, 3.5);
 		arrowhead.style = {
 			fillColor: "black",
@@ -38,31 +41,35 @@ var EFieldVector = new Class({
 			strokeWidth: 2
 		};
 		arrowhead.rotate(-150);
-		// Draw the arrowtail for the vector
+		// Draw the arrowtail
 		var arrowtail = new Path.Line(this.getCanvasCoordinates(), this.getCanvasCoordinates());
 		arrowtail.style = {
 			strokeColor: "black",
 			strokeWidth: 2
 		};
 		// Commit graphics
-		var arrow = new Group();
-		this.getGraphics().vector.arrowhead = arrowhead;
-		arrow.addChild(arrowhead);
-		this.getGraphics().vector.arrowtail = arrowtail;
-		arrow.addChild(arrowtail);
-		this.getGraphics().vector.arrow = arrow;
-		this.getGroup().addChild(arrow);
+		//// Add the arrowhead
+		this.getArrow().arrowhead = arrowhead;
+		this.getArrow().group.appendTop(arrowhead);
+		//// Add the arrowtail
+		this.getArrow().arrowtail = arrowtail;
+		this.getArrow().group.appendBottom(arrowtail);
 		// Initialize other stuff
-		this.getGraphics().vector.magnitude = 0;
-		this.getGraphics().vector.angle = 0;
+		this.getGraphics().arrow = {
+			magnitude: 0,
+			angle: 0
+		};
 		this.refreshGraphics(universe);
 	},
 	
 	// Handles graphical display of the entity
+	getArrow: function() {
+		return this.getGroup().arrow; // Object
+	},
 	refreshGraphics: function(universe) { // Universe
 		// Update label
 		var decimalPrecision = universe.getDecimalPrecision();
-		this.getGraphics().label.content = parseFloat(this.measure(universe).modulus().toPrecision(decimalPrecision)) + "N/C";
+		this.getMainLabel().text.content = parseFloat(this.measure(universe).modulus().toPrecision(decimalPrecision)) + "N/C";
 		// Prepare for updating the vector arrow
 		var vectorData = this.measure(universe).to3D();
 		// Determine information about vector arrow
@@ -74,36 +81,36 @@ var EFieldVector = new Class({
 			var vectorOrientation = -1 * Vector.i.cross(vectorData).toUnitVector().e(3); // Direction of 1 means the arrow is clockwise from j; direction of -1 means the arrow is counterclockwise from j
 			var vectorAngle = vectorOrientation * vectorData.angleFrom(Vector.i) * 180 / Math.PI;
 		}
-		var previousMagnitude = this.getGraphics().vector.magnitude;
-		var previousAngle = this.getGraphics().vector.angle;
+		var previousMagnitude = this.getGraphics().arrow.magnitude;
+		var previousAngle = this.getGraphics().arrow.angle;
 		// Modify the graphics
 		if (vectorMagnitude == 0) { // if want to make the direction vector indicate no field
 			// Make a new endpoint
-			this.getGraphics().vector.arrowtail.lastSegment.point = this.getCanvasCoordinates();
-			this.getGraphics().vector.arrowtail.firstSegment.point = this.getCanvasCoordinates();
+			this.getArrow().arrowtail.lastSegment.point = this.getCanvasCoordinates();
+			this.getArrow().arrowtail.firstSegment.point = this.getCanvasCoordinates();
 			// Move the arrowhead
-			this.getGraphics().vector.arrowhead.position = this.getCanvasCoordinates();
+			this.getArrow().arrowhead.position = this.getCanvasCoordinates();
 		} else {
 			if (previousMagnitude == 0) { // the vector was previously drawn as zero, but it no longer should be
 				// Make a new endpoint
-				this.getGraphics().vector.arrowtail.lastSegment.point = (new Point(vectorMagnitude, 0)).add(this.getCanvasCoordinates());
-				this.getGraphics().vector.arrowtail.firstSegment.point = this.getCanvasCoordinates();
+				this.getArrow().arrowtail.lastSegment.point = (new Point(vectorMagnitude, 0)).add(this.getCanvasCoordinates());
+				this.getArrow().arrowtail.firstSegment.point = this.getCanvasCoordinates();
 				// Move the arrowhead
-				this.getGraphics().vector.arrowhead.position = this.getGraphics().vector.arrowtail.lastSegment.point;
+				this.getArrow().arrowhead.position = this.getArrow().arrowtail.lastSegment.point;
 			} else {
 				// Scale the vector
-				var newVector = this.getGraphics().vector.arrowtail.lastSegment.point.subtract(this.getGraphics().vector.arrowtail.firstSegment.point).multiply(vectorMagnitude / previousMagnitude);
-				this.getGraphics().vector.arrowtail.firstSegment.point = this.getCanvasCoordinates();
-				this.getGraphics().vector.arrowtail.lastSegment.point = newVector.add(this.getCanvasCoordinates());
-				this.getGraphics().vector.arrowhead.position = this.getGraphics().vector.arrowtail.lastSegment.point;
+				var newVector = this.getArrow().arrowtail.lastSegment.point.subtract(this.getArrow().arrowtail.firstSegment.point).multiply(vectorMagnitude / previousMagnitude);
+				this.getArrow().arrowtail.firstSegment.point = this.getCanvasCoordinates();
+				this.getArrow().arrowtail.lastSegment.point = newVector.add(this.getCanvasCoordinates());
+				this.getArrow().arrowhead.position = this.getArrow().arrowtail.lastSegment.point;
 			}
 		}
 		if (vectorMagnitude != 0 || previousMagnitude != 0) { // i.e. the graphics must be changed
 			// Rotate the arrow accordingly
-			this.getGraphics().vector.arrow.rotate(vectorAngle - previousAngle, this.getGraphics().vector.arrowtail.firstSegment.point);
+			this.getArrow().group.rotate(vectorAngle - previousAngle, this.getArrow().arrowtail.firstSegment.point);
 			// Store info for next graphics update
-			this.getGraphics().vector.magnitude = vectorMagnitude;
-			this.getGraphics().vector.angle = vectorAngle;
+			this.getGraphics().arrow.magnitude = vectorMagnitude;
+			this.getGraphics().arrow.angle = vectorAngle;
 			return true; // bool
 		}
 	},
@@ -122,9 +129,12 @@ var EFieldDirection = new Class({
 	},
 	initializeGraphics: function(universe) { // Universe
 		this.parent(universe);
-		this.getGraphics().label.content = "";
-		// Create container for vector arrow display
-		this.getGraphics().vector = new Object();
+		this.getMainLabel().text.content = "";
+		// Set up storage
+		this.getGroup().arrow = {
+			group: new Group()
+		};
+		this.getGroup().group.appendBottom(this.getArrow().group);
 		// Draw the arrowhead for the vector
 		var arrowhead = new Path.RegularPolygon(this.getCanvasCoordinates(), 3, 3.5);
 		arrowhead.style = {
@@ -140,16 +150,17 @@ var EFieldDirection = new Class({
 			strokeWidth: 2
 		};
 		// Commit graphics
-		var arrow = new Group();
-		this.getGraphics().vector.arrowhead = arrowhead;
-		arrow.addChild(arrowhead);
-		this.getGraphics().vector.arrowtail = arrowtail;
-		arrow.addChild(arrowtail);
-		this.getGraphics().vector.arrow = arrow;
-		this.getGroup().addChild(arrow);
+		//// Add the arrowhead
+		this.getArrow().arrowhead = arrowhead;
+		this.getArrow().group.appendTop(arrowhead);
+		//// Add the arrowtail
+		this.getArrow().arrowtail = arrowtail;
+		this.getArrow().group.appendBottom(arrowtail);
 		// Initialize other stuff
-		this.getGraphics().vector.magnitude = 0;
-		this.getGraphics().vector.angle = 0;
+		this.getGraphics().arrow = {
+			magnitude: 0,
+			angle: 0
+		};
 		this.refreshGraphics(universe);
 	},
 	
@@ -158,6 +169,9 @@ var EFieldDirection = new Class({
 	},
 	
 	// Handles graphical display of the entity
+	getArrow: function() {
+		return this.getGroup().arrow; // Object
+	},
 	refreshGraphics: function(universe) { // Universe
 		// Prepare for updating the vector arrow
 		var vectorData = this.measure(universe).to3D();
@@ -170,29 +184,29 @@ var EFieldDirection = new Class({
 			var vectorOrientation = -1 * Vector.i.cross(vectorData).toUnitVector().e(3); // Direction of 1 means the arrow is clockwise from j; direction of -1 means the arrow is counterclockwise from j
 			var vectorAngle = vectorOrientation * vectorData.angleFrom(Vector.i) * 180 / Math.PI;
 		}
-		var previousMagnitude = this.getGraphics().vector.magnitude;
-		var previousAngle = this.getGraphics().vector.angle;
+		var previousMagnitude = this.getGraphics().arrow.magnitude;
+		var previousAngle = this.getGraphics().arrow.angle;
 		// Modify the graphics
 		if (vectorMagnitude == 0) { // if want to make the direction vector indicate no field
-			this.getGraphics().vector.arrowtail.lastSegment.point = this.getCanvasCoordinates();
-			this.getGraphics().vector.arrowtail.firstSegment.point = this.getCanvasCoordinates();
+			this.getArrow().arrowtail.lastSegment.point = this.getCanvasCoordinates();
+			this.getArrow().arrowtail.firstSegment.point = this.getCanvasCoordinates();
 			// Move the arrowhead
-			this.getGraphics().vector.arrowhead.position = this.getCanvasCoordinates();
+			this.getArrow().arrowhead.position = this.getCanvasCoordinates();
 		} else {
 			if (previousMagnitude == 0) { // the vector was previously drawn as zero, but it no longer should be
-				this.getGraphics().vector.arrowtail.lastSegment.point = (new Point(12, 0)).add(this.getCanvasCoordinates());
-				this.getGraphics().vector.arrowtail.firstSegment.point = (new Point(-12, 0)).add(this.getCanvasCoordinates());
+				this.getArrow().arrowtail.lastSegment.point = (new Point(12, 0)).add(this.getCanvasCoordinates());
+				this.getArrow().arrowtail.firstSegment.point = (new Point(-12, 0)).add(this.getCanvasCoordinates());
 				// Move the arrowhead
-				this.getGraphics().vector.arrowhead.position = this.getGraphics().vector.arrowtail.lastSegment.point;
+				this.getArrow().arrowhead.position = this.getArrow().arrowtail.lastSegment.point;
 			}
 		}
 		if (vectorMagnitude != 0 || previousMagnitude != 0) { // i.e. the graphics must be changed
 			// Rotate the arrow accordingly
-			var midpoint = this.getGraphics().vector.arrowtail.firstSegment.point.add(this.getGraphics().vector.arrowtail.lastSegment.point.subtract(this.getGraphics().vector.arrowtail.firstSegment.point).multiply(0.5));
-			this.getGraphics().vector.arrow.rotate(vectorAngle - previousAngle, midpoint);
+			var midpoint = this.getArrow().arrowtail.firstSegment.point.add(this.getArrow().arrowtail.lastSegment.point.subtract(this.getArrow().arrowtail.firstSegment.point).multiply(0.5));
+			this.getArrow().group.rotate(vectorAngle - previousAngle, midpoint);
 			// Store info for next graphics update
-			this.getGraphics().vector.magnitude = vectorMagnitude;
-			this.getGraphics().vector.angle = vectorAngle;
+			this.getGraphics().arrow.magnitude = vectorMagnitude;
+			this.getGraphics().arrow.angle = vectorAngle;
 			return true; // bool
 		}
 	}
@@ -221,7 +235,7 @@ var EFieldMagnitude = new Class({
 	// Handles graphical display of the entity
 	refreshGraphics: function(universe) { // Universe
 		var decimalPrecision = universe.getDecimalPrecision();
-		this.getGraphics().label.content = parseFloat(this.measure(universe).toPrecision(decimalPrecision)) + "N/C";
+		this.getMainLabel().text.content = parseFloat(this.measure(universe).toPrecision(decimalPrecision)) + "N/C";
 		return true; // bool
 	},
 });
@@ -249,7 +263,7 @@ var EPotential = new Class({
 	// Handles graphical display of the entity
 	refreshGraphics: function(universe) { // Universe
 		var decimalPrecision = universe.getDecimalPrecision();
-		this.getGraphics().label.content = parseFloat(this.measure(universe).toPrecision(decimalPrecision)) + "V";
+		this.getMainLabel().text.content = parseFloat(this.measure(universe).toPrecision(decimalPrecision)) + "V";
 		return true; // bool
 	},
 });

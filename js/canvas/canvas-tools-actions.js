@@ -3,13 +3,13 @@ var canvasToolsActions = {
 		hover: function(event) {
 			var hitResult = project.hitTest(event.point, hitOptions);
 			
-			if (hitResult && hitResult.item.parent) { // Hit a group!
+			if (hitResult && hitResult.item.parent && canvasToolsSupport.tools.isInClickableGroup(hitResult.item)) { // Hit a group!
 				if (selectionToolsData.hoveredGroup != null && selectionToolsData.hoveredGroup != hitResult.item.parent.parent) { // Moved from a group onto a different one
 					selectionToolsData.hoveredGroup.associatedEntity.setUnhovered();
-					selectionToolsData.hoveredGroup = hitResult.item.parent.parent;
+					selectionToolsData.hoveredGroup = canvasToolsSupport.tools.findOverallGroupParent(hitResult.item);
 					selectionToolsData.hoveredGroup.associatedEntity.setHovered();
 				} else if (selectionToolsData.hoveredGroup == null) { // Move from blank canvas onto a group
-					selectionToolsData.hoveredGroup = hitResult.item.parent.parent;
+					selectionToolsData.hoveredGroup = canvasToolsSupport.tools.findOverallGroupParent(hitResult.item);
 					selectionToolsData.hoveredGroup.associatedEntity.setHovered();
 				}
 			} else if (selectionToolsData.hoveredGroup != null) { // Moved from a group and onto blank canvas
@@ -123,8 +123,29 @@ var canvasToolsActions = {
 			currentUniverse.setVectorScalingExponent(currentUniverse.getVectorScalingExponent() + delta);
 			currentUniverse.refreshProbeGraphics(currentUniverse);
 		}
-	},
+	}
+}
+
+var canvasToolsSupport = {
 	tools: {
+		isInClickableGroup: function(item) {
+			var itemIterator = item;
+			while (typeof(itemIterator) !== "undefined" && typeof(itemIterator.parent) !== "undefined" && typeof(itemIterator.isClickable) === "undefined" && !item.isClickable) {
+				itemIterator = itemIterator.parent;
+			}
+			if (typeof(itemIterator) !== "undefined" && typeof(itemIterator.isClickable) !== "undefined") {
+				return itemIterator.isClickable;
+			} else {
+				return false;
+			}
+		},
+		findOverallGroupParent: function(item) {
+			var itemIterator = item;
+			while (typeof(itemIterator) !== "undefined" && typeof(itemIterator.parent) !== "undefined" && typeof(itemIterator.associatedEntity) === "undefined") {
+				itemIterator = itemIterator.parent;
+			}
+			return itemIterator;
+		},
 		addToSelection: function(group) {
 			selectionToolsData.selectedGroups.include(group);
 			group.associatedEntity.setSelected();
@@ -147,5 +168,5 @@ var canvasToolsActions = {
 			currentUniverse.refreshProbeGraphics(currentUniverse);
 			currentUniverse.refreshCanvasPositions(currentUniverse);
 		}
-	},
-}
+	}
+};

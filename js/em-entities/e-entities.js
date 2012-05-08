@@ -45,7 +45,7 @@ var ChargedPointEntity = new Class({
 	// Handles graphical display of the entity
 	refreshGraphics: function(universe) { // Universe
 		var decimalPrecision = universe.getDecimalPrecision();
-		this.getGraphics().label.content = parseFloat(this.getCharge().toPrecision(decimalPrecision)) + "C";
+		this.getMainLabel().text.content = parseFloat(this.getCharge().toPrecision(decimalPrecision)) + "C";
 		return true; // bool
 	},
 });

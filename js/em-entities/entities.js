@@ -23,19 +23,32 @@ var Entity = new Class({
 			properties.graphics = new Object();
 		}
 		this.setCanvasCoordinates(properties.graphics.canvasCoordinates);
-		this.getGraphics().group = new Group();
-		this.getGroup().associatedEntity = this;
-		this.getGraphics().clickable = new Group();
-		this.getGroup().addChild(this.getClickable());
-		this.getGraphics().hovered = new Group();
-		this.getGroup().addChild(this.getHovered());
-		this.getHovered().insertBelow(this.getClickable());
-		this.getGraphics().selected = new Group();
-		this.getGroup().addChild(this.getSelected());
-		this.getSelected().insertBelow(this.getClickable());
 	},
 	initializeGraphics: function(universe) { // Universe
-		return true;
+		// Set up storage
+		this.getGraphics().group = {
+			group: new Group(),
+			clickable: {
+				group: new Group(),
+				main: {
+					group: new Group()
+				},
+				hovered: {
+					group: new Group()
+				},
+				selected: {
+					group: new Group()
+				}
+			}
+		};
+		////// Custom properties
+		this.getGroup().group.associatedEntity = this;
+		this.getClickable().group.isClickable = true;
+		////// Nest the groups
+		this.getGroup().group.appendTop(this.getClickable().group);
+		this.getClickable().group.appendTop(this.getMain().group);
+		this.getClickable().group.appendBottom(this.getHovered().group);
+		this.getClickable().group.appendBottom(this.getSelected().group);
 	},
 	
 	// Handles the entity's basic properties
@@ -55,7 +68,7 @@ var Entity = new Class({
 	
 	// Method to remove the entity
 	remove: function() {
-		return this.getGroup().remove(); // bool
+		return this.getGroup().group.remove(); // bool
 	},
 	
 	// Handles properties in a bulk manner
@@ -88,19 +101,22 @@ var Entity = new Class({
 	
 	// Handles graphics
 	getGraphics: function() {
-		return this.properties.graphics; // Group
+		return this.properties.graphics; // Object
 	},
 	getGroup: function() {
-		return this.getGraphics().group; // Group
+		return this.getGraphics().group; // Object
 	},
 	getClickable: function() {
-		return this.getGraphics().clickable; // Group
+		return this.getGroup().clickable; // Object
+	},
+	getMain: function() {
+		return this.getClickable().main; // Object
 	},
 	getHovered: function() {
-		return this.getGraphics().hovered; // Group
+		return this.getClickable().hovered; // Object
 	},
 	getSelected: function() {
-		return this.getGraphics().selected; // Group
+		return this.getClickable().selected; // Object
 	},
 	setCanvasCoordinates: function(location) { // point as Point
 		this.getGraphics().canvasCoordinates = location;
@@ -141,6 +157,16 @@ var PointEntity = new Class({
 		this.setLocation(properties.point.location);
 	},
 	initializeGraphics: function(universe) { // Object
+		this.parent(universe);
+		// Set up storage
+		this.getGroup().labels = {
+			group: new Group(),
+			mainLabel: {
+				group: new Group()
+			}
+		};
+		this.getGroup().group.appendBottom(this.getLabels().group);
+		this.getLabels().group.appendTop(this.getMainLabel().group);
 		// Draw the point
 		var point = new Path.Circle(this.getCanvasCoordinates(), 2);
 		point.style = {
@@ -173,15 +199,18 @@ var PointEntity = new Class({
 		label.characterStyle.fontSize = universe.getFontSize();
 		label.content = this.getName();
 		// Commit graphics
-		this.getGraphics().point = point;
-		this.getGraphics().label = label;
-		this.getGraphics().hoveredBorder = hoveredBorder;
-		this.getGraphics().selectedBorder = selectedBorder;
-		// Make clickable group and overall group
-		this.getHovered().addChild(hoveredBorder)
-		this.getSelected().addChild(selectedBorder);
-		this.getClickable().addChild(point)
-		this.getGroup().addChild(label);
+		//// Add the point
+		this.getMain().point = point;
+		this.getMain().group.addChild(point);
+		//// Add the hovered border
+		this.getHovered().border = hoveredBorder;
+		this.getHovered().group.appendTop(hoveredBorder);
+		//// Add the selected border
+		this.getSelected().border = selectedBorder;
+		this.getSelected().group.appendTop(selectedBorder);
+		//// Add the label
+		this.getMainLabel().text = label;
+		this.getMainLabel().group.appendTop(label);
 		this.setUntouched();
 	},
 	
@@ -215,7 +244,7 @@ var PointEntity = new Class({
 				// Determine how far to move on the canvas
 				var canvasCoordinatesOffset = universe.findCanvasCoordinates(location).subtract(this.getCanvasCoordinates());
 				// Translate
-				this.getGroup().translate(canvasCoordinatesOffset);
+				this.getGroup().group.translate(canvasCoordinatesOffset);
 				// Update the graphics
 				this.refreshGraphics(universe);
 				this.setCanvasCoordinates(canvasCoordinates);
@@ -228,7 +257,7 @@ var PointEntity = new Class({
 				// Determine how far to move on the canvas
 				var canvasCoordinatesOffset = location.subtract(this.getCanvasCoordinates());
 				// Translate
-				this.getGroup().translate(canvasCoordinatesOffset);
+				this.getGroup().group.translate(canvasCoordinatesOffset);
 				// Update the graphics
 				this.refreshGraphics(universe);
 				this.setCanvasCoordinates(location);
@@ -244,7 +273,7 @@ var PointEntity = new Class({
 				// Determine how far to move on the canvas
 				var canvasCoordinatesOffset = universe.findCanvasCoordinatesOffset(offset);
 				// Translate
-				this.getGroup().translate(canvasCoordinatesOffset);
+				this.getGroup().group.translate(canvasCoordinatesOffset);
 				// Update the graphics
 				this.refreshGraphics(universe);
 				this.translateCanvasCoordinates(canvasCoordinatesOffset);
@@ -255,7 +284,7 @@ var PointEntity = new Class({
 		} else { // location is a Point
 			if (this.translateLocation(universe.findUniverseCoordinatesOffset(offset))) { // Successfully updated the location
 				// Translate
-				this.getGroup().translate(offset);
+				this.getGroup().group.translate(offset);
 				// Update the graphics
 				this.refreshGraphics(universe);
 				this.translateCanvasCoordinates(offset);
@@ -264,6 +293,12 @@ var PointEntity = new Class({
 				return false; // bool
 			}
 		}
+	},
+	getLabels: function() {
+		return this.getGroup().labels; // Object
+	},
+	getMainLabel: function() {
+		return this.getLabels().mainLabel; // Object
 	},
 	refreshGraphics: function(universe) { // Universe
 		this.getGraphics().label.content = this.getName();
@@ -274,22 +309,22 @@ var PointEntity = new Class({
 		var canvasCoordinatesOffset = universe.findCanvasCoordinates(this.getLocation()).subtract(this.getCanvasCoordinates());
 		this.setCanvasCoordinates(universe.findCanvasCoordinates(this.getLocation()));
 		// Translate
-		this.getGroup().translate(canvasCoordinatesOffset);
+		this.getGroup().group.translate(canvasCoordinatesOffset);
 		return true; // bool
 	},
 	
 	// Handles mouse events
 	setHovered: function() {
-		this.getHovered().visible = true;
+		this.getHovered().group.visible = true;
 	},
 	setUnhovered: function() {
-		this.getHovered().visible = false;
+		this.getHovered().group.visible = false;
 	},
 	setSelected: function() {
-		this.getSelected().visible = true;
+		this.getSelected().group.visible = true;
 	},
 	setUnselected: function() {
-		this.getSelected().visible = false;
+		this.getSelected().group.visible = false;
 	},
 	setUntouched: function() {
 		this.setUnhovered();
@@ -402,7 +437,7 @@ var UniverseLocation = new Class({
 	// Handles graphical display of the entity
 	refreshGraphics: function(universe) { // Universe
 		var decimalEpsilonPrecision = universe.getDecimalEpsilonPrecision();
-		this.getGraphics().label.content = "(" + parseFloat(this.getLocation().e(1).toPrecision(decimalEpsilonPrecision)) + "m," + parseFloat(this.getLocation().e(2).toPrecision(decimalEpsilonPrecision)) + "m)";
+		this.getMainLabel().text.content = "(" + parseFloat(this.getLocation().e(1).toPrecision(decimalEpsilonPrecision)) + "m," + parseFloat(this.getLocation().e(2).toPrecision(decimalEpsilonPrecision)) + "m)";
 		return true; // bool
 	},
 });

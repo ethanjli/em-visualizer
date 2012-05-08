@@ -42,7 +42,7 @@ var StandardModelParticle = new Class({
 	
 	// Handles graphical display of the entity
 	refreshGraphics: function(universe) { // Universe
-		this.getGraphics().label.content = this.getStandardModelParticleSymbol();
+		this.getMainLabel().text.content = this.getStandardModelParticleSymbol();
 		return true; // bool
 	}
 });
