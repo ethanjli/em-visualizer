@@ -35,6 +35,7 @@ selectAndDragTool.onMouseDown = function(event) {
 		} else {
 			canvasToolsSupport.tools.clearSelection();
 			selectionToolsData.clickedGroup = null;
+			selectionToolsData.prepareToPan = true;
 			selectionToolsData.prepareToRemoveGroup = false;
 		}
 	}
@@ -99,6 +100,7 @@ dragIndividuallyTool.onMouseDown = function(event) {
 			canvasToolsSupport.tools.addToSelection(selectionToolsData.clickedGroup);
 		} else {
 			canvasToolsSupport.tools.clearSelection();
+			selectionToolsData.prepareToPan = true;
 			selectionToolsData.clickedGroup = null;
 		}
 	}
