@@ -19,7 +19,7 @@ var currentUniverse = new Universe({
 	},
 	text: {
 		typeface: "Segoe UI",
-		fontSize: 10,
+		fontSize: 12,
 		decimalPrecision: 5,
 		decimalEpsilonPrecision: 10
 	}
