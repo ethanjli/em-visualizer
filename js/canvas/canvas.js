@@ -14,7 +14,7 @@ var currentUniverse = new Universe({
 	},
 	graphics: {
 		locationOfCenterOfCanvas: Vector.create([0, 0]),
-		canvasZoom: 2,
+		canvasZoom: 3,
 		vectorScaling: 9
 	},
 	text: {
@@ -24,22 +24,22 @@ var currentUniverse = new Universe({
 		decimalEpsilonPrecision: 10
 	}
 });
-entity0Preset = {
+location0Preset = {
 	id: currentUniverse.getNextEntityId(),
 	name: "Second Location",
 	point: {
-		location: Vector.create([0, 0.4])
+		location: Vector.create([0.4, 0])
 	}
 };
-currentUniverse.addEntity(new UniverseLocation(entity0Preset, currentUniverse));
-entity1Preset = {
+currentUniverse.addEntity(new UniverseLocation(location0Preset, currentUniverse));
+location1Preset = {
 	id: currentUniverse.getNextEntityId(),
 	name: "Third Location",
 	point: {
-		location: Vector.create([0, -0.4])
+		location: Vector.create([0.2, -0.2])
 	}
 };
-currentUniverse.addEntity(new UniverseLocation(entity1Preset, currentUniverse));
+currentUniverse.addEntity(new UniverseLocation(location1Preset, currentUniverse));
 electronPreset = {
 	id: currentUniverse.getNextEntityId(),
 	name: "First Electron",

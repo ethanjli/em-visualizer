@@ -89,26 +89,28 @@ var canvasToolsActions = {
 			});
 		},
 		pan: function(event) {
+			var increment = 5;
 			// Choose an offset
 			if (event.key == "up") {
-				var offset = new Point(0, -1);
+				var offset = new Point(0, -1 * increment);
 			} else if (event.key == "down") {
-				var offset = new Point(0, 1);
+				var offset = new Point(0, increment);
 			} else if (event.key == "left") {
-				var offset = new Point(-1, 0);
+				var offset = new Point(-1 * increment, 0);
 			} else if (event.key == "right") {
-				var offset = new Point(1, 0);
+				var offset = new Point(increment, 0);
 			}
 			currentUniverse.translateCenterOfCanvas(currentUniverse.findUniverseCoordinatesOffset(offset));
 			currentUniverse.refreshCanvasPositions(currentUniverse);
 		},
 		zoom: function(event) {
+			var increment = 0.2;
 			if (event.key == "up" || event.key == "right" || event.key == "=") {
-				var delta = 0.2;
+				var delta = increment;
 			} else if (event.key == "down" || event.key == "left" || event.key == "-") {
-				var delta = -0.2;
+				var delta = -1 * increment;
 			}
-			currentUniverse.setCanvasZoomExponent(currentUniverse.getCanvasZoomExponent() + delta);
+			currentUniverse.setCanvasZoomExponent(Math.round(currentUniverse.getCanvasZoomExponent() * 5) / 5 + delta);
 			currentUniverse.refreshCanvasPositions(currentUniverse);
 		},
 		scaleVectors: function(event) {
