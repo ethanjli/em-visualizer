@@ -98,8 +98,8 @@ antiProtonPreset = {
 currentUniverse.addEntity(new AntiProton(antiProtonPreset, currentUniverse));
 debug.debug("Test universe now looks like", currentUniverse);
 
-// Set up view
-view.onFrame = function(event) {
-	//currentUniverse.getEntity(2).updateLocationByOffset(new Point(5, 5), currentUniverse);
-};
+// Set up view stuff
+view.onResize = function(event) {
+	currentUniverse.refreshCanvasPositions(currentUniverse);
+}
 // TODO: Add proper onResize handler
