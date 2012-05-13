@@ -1,41 +1,113 @@
+var Animation = new Class({
+	initialize: function() {
+		this.properties = new Object();
+	},
+	
+	shouldUpdate: function(event) {
+		return false;
+	},
+	update: function(event) {
+		
+	},
+	
+	shouldRemove: function(event) {
+		return true;
+	}
+});
+
+var ConstantStepAnimation = new Class({
+	Extends: Animation,
+	
+	initialize: function(properties) {
+		// Send up to parent
+		this.parent(properties);
+		// Handle constantstepanimation-specific variables
+		this.properties.animationDuration = properties.animationDuration;
+		this.properties.stepDuration = properties.animationDuration / properties.stepCount;
+		this.properties.numberOfStepsRemaining = properties.stepCount;
+		this.properties.lastUpdateTime = 0;
+		this.properties.stepSize = 0;
+	},
+	
+	shouldUpdate: function(event) {
+		return (event.time - this.properties.lastUpdateTime) > this.properties.stepDuration;
+	},
+	update: function(event) {
+		this.properties.numberOfStepsRemaining--;
+		this.properties.lastUpdateTime = event.time;
+	},
+	
+	shouldRemove: function(event) {
+		return this.properties.numberOfStepsRemaining == 0;
+	}
+});
+
+var LinearZoomAnimation = new Class({
+	Extends: ConstantStepAnimation,
+	
+	initialize: function(properties) {
+		// Send up to parent
+		this.parent(properties);
+		// Handle zoomanimation-specific variables
+		this.properties.stepSize = (properties.targetZoom - currentUniverse.getCanvasZoomExponent()) / properties.stepCount;
+	},
+	
+	update: function(event) {
+		// Send up to parent
+		this.parent(event);
+		currentUniverse.setCanvasZoomExponent(currentUniverse.getCanvasZoomExponent() + this.properties.stepSize);
+		currentUniverse.refreshCanvasPositions(currentUniverse);
+	}
+});
+
+var LinearPanAnimation = new Class({
+	Extends: ConstantStepAnimation,
+	
+	initialize: function(properties) {
+		// Send up to parent
+		this.parent(properties);
+		// Handle pananimation-specific variables
+		this.properties.stepSize = properties.locationOffset.multiply(1 / properties.stepCount);
+	},
+	
+	update: function(event) {
+		// Send up to parent
+		this.parent(event);
+		debug.debug(this.properties.stepSize, currentUniverse.getCenterOfCanvas());
+		currentUniverse.translateCenterOfCanvas(currentUniverse.findUniverseCoordinatesOffset(this.properties.stepSize));
+		currentUniverse.refreshCanvasPositions(currentUniverse);
+	}
+});
+
 var canvasAnimationsSupport = {
 	data: {
 		canvasAnimations: new Array(),
 		canvasAnimationsToRemove: new Array()
 	},
-	zoomAnimatedly: function(targetZoom, stepCount, duration) {
-		var zoomAnimation = {
-			stepSize: (targetZoom - currentUniverse.getCanvasZoomExponent()) / stepCount,
-			animationDuration: duration,
-			stepDuration: duration / stepCount,
-			numberOfStepsRemaining: stepCount,
-			lastUpdateTime: 0,
-			shouldUpdate: function(event) {
-				return (event.time - this.lastUpdateTime) > this.stepDuration;
-			},
-			update: function(event) {
-				currentUniverse.setCanvasZoomExponent(currentUniverse.getCanvasZoomExponent() + this.stepSize);
-				currentUniverse.refreshCanvasPositions(currentUniverse);
-				this.numberOfStepsRemaining--;
-				this.lastUpdateTime = event.time;
-			},
-			shouldRemoveAnimation: function(event) {
-				return this.numberOfStepsRemaining == 0;
-			}
-		};
-		debug.debug(zoomAnimation);
+	zoom: function(targetZoom, stepCount, animationDuration) {
+		var zoomAnimation = new LinearZoomAnimation({
+			targetZoom: targetZoom,
+			stepCount: stepCount,
+			animationDuration: animationDuration
+		});
 		this.data.canvasAnimations.push(zoomAnimation);
+	},
+	pan: function(locationOffset, stepCount, animationDuration) {
+		var panAnimation = new LinearPanAnimation({
+			locationOffset: locationOffset,
+			stepCount: stepCount,
+			animationDuration: animationDuration
+		});
+		this.data.canvasAnimations.push(panAnimation);
 	}
 };
 
 view.onFrame = function(event) {
 	canvasAnimationsSupport.data.canvasAnimations.forEach(function(animation) {
 		if (animation.shouldUpdate(event)) {
-			debug.debug("time to update!");
 			animation.update(event);
 		}
-		if (animation.shouldRemoveAnimation(event)) {
-			debug.debug("time to remove!");
+		if (animation.shouldRemove(event)) {
 			canvasAnimationsSupport.data.canvasAnimationsToRemove.push(animation);
 		}
 	});
