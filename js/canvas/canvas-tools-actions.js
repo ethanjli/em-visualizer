@@ -115,12 +115,14 @@ var canvasToolsActions = {
 			currentUniverse.refreshCanvasPositions(currentUniverse);
 		},
 		scaleVectors: function(event) {
+			var increment = 0.1
 			if (event.key == "up" || event.key == "right" || event.key == "=" || event.key == "+") {
-				var delta = 0.1;
+				var delta = increment;
 			} else if (event.key == "down" || event.key == "left" || event.key == "-" || event.key == "_") {
-				var delta = -0.1;
+				var delta = -1 * increment;
 			}
-			currentUniverse.setVectorScalingExponent(currentUniverse.getVectorScalingExponent() + delta);
+			var targetScale = Math.round(currentUniverse.getVectorScalingExponent() / increment) * increment + delta;
+			canvasAnimationsSupport.scaleVectors(targetScale, 8, 0.1);
 			currentUniverse.refreshProbeGraphics(currentUniverse);
 		}
 	}

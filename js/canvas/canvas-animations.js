@@ -73,9 +73,26 @@ var LinearPanAnimation = new Class({
 	update: function(event) {
 		// Send up to parent
 		this.parent(event);
-		debug.debug(this.properties.stepSize, currentUniverse.getCenterOfCanvas());
 		currentUniverse.translateCenterOfCanvas(currentUniverse.findUniverseCoordinatesOffset(this.properties.stepSize));
 		currentUniverse.refreshCanvasPositions(currentUniverse);
+	}
+});
+
+var LinearScaleVectorsAnimation = new Class({
+	Extends: ConstantStepAnimation,
+	
+	initialize: function(properties) {
+		// Send up to parent
+		this.parent(properties);
+		// Handle pananimation-specific variables
+		this.properties.stepSize = (properties.targetScale - currentUniverse.getVectorScalingExponent()) / properties.stepCount;
+	},
+	
+	update: function(event) {
+		// Send up to parent
+		this.parent(event);
+		currentUniverse.setVectorScalingExponent(currentUniverse.getVectorScalingExponent() + this.properties.stepSize);
+		currentUniverse.refreshProbeGraphics(currentUniverse);
 	}
 });
 
@@ -99,6 +116,14 @@ var canvasAnimationsSupport = {
 			animationDuration: animationDuration
 		});
 		this.data.canvasAnimations.push(panAnimation);
+	},
+	scaleVectors: function(targetScale, stepCount, animationDuration) {
+		var scaleAnimation = new LinearScaleVectorsAnimation({
+			targetScale: targetScale,
+			stepCount: stepCount,
+			animationDuration: animationDuration
+		});
+		this.data.canvasAnimations.push(scaleAnimation);
 	}
 };
 
