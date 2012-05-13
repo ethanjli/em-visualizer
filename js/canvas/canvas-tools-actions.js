@@ -110,11 +110,11 @@ var canvasToolsActions = {
 			} else if (event.key == "down" || event.key == "left" || event.key == "-") {
 				var delta = -1 * increment;
 			}
-			currentUniverse.setCanvasZoomExponent(Math.round(currentUniverse.getCanvasZoomExponent() * 5) / 5 + delta);
+			var targetZoom = Math.round(currentUniverse.getCanvasZoomExponent() / increment) * increment + delta;
+			canvasAnimationsSupport.zoomAnimatedly(targetZoom, 8, 0.1);
 			currentUniverse.refreshCanvasPositions(currentUniverse);
 		},
 		scaleVectors: function(event) {
-			debug.debug("yay");
 			if (event.key == "up" || event.key == "right" || event.key == "=" || event.key == "+") {
 				var delta = 0.1;
 			} else if (event.key == "down" || event.key == "left" || event.key == "-" || event.key == "_") {

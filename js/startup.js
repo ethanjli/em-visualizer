@@ -43,5 +43,7 @@ $LAB.script("js/libs/sylvester/lib/sylvester-min.js")
 	})
 	.script("js/canvas/canvas-tools.js")
 	.script("js/canvas/canvas-tools-actions.js").wait(function() {
-		debug.info("Set up mouse tools");
+		debug.info("Set up mouse and keyboard tools");
+	}).script("js/canvas/canvas-animations.js").wait(function() {
+		debug.info("Set up animations");
 	});
