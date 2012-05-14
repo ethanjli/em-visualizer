@@ -146,7 +146,7 @@ var Universe = new Class({
 		}).reduce(function(previousValue, currentValue) {
 			return Math.max(previousValue, currentValue);
 		});
-		return maxRadius;
+		return maxRadius + 1;
 	},
 	
 	// Handles the location in the universe where the center of the canvas is

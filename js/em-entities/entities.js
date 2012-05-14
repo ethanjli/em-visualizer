@@ -367,7 +367,7 @@ var LineEntity = new Class({
 		lineSegment.style = {
 			fillColor: "black",
 			strokeColor: "black",
-			strokeWidth: 1.5
+			strokeWidth: 2
 		};
 		// Commit graphics
 		this.getLineSegment().lineSegment = lineSegment;

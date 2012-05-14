@@ -116,7 +116,7 @@ Line3Preset = {
 	id: currentUniverse.getNextEntityId(),
 	name: "Third Line",
 	line: {
-		line: Line.create([1, 1], [1, 1])
+		line: Line.create([0.4, 0.4], [1, -1])
 	}
 };
 currentUniverse.addEntity(new LineEntity(Line3Preset, currentUniverse));
@@ -125,5 +125,6 @@ debug.debug("Test universe now looks like", currentUniverse);
 // Set up view stuff
 view.onResize = function(event) {
 	currentUniverse.refreshCanvasPositions(currentUniverse);
+	currentUniverse.refreshObservedUniverseData(currentUniverse);
 }
 // TODO: Add proper onResize handler
