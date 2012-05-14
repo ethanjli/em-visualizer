@@ -2,7 +2,7 @@
 var EField = new Class({
 	Extends: PointEntity,
 	
-	initialize: function(properties, universe) { // Object
+	initialize: function(properties, universe) { // Object, Universe
 		// Send up to parent
 		this.parent(properties, universe);
 		// Handle e-field-probe-specific constants
@@ -19,7 +19,7 @@ var EField = new Class({
 var EFieldVector = new Class({
 	Extends: EField,
 	
-	initialize: function(properties, universe) { // Object
+	initialize: function(properties, universe) { // Object, Universe
 		// Send up to parent
 		this.parent(properties, universe);
 		// Handle e-field-probe-specific constants
@@ -120,7 +120,7 @@ var EFieldVector = new Class({
 var EFieldDirection = new Class({
 	Extends: EField,
 	
-	initialize: function(properties, universe) { // Object
+	initialize: function(properties, universe) { // Object, Universe
 		// Send up to parent
 		this.parent(properties, universe);
 		// Handle e-field-direction-probe-specific constants
@@ -216,7 +216,7 @@ var EFieldDirection = new Class({
 var EFieldMagnitude = new Class({
 	Extends: EField,
 	
-	initialize: function(properties, universe) { // Object
+	initialize: function(properties, universe) { // Object, Universe
 		// Send up to parent
 		this.parent(properties, universe);
 		// Handle e-field-magnitude-probe-specific constants
@@ -244,7 +244,7 @@ var EFieldMagnitude = new Class({
 var EPotential = new Class({
 	Extends: PointEntity,
 	
-	initialize: function(properties, universe) { // Object
+	initialize: function(properties, universe) { // Object, Universe
 		// Send up to parent
 		this.parent(properties, universe);
 		// Handle e-field-magnitude-probe-specific constants

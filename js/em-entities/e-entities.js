@@ -4,7 +4,7 @@
 var ChargedPointEntity = new Class({
 	Extends: PointEntity,
 	
-	initialize: function(properties, universe) { // Object
+	initialize: function(properties, universe) { // Object, Universe
 		// Send up to parent
 		this.parent(properties, universe);
 		// Initialize charged-point-specific properties container
@@ -54,7 +54,7 @@ var ChargedPointEntity = new Class({
 var ChargedLineEntity = new Class({
 	Extends: LineEntity,
 	
-	initialize: function(properties, universe) { // Object
+	initialize: function(properties, universe) { // Object, Universe
 		// Send up to parent
 		this.parent(properties, universe);
 		// Initialize charged-line-specific properties container

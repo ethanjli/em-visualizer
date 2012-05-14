@@ -57,6 +57,7 @@ var LinearZoomAnimation = new Class({
 		this.parent(event);
 		currentUniverse.setCanvasZoomExponent(currentUniverse.getCanvasZoomExponent() + this.properties.stepSize);
 		currentUniverse.refreshCanvasPositions(currentUniverse);
+		currentUniverse.resetObservedUniverseData(currentUniverse);
 	}
 });
 
@@ -75,6 +76,7 @@ var LinearPanAnimation = new Class({
 		this.parent(event);
 		currentUniverse.translateCenterOfCanvas(currentUniverse.findUniverseCoordinatesOffset(this.properties.stepSize));
 		currentUniverse.refreshCanvasPositions(currentUniverse);
+		currentUniverse.refreshObservedUniverseData(currentUniverse);
 	}
 });
 

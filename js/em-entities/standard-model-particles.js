@@ -2,7 +2,7 @@
 var StandardModelParticle = new Class({
 	Extends: ChargedPointEntity,
 	
-	initialize: function(properties, universe) { // Object
+	initialize: function(properties, universe) { // Object, Universe
 		// Send up to parent
 		this.parent(properties, universe);
 		// Initialize standard-model-particle-specific properties container
@@ -50,7 +50,7 @@ var StandardModelParticle = new Class({
 var Electron = new Class({
 	Extends: StandardModelParticle,
 	
-	initialize: function(properties, universe) { // Object
+	initialize: function(properties, universe) { // Object, Universe
 		// Handle preset properties
 		var newProperties = Object.clone(properties);
 		if (typeof(newProperties.charge) === "undefined") {
@@ -73,7 +73,7 @@ var Electron = new Class({
 var Positron = new Class({
 	Extends: StandardModelParticle,
 	
-	initialize: function(properties, universe) { // Object
+	initialize: function(properties, universe) { // Object, Universe
 		// Handle preset properties
 		var newProperties = Object.clone(properties);
 		if (typeof(newProperties.charge) === "undefined") {
@@ -96,7 +96,7 @@ var Positron = new Class({
 var Proton = new Class({
 	Extends: StandardModelParticle,
 	
-	initialize: function(properties, universe) { // Object
+	initialize: function(properties, universe) { // Object, Universe
 		// Handle preset properties
 		var newProperties = Object.clone(properties);
 		if (typeof(newProperties.charge) === "undefined") {
@@ -119,7 +119,7 @@ var Proton = new Class({
 var AntiProton = new Class({
 	Extends: StandardModelParticle,
 	
-	initialize: function(properties, universe) { // Object
+	initialize: function(properties, universe) { // Object, Universe
 		// Handle preset properties
 		var newProperties = Object.clone(properties);
 		if (typeof(newProperties.charge) === "undefined") {
@@ -142,7 +142,7 @@ var AntiProton = new Class({
 var Muon = new Class({
 	Extends: StandardModelParticle,
 	
-	initialize: function(properties, universe) { // Object
+	initialize: function(properties, universe) { // Object, Universe
 		// Handle preset properties
 		var newProperties = Object.clone(properties);
 		if (typeof(newProperties.charge) === "undefined") {
@@ -165,7 +165,7 @@ var Muon = new Class({
 var AntiMuon = new Class({
 	Extends: StandardModelParticle,
 	
-	initialize: function(properties, universe) { // Object
+	initialize: function(properties, universe) { // Object, Universe
 		// Handle preset properties
 		var newProperties = Object.clone(properties);
 		if (typeof(newProperties.charge) === "undefined") {
@@ -188,7 +188,7 @@ var AntiMuon = new Class({
 var Tauon = new Class({
 	Extends: StandardModelParticle,
 	
-	initialize: function(properties, universe) { // Object
+	initialize: function(properties, universe) { // Object, Universe
 		// Handle preset properties
 		var newProperties = Object.clone(properties);
 		if (typeof(newProperties.charge) === "undefined") {
@@ -211,7 +211,7 @@ var Tauon = new Class({
 var AntiTau = new Class({
 	Extends: StandardModelParticle,
 	
-	initialize: function(properties, universe) { // Object
+	initialize: function(properties, universe) { // Object, Universe
 		// Handle preset properties
 		var newProperties = Object.clone(properties);
 		if (typeof(newProperties.charge) === "undefined") {

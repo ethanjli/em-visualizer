@@ -26,10 +26,12 @@ var canvasToolsActions = {
 		pan: function(event) {
 			currentUniverse.translateCenterOfCanvas(currentUniverse.findUniverseCoordinatesOffset(event.delta).multiply(-1));
 			currentUniverse.refreshCanvasPositions(currentUniverse);
+			currentUniverse.refreshObservedUniverseData(currentUniverse);
 		},
 		zoom: function(event) {
 			currentUniverse.setCanvasZoomExponent(currentUniverse.getCanvasZoomExponent() + event.delta.y / 100);
 			currentUniverse.refreshCanvasPositions(currentUniverse);
+			currentUniverse.resetObservedUniverseData(currentUniverse);
 		}
 	},
 	keyActions: {
@@ -89,7 +91,7 @@ var canvasToolsActions = {
 			});
 		},
 		pan: function(event) {
-			var increment = 10;
+			var increment = 40;
 			// Choose an offset
 			if (event.key == "up") {
 				var offset = new Point(0, -1 * increment);
@@ -102,6 +104,7 @@ var canvasToolsActions = {
 			}
 			canvasAnimationsSupport.pan(offset, 8, 0.1);
 			currentUniverse.refreshCanvasPositions(currentUniverse);
+			currentUniverse.refreshObservedUniverseData(currentUniverse);
 		},
 		zoom: function(event) {
 			var increment = 0.2;
@@ -113,6 +116,7 @@ var canvasToolsActions = {
 			var targetZoom = Math.round(currentUniverse.getCanvasZoomExponent() / increment) * increment + delta;
 			canvasAnimationsSupport.zoom(targetZoom, 8, 0.1);
 			currentUniverse.refreshCanvasPositions(currentUniverse);
+			currentUniverse.resetObservedUniverseData(currentUniverse);
 		},
 		scaleVectors: function(event) {
 			var increment = 0.1

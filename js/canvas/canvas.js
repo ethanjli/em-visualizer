@@ -96,6 +96,30 @@ antiProtonPreset = {
 	}
 };
 currentUniverse.addEntity(new AntiProton(antiProtonPreset, currentUniverse));
+Line1Preset = {
+	id: currentUniverse.getNextEntityId(),
+	name: "First Line",
+	line: {
+		line: Line.X
+	}
+};
+currentUniverse.addEntity(new LineEntity(Line1Preset, currentUniverse));
+Line2Preset = {
+	id: currentUniverse.getNextEntityId(),
+	name: "Second Line",
+	line: {
+		line: Line.Y
+	}
+};
+currentUniverse.addEntity(new LineEntity(Line2Preset, currentUniverse));
+Line3Preset = {
+	id: currentUniverse.getNextEntityId(),
+	name: "Third Line",
+	line: {
+		line: Line.create([1, 1], [1, 1])
+	}
+};
+currentUniverse.addEntity(new LineEntity(Line3Preset, currentUniverse));
 debug.debug("Test universe now looks like", currentUniverse);
 
 // Set up view stuff

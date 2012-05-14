@@ -2,7 +2,7 @@
 
 // Models any object, real or imaginary, in the universe that is displayed on the canvas
 var Entity = new Class({
-	initialize: function(properties) { // Object
+	initialize: function(properties, universe) { // Object, Universe
 		// Initialize entity-specific properties container
 		this.properties = new Object();
 		// Handle entity-specific constants
@@ -140,7 +140,7 @@ var Entity = new Class({
 var PointEntity = new Class({
 	Extends: Entity,
 	
-	initialize: function(properties, universe) { // Object
+	initialize: function(properties, universe) { // Object, Universe
 		// Handle preset properties
 		var newProperties = Object.clone(properties);
 		if (typeof(newProperties.graphics) === "undefined") {
@@ -156,7 +156,7 @@ var PointEntity = new Class({
 		this.properties.point = new Object();
 		this.setLocation(properties.point.location);
 	},
-	initializeGraphics: function(universe) { // Object
+	initializeGraphics: function(universe) { // Universe
 		this.parent(universe);
 		// Set up storage
 		this.getGroup().labels = {
@@ -336,7 +336,7 @@ var PointEntity = new Class({
 var LineEntity = new Class({
 	Extends: Entity,
 	
-	initialize: function(properties, universe) { // Object
+	initialize: function(properties, universe) { // Object, Universe
 		// Send up to parent
 		this.parent(properties, universe);
 		// Initialize line-specific properties container
@@ -344,22 +344,83 @@ var LineEntity = new Class({
 		// Handle line-specific constants
 		this.getType().push("Line");
 		// Handle line-specific variables
+		this.properties.line = new Object();
+		this.properties.line.centerPoint = Vector.Zero(3);
+		this.properties.line.observedUniverse = {
+			outerRadius: universe.getObservedUniverseOuterRadius(universe)
+		};
 		this.setLine(properties.line.line);
+	},
+	initializeGraphics: function(universe) { // Universe
+		this.parent(universe);
+		// Set up storage
+		this.getGroup().line = {
+			group: new Group(),
+			lineSegment: {
+				group: new Group()
+			}
+		};
+		this.getGroup().group.appendTop(this.getLineRepresentation().group);
+		this.getLineRepresentation().group.appendTop(this.getLineSegment().group);
+		// Draw the point
+		var lineSegment = new Path.Line(this.getProperties().line.centerPoint, this.getProperties().line.centerPoint);
+		lineSegment.style = {
+			fillColor: "black",
+			strokeColor: "black",
+			strokeWidth: 1.5
+		};
+		// Commit graphics
+		this.getLineSegment().lineSegment = lineSegment;
+		this.getLineSegment().group.appendTop(lineSegment);
+		this.refreshCanvasPosition(universe);
 	},
 	
 	// Handles the entity's location and direction
 	setLine: function(line) { // Line
-		this.line.line = line;
+		if (typeof(this.getLine()) === "undefined" || line.isParallelTo(Line.Z) && !this.getLine().isParallelTo(Line.Z) || line.liesIn(Plane.XY) && !this.getLine().liesIn(Plane.XY)) {
+			// Change the graphics storage for the line
+		}
+		if (line.liesIn(Plane.XY)) {
+			this.getProperties().line.centerPoint = line.pointClosestTo(Vector.Zero(3));
+		}
+		this.properties.line.line = line;
 		return true; // bool
 	},
 	getLine: function() {
-		return this.line.line; // Line
+		return this.properties.line.line; // Line
 	},
 	
 	// Returns the smallest-magnitude vector from the line entity to the given location
 	findVectorTo: function(location) {
 		return location.subtract(this.getLine().pointClosestTo(location)); // vector as Vector
-	}
+	},
+	
+	// Handles graphical display of the entity
+	setObservedUniverseOuterRadius: function(outerRadius) { // double
+		this.getProperties().line.observedUniverse.outerRadius = outerRadius;
+		return true; // boolean
+	},
+	getObservedUniverseOuterRadius: function() {
+		return this.getProperties().line.observedUniverse.outerRadius; // double
+	},
+	getLineRepresentation: function() {
+		return this.getGroup().line; // Object
+	},
+	getLineSegment: function() {
+		return this.getLineRepresentation().lineSegment; // Object
+	},
+	refreshCanvasPosition: function(universe) { // Universe
+		if (this.getLine().liesIn(Plane.XY)) { // Lies in the plane
+			var lengthFromCenterPoint = Math.sqrt(Math.pow(this.getObservedUniverseOuterRadius(), 2) - Math.pow(this.getProperties().line.centerPoint.distanceFrom(Vector.Zero(3)), 2));
+			var offset = this.getLine().direction.multiply(lengthFromCenterPoint);
+			this.getLineSegment().lineSegment.firstSegment.point = universe.findCanvasCoordinates(this.getProperties().line.centerPoint.add(offset));
+			this.getLineSegment().lineSegment.lastSegment.point = universe.findCanvasCoordinates(this.getProperties().line.centerPoint.add(offset.multiply(-1)));
+		} else if (this.getLine().isParallelTo(Line.Z)) { // Perpendicular to the plane
+			
+		}
+		
+		return true; // bool
+	},
 });
 
 // Models any ray object in the universe
@@ -367,7 +428,7 @@ var LineEntity = new Class({
 var RayEntity = new Class({
 	Extends: LineEntity,
 	
-	initialize: function(properties, universe) { // Object
+	initialize: function(properties, universe) { // Object, Universe
 		// Send up to parent
 		this.parent(properties, universe);
 		// Initialize ray-specific properties container
@@ -384,7 +445,7 @@ var RayEntity = new Class({
 var LineSegmentEntity = new Class({
 	Extends: LineEntity,
 	
-	initialize: function(properties, universe) { // Object
+	initialize: function(properties, universe) { // Object, Universe
 		// Send up to parent
 		this.parent(properties, universe);
 		// Initialize line-segment-specific properties container
@@ -401,7 +462,7 @@ var LineSegmentEntity = new Class({
 var SolidEntity = new Class({
 	Extends: Entity,
 	
-	initialize: function(properties, universe) { // Object
+	initialize: function(properties, universe) { // Object, Universe
 		// Send up to parent
 		this.parent(properties, universe);
 		// Initialize solid-specific properties container
@@ -417,7 +478,7 @@ var SolidEntity = new Class({
 var UniverseLocation = new Class({
 	Extends: PointEntity,
 	
-	initialize: function(properties, universe) { // Object
+	initialize: function(properties, universe) { // Object, Universe
 		// Handle preset properties
 		var newProperties = Object.clone(properties);
 		newProperties.mass = 0;
@@ -446,7 +507,7 @@ var UniverseLocation = new Class({
 var UniverseAnchorPoint = new Class({
 	Extends: UniverseLocation,
 	
-	initialize: function(properties, universe) { // Object
+	initialize: function(properties, universe) { // Object, Universe
 		// Handle preset properties
 		var newProperties = Object.clone(properties);
 		newProperties.name = "Center of the Universe";
