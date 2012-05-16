@@ -65,9 +65,9 @@ var canvasToolsActions = {
 			}
 			// Choose the new selection
 			if (event.key == "j") {
-				canvasToolsSupport.data.selectionTools.clickedGroup = remainingEntities[0].getGroup();
+				canvasToolsSupport.data.selectionTools.clickedGroup = remainingEntities[0].getGroup().group;
 			} else if (event.key == "k") {
-				canvasToolsSupport.data.selectionTools.clickedGroup = remainingEntities[remainingEntities.length - 1].getGroup();
+				canvasToolsSupport.data.selectionTools.clickedGroup = remainingEntities[remainingEntities.length - 1].getGroup().group;
 			}
 			// Make the new selection
 			canvasToolsSupport.data.selectionTools.selectedGroups = [canvasToolsSupport.data.selectionTools.clickedGroup];
