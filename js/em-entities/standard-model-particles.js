@@ -52,7 +52,8 @@ var Electron = new Class({
 	
 	initialize: function(properties, universe) { // Object, Universe
 		// Handle preset properties
-		var newProperties = Object.clone(properties);
+		//var newProperties = Object.clone(properties);
+		var newProperties = properties;
 		if (typeof(newProperties.charge) === "undefined") {
 			newProperties.charge = new Object();
 		}
@@ -75,7 +76,8 @@ var Positron = new Class({
 	
 	initialize: function(properties, universe) { // Object, Universe
 		// Handle preset properties
-		var newProperties = Object.clone(properties);
+		//var newProperties = Object.clone(properties);
+		var newProperties = properties;
 		if (typeof(newProperties.charge) === "undefined") {
 			newProperties.charge = new Object();
 		}
@@ -98,7 +100,8 @@ var Proton = new Class({
 	
 	initialize: function(properties, universe) { // Object, Universe
 		// Handle preset properties
-		var newProperties = Object.clone(properties);
+		//var newProperties = Object.clone(properties);
+		var newProperties = properties;
 		if (typeof(newProperties.charge) === "undefined") {
 			newProperties.charge = new Object();
 		}
@@ -121,7 +124,8 @@ var AntiProton = new Class({
 	
 	initialize: function(properties, universe) { // Object, Universe
 		// Handle preset properties
-		var newProperties = Object.clone(properties);
+		//var newProperties = Object.clone(properties);
+		var newProperties = properties;
 		if (typeof(newProperties.charge) === "undefined") {
 			newProperties.charge = new Object();
 		}
@@ -144,7 +148,8 @@ var Muon = new Class({
 	
 	initialize: function(properties, universe) { // Object, Universe
 		// Handle preset properties
-		var newProperties = Object.clone(properties);
+		//var newProperties = Object.clone(properties);
+		var newProperties = properties;
 		if (typeof(newProperties.charge) === "undefined") {
 			newProperties.charge = new Object();
 		}
@@ -167,7 +172,8 @@ var AntiMuon = new Class({
 	
 	initialize: function(properties, universe) { // Object, Universe
 		// Handle preset properties
-		var newProperties = Object.clone(properties);
+		//var newProperties = Object.clone(properties);
+		var newProperties = properties;
 		if (typeof(newProperties.charge) === "undefined") {
 			newProperties.charge = new Object();
 		}
@@ -190,7 +196,8 @@ var Tauon = new Class({
 	
 	initialize: function(properties, universe) { // Object, Universe
 		// Handle preset properties
-		var newProperties = Object.clone(properties);
+		//var newProperties = Object.clone(properties);
+		var newProperties = properties;
 		if (typeof(newProperties.charge) === "undefined") {
 			newProperties.charge = new Object();
 		}
@@ -213,7 +220,8 @@ var AntiTau = new Class({
 	
 	initialize: function(properties, universe) { // Object, Universe
 		// Handle preset properties
-		var newProperties = Object.clone(properties);
+		//var newProperties = Object.clone(properties);
+		var newProperties = properties;
 		if (typeof(newProperties.charge) === "undefined") {
 			newProperties.charge = new Object();
 		}

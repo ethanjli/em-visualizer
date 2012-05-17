@@ -32,6 +32,8 @@ $LAB.script("js/libs/sylvester/lib/sylvester-min.js")
 		debug.info("Finished loading MooTools");
 	})
 	.script("js/em-entities/entities.js").wait()
+	.script("js/em-entities/point-entities.js")
+	.script("js/em-entities/linear-entities.js").wait()
 	.script("js/em-entities/e-entities.js").wait()
 	.script("js/em-entities/standard-model-particles.js")
 	.script("js/em-entities/e-probes.js")

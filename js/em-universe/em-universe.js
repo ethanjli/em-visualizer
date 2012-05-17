@@ -29,10 +29,7 @@ var Universe = new Class({
 		//// Populate the universe with initial entities
 		////// Add the (0,0) anchor point
 		this.addEntity(new UniverseAnchorPoint({
-			id: this.getNextEntityId(),
-			graphics: {
-				canvasCoordinates: this.findCanvasCoordinates(Vector.Zero(2))
-			}
+			id: this.getNextEntityId()
 		}, this));
 		////// Put all the other entities in if the entity list is not undefined
 		if (typeof(properties.entities) !== "undefined" && typeof(properties.entities.entities) !== "undefined" && properties.entities.entities.length != 0) {
@@ -99,18 +96,25 @@ var Universe = new Class({
 			return typeof(entity.getObservedUniverseOuterRadius) !== "undefined";
 		}); // Entity[]
 	},
-	addEntity: function(entity) {
+	getCompositeEntities: function() {
+		return this.properties.entities.entities.filter(function(entity) {
+			return typeof(entity.getProperties().parentEntity) !== "undefined";
+		}).map(function(entity) {
+			return entity.getProperties().parentEntity;
+		}); // Entity[]
+	},
+	addEntity: function(entity) { // Entity
 		this.properties.entities.entities[entity.getId()] = entity;
 		entity.initializeGraphics(this);
 		this.refreshProbeGraphics(this);
-		return true; // Entity
+		return true; // bool
 	},
 	getEntity: function(id) { // int
 		return this.properties.entities.entities[id]; // Entity
 	},
-	removeEntity: function(entity) { // Entity
+	removeEntity: function(universe, entity) { // Universe, Entity
 		delete this.properties.entities.entities[entity.getId()];
-		entity.remove();
+		entity.remove(universe);
 		return entity; // Entity
 	},
 	// TODO: add method to compress the entity list and entity ids by filling empty spots
@@ -124,7 +128,7 @@ var Universe = new Class({
 			} else {
 				return totalElectricField;
 			}
-		}, Vector.Zero(2));
+		}, Vector.Zero(3));
 	},
 	// Calculates the electric potential in the universe at a given spot by superpositioning
 	findElectricPotentialAt: function(location) { // point as Vector
@@ -139,7 +143,7 @@ var Universe = new Class({
 	},
 	
 	// Determines the outer and inner radii of the observed universe as determined by the location of the canvas view
-	getObservedUniverseOuterRadius: function(universe) {
+	getObservedUniverseOuterRadius: function(universe) { // Universe
 		var corners = [view.bounds.topLeft, view.bounds.topRight, view.bounds.bottomRight, view.bounds.bottomLeft];
 		var maxRadius = corners.map(function(corner) {
 			return universe.findUniverseCoordinates(corner).modulus();
@@ -151,7 +155,7 @@ var Universe = new Class({
 	
 	// Handles the location in the universe where the center of the canvas is
 	setCenterOfCanvas: function(location) { // point as Vector
-		this.properties.graphics.locationOfCenterOfCanvas = location.dup();
+		this.properties.graphics.locationOfCenterOfCanvas = location.dup().to3D();
 		return true; // bool
 	},
 	getCenterOfCanvas: function() {
@@ -196,6 +200,11 @@ var Universe = new Class({
 			entity.refreshCanvasPosition(universe);
 		});
 	},
+	refreshProbeGraphics: function(universe) { // Universe
+		this.getProbeEntities().forEach(function(entity) {
+			entity.refreshGraphics(universe);
+		});
+	},
 	refreshObservedUniverseData: function(universe) { // Universe
 		this.getObservedUniverseEntities().forEach(function(entity) {
 			entity.setObservedUniverseOuterRadius(Math.max(entity.getObservedUniverseOuterRadius(), universe.getObservedUniverseOuterRadius(universe)));
@@ -206,38 +215,32 @@ var Universe = new Class({
 			entity.setObservedUniverseOuterRadius(universe.getObservedUniverseOuterRadius(universe));
 		});
 	},
-	refreshProbeGraphics: function(universe) { // Universe
-		this.getProbeEntities().forEach(function(entity) {
-			entity.refreshGraphics(universe);
+	refreshCompositeEntityCanvasPositions: function(universe) { // Universe
+		this.getCompositeEntities().forEach(function(entity) {
+			entity.refreshCanvasPosition(universe);
 		});
 	},
 	
 	// Handles conversion of coordinate offsets between the universe and the canvas
 	findCanvasCoordinatesOffset: function(universeCoordinatesOffset) { // point as Vector
-		if (universeCoordinates.elements.length > 2) {
-			universeCoordinates = Vector.create(universeCoordinates.elements.slice(0, 2));
-		}
 		var canvasCoordinatesOffset = universeCoordinatesOffset.multiply(this.getCanvasZoom());
 		return new paper.Point([canvasCoordinatesOffset.e(1), canvasCoordinatesOffset.e(2) * -1]); // point as Point
 	},
 	findUniverseCoordinatesOffset: function(canvasCoordinatesOffset) { // point as Point
-		return Vector.create([canvasCoordinatesOffset.x, canvasCoordinatesOffset.y * -1]).multiply(1 / this.getCanvasZoom()); // point as Vector
+		return Vector.create([canvasCoordinatesOffset.x, canvasCoordinatesOffset.y * -1]).multiply(1 / this.getCanvasZoom()).to3D(); // point as Vector
 	},
 	
 	// Handles conversion of coordinates between the universe and the canvas
 	findCanvasCoordinates: function(universeCoordinates) { // point as Vector
-		if (universeCoordinates.elements.length > 2) {
-			universeCoordinates = Vector.create(universeCoordinates.elements.slice(0, 2));
-		}
 		var relativeCanvasCoordinates = universeCoordinates.subtract(this.getCenterOfCanvas()).multiply(this.getCanvasZoom());
 		relativeCanvasCoordinates.elements[1] = relativeCanvasCoordinates.e(2) * -1;
-		var absoluteCanvasCoordinates = relativeCanvasCoordinates.add(Vector.create([view.viewSize.width, view.viewSize.height]).multiply(0.5));
-		return new paper.Point([absoluteCanvasCoordinates.e(1), absoluteCanvasCoordinates.e(2)]); // point as Point
+		var absoluteCanvasCoordinates = relativeCanvasCoordinates.add(Vector.create([view.viewSize.width, view.viewSize.height, 0]).multiply(0.5));
+		return new paper.Point(absoluteCanvasCoordinates.elements.slice(0, 2)); // point as Point
 	},
 	findUniverseCoordinates: function(canvasCoordinates) { // point as Point
-		var relativeUniverseCoordinates = Vector.create([canvasCoordinates.x, canvasCoordinates.y]).subtract(Vector.create([view.viewSize.width, view.viewSize.height]).multiply(0.5)).multiply(1 / this.getCanvasZoom());
+		var relativeUniverseCoordinates = Vector.create([canvasCoordinates.x, canvasCoordinates.y, 0]).subtract(Vector.create([view.viewSize.width, view.viewSize.height, 0]).multiply(0.5)).multiply(1 / this.getCanvasZoom());
 		relativeUniverseCoordinates.elements[1] = relativeUniverseCoordinates.e(2) * -1;
-		return relativeUniverseCoordinates.add(this.getCenterOfCanvas()); // point as Vector
+		return relativeUniverseCoordinates.add(this.getCenterOfCanvas()).to3D(); // point as Vector
 	},
 	
 	// Handles text display

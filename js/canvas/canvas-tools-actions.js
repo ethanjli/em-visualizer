@@ -22,6 +22,7 @@ var canvasToolsActions = {
 				}
 			});
 			currentUniverse.refreshProbeGraphics(currentUniverse);
+			currentUniverse.refreshCompositeEntityCanvasPositions(currentUniverse);
 		},
 		pan: function(event) {
 			currentUniverse.translateCenterOfCanvas(currentUniverse.findUniverseCoordinatesOffset(event.delta).multiply(-1));
@@ -89,6 +90,7 @@ var canvasToolsActions = {
 					selectedGroup.associatedEntity.updateLocationByOffset(offset, currentUniverse);
 				}
 			});
+			currentUniverse.refreshCompositeEntityCanvasPositions(currentUniverse);
 		},
 		pan: function(event) {
 			var increment = 40;
@@ -128,6 +130,7 @@ var canvasToolsActions = {
 			var targetScale = Math.round(currentUniverse.getVectorScalingExponent() / increment) * increment + delta;
 			canvasAnimationsSupport.scaleVectors(targetScale, 8, 0.1);
 			currentUniverse.refreshProbeGraphics(currentUniverse);
+			currentUniverse.refreshCompositeEntityCanvasPositions(currentUniverse);
 		}
 	}
 }
@@ -187,7 +190,7 @@ var canvasToolsSupport = {
 	},
 	deleteSelection: function() {
 		this.data.selectionTools.selectedGroups.forEach(function(selectedGroup) {
-			currentUniverse.removeEntity(selectedGroup.associatedEntity);
+			currentUniverse.removeEntity(currentUniverse, selectedGroup.associatedEntity);
 		});
 		this.data.selectionTools.selectedGroups.empty();
 		currentUniverse.refreshProbeGraphics(currentUniverse);
