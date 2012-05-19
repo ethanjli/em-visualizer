@@ -167,6 +167,15 @@ var LineEntity = new Class({
 	getLine: function() {
 		return this.properties.line.line; // Line
 	},
+	translateLocation: function(offset) { // vector as Vector
+		this.getLine().translate(offset);
+		this.getProperties().line.anchor.translateLocation(offset);
+		this.getProperties().line.direction.translateLocation(offset);
+		if (this.getLine().liesIn(Plane.XY)) {
+			this.getProperties().line.centerPoint = this.getLine().pointClosestTo(Vector.Zero(3));
+		}
+		return true;
+	},
 	// Handles the line's anchor's location
 	setLocation: function(location) { // point as Vector
 		if (typeof(this.getLocation()) !== "undefined" && this.isAnchored()) {
@@ -210,6 +219,26 @@ var LineEntity = new Class({
 		return location.subtract(this.getLine().pointClosestTo(location)); // vector as Vector
 	},
 	
+	// Handles graphical display of the entity
+	updateLocationByOffset: function(offset, universe) { // vector as Vector or Point
+		if ("create" in offset) { // location is a Vector
+			if (this.translateLocation(offset)) { // Successfully updated the location
+				// Update the graphics
+				this.refreshGraphics(universe);
+				return true; // bool
+			} else {
+				return false; // bool
+			}
+		} else { // location is a Point
+			if (this.translateLocation(universe.findUniverseCoordinatesOffset(offset))) { // Successfully updated the location
+				// Update the graphics
+				this.refreshGraphics(universe);
+				return true; // bool
+			} else {
+				return false; // bool
+			}
+		}
+	},
 	setObservedUniverseOuterRadius: function(outerRadius) { // double
 		this.getProperties().line.observedUniverse.outerRadius = outerRadius;
 		return true; // boolean
@@ -231,6 +260,8 @@ var LineEntity = new Class({
 			this.getSelected().borderInner.lastSegment.point = secondEndpoint;
 			this.getSelected().borderOuter.firstSegment.point = firstEndpoint;
 			this.getSelected().borderOuter.lastSegment.point = secondEndpoint;
+			this.getProperties().line.anchor.refreshCanvasPosition(universe);
+			this.getProperties().line.direction.refreshCanvasPosition(universe);
 		} else if (this.getLine().isParallelTo(Line.Z)) { // Perpendicular to the plane
 			
 		}
