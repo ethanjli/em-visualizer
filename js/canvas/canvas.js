@@ -100,7 +100,8 @@ Line1Preset = {
 	id: currentUniverse.getNextEntityId(),
 	name: "First Line",
 	line: {
-		line: Line.X
+		line: Line.X,
+		anchor: currentUniverse.getEntity(0)
 	}
 };
 currentUniverse.addEntity(new LineEntity(Line1Preset, currentUniverse));
@@ -108,7 +109,8 @@ Line2Preset = {
 	id: currentUniverse.getNextEntityId(),
 	name: "Second Line",
 	line: {
-		line: Line.Y
+		line: Line.Y,
+		anchor: currentUniverse.getEntity(0)
 	}
 };
 currentUniverse.addEntity(new LineEntity(Line2Preset, currentUniverse));
@@ -116,7 +118,9 @@ Line3Preset = {
 	id: currentUniverse.getNextEntityId(),
 	name: "Third Line",
 	line: {
-		line: Line.create([0.4, 0.4], [1, -1])
+		/*line: Line.create([0.1, 0], [0.05, -0.1])*/
+		anchor: currentUniverse.getEntity(1),
+		direction: [0.05, -0.1]
 	}
 };
 currentUniverse.addEntity(new LineEntity(Line3Preset, currentUniverse));

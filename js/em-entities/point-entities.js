@@ -234,3 +234,28 @@ var UniverseAnchorPoint = new Class({
 });
 
 // Models support points used to give direction to lines and rays 
+var LinearEntitySecondaryPoint = new Class({
+	Extends: UniverseLocation,
+	
+	initialize: function(properties, universe) { // Object, Universe
+		// Send up to parent
+		this.parent(properties, universe);
+		// Handle universe-anchor-point-specific constants
+		this.getType().push("Secondary Anchor Point for Linear Entities");
+	},
+	
+	// Handles the entity's location
+	setLocation: function(location) { // point as Vector
+		if (typeof(this.getLocation()) !== "undefined" && this.isAnchored()) {
+			debug.warn("Tried to set the location of anchored entity " + this.getId());
+			return false; // bool
+		} else {
+			// TODO: clone the location
+			this.properties.point.location = location.to3D();
+			if (typeof(this.getProperties().parentEntity) !== "undefined") {
+				this.getProperties().parentEntity.setSecondaryLocation(location);
+			}
+			return true; // bool
+		}
+	},
+});

@@ -14,19 +14,99 @@ var LineEntity = new Class({
 		this.properties.line.observedUniverse = {
 			outerRadius: universe.getObservedUniverseOuterRadius(universe)
 		};
+		if (typeof(properties.line.line) == "undefined") {
+			if (typeof(properties.line.anchor) !== "undefined" && typeof(properties.line.direction) !== "undefined") {
+				// Try to make the line from anchor and direction
+				if (typeof(properties.line.anchor.getType) !== "undefined") { // anchor is a valid Entity
+					var anchor = properties.line.anchor.getLocation();
+				} else {
+					var anchor = Vector.create(properties.line.anchor);
+				}
+				if (typeof(properties.line.direction.getType) !== "undefined") { // direction is a valid Entity
+					var direction = properties.line.direction.getLocation().subtract(anchor);
+				} else {
+					var direction = Vector.create(properties.line.direction);
+				}
+				properties.line.line = Line.create(anchor, direction);
+			} else {
+				debug.error("Could not create a line for entity", this.getId());
+			}
+		}
 		this.setLine(properties.line.line);
-		if (typeof(properties.line.anchor) === "undefined") {
+		if (typeof(properties.line.anchor) !== "undefined") {
+			// Try to set the given anchor as the anchoring entity
+			if ((typeof(properties.line.anchor) == "Array" || typeof(properties.line.anchor.create) !== "undefined") && Vector.create(properties.line.anchor).to3D().liesOn(this.getLine())) { // is a valid array for a Vector, or is a valid Vector
+				// Create a new entity
+				properties.line.anchor = new UniverseLocation({
+					id: universe.getNextEntityId(),
+					name: "Anchor for line " + this.getId(),
+					parentEntity: this,
+					point: {
+						location: Vector.create(properties.line.anchor).to3D()
+					}
+				}, universe);
+				universe.addEntity(properties.line.anchor);
+			} else if (typeof(properties.line.anchor.getType) !== "undefined" && properties.line.anchor.getLocation().liesOn(this.getLine())) { // is a valid Entity
+				// Set the entity
+				properties.line.anchor.getProperties().parentEntity = this;
+				if (typeof(universe.getEntity(properties.line.anchor.getId())) == "undefined") {
+					universe.addEntity(properties.line.anchor);
+				}
+			} else {
+				// Failed to set the given anchor as the anchoring entity
+				debug.error("Could not set", properties.line.anchor, "as the anchor for entity", this.getId());
+			}
+		} else {
+			// Create a new entity
 			properties.line.anchor = new UniverseLocation({
 				id: universe.getNextEntityId(),
 				name: "Anchor for line " + this.getId(),
 				parentEntity: this,
 				point: {
-					location: this.getLine().anchor
+					location: this.getLine().anchor.to3D()
 				}
 			}, universe);
 			universe.addEntity(properties.line.anchor);
 		}
+		if (typeof(properties.line.direction) !== "undefined") {
+			// Try to set the given direction as the secondary anchoring entity
+			if ((typeof(properties.line.direction.slice) !== "undefined" || typeof(properties.line.direction.create) !== "undefined") && Vector.create(properties.line.direction).to3D().add(this.getLine().anchor).liesOn(this.getLine())) { // is a valid array for a Vector, or is a valid Vector
+				// Create a new entity
+				properties.line.direction = new LinearEntitySecondaryPoint({
+					id: universe.getNextEntityId(),
+					name: "Secondary anchor for line " + this.getId(),
+					parentEntity: this,
+					point: {
+						location: Vector.create(properties.line.direction).to3D().add(this.getLine().anchor)
+					}
+				}, universe);
+				universe.addEntity(properties.line.direction);
+			} else if (typeof(properties.line.direction.getType) !== "undefined" && properties.line.direction.getLocation().liesOn(this.getLine())) { // is a valid Entity
+				// Set the entity
+				properties.line.direction.getProperties().parentEntity = this;
+				if (typeof(universe.getEntity(properties.line.direction.getId())) == "undefined") {
+					universe.addEntity(properties.line.direction);
+				}
+			} else {
+				// Failed to set the given anchor as the anchoring entity
+				debug.error("Could not set", properties.line.direction, "as the secondary anchor for entity", this.getId());
+			}
+		} else {
+			// Create a new entity
+			properties.line.direction = new LinearEntitySecondaryPoint({
+				id: universe.getNextEntityId(),
+				name: "Secondary anchor for line " + this.getId(),
+				parentEntity: this,
+				point: {
+					location: this.getLine().direction.to3D()
+				}
+			}, universe);
+			universe.addEntity(properties.line.direction);
+		}
+		
 		this.properties.line.anchor = properties.line.anchor;
+		this.properties.line.direction = properties.line.direction;
+		this.setLocation(properties.line.anchor.getLocation());
 	},
 	initializeGraphics: function(universe) { // Universe
 		this.parent(universe);
@@ -87,7 +167,7 @@ var LineEntity = new Class({
 	getLine: function() {
 		return this.properties.line.line; // Line
 	},
-	// Handles the entity's anchor's location
+	// Handles the line's anchor's location
 	setLocation: function(location) { // point as Vector
 		if (typeof(this.getLocation()) !== "undefined" && this.isAnchored()) {
 			debug.warn("Tried to set the location of anchored entity " + this.getId());
@@ -95,6 +175,9 @@ var LineEntity = new Class({
 		} else {
 			// TODO: clone the location
 			this.getLine().anchor = location.to3D();
+			if (typeof(this.getProperties().line.direction) !== "undefined") {
+				this.setSecondaryLocation(this.getProperties().line.direction.getLocation());
+			}
 			if (this.getLine().liesIn(Plane.XY)) {
 				this.getProperties().line.centerPoint = this.getLine().pointClosestTo(Vector.Zero(3));
 			}
@@ -103,6 +186,23 @@ var LineEntity = new Class({
 	},
 	getLocation: function() {
 		return this.getLine().anchor; // point as Vector
+	},
+	// Handles the line's secondary anchor's location 
+	setSecondaryLocation: function(location) { // point as Vector
+		if (typeof(this.getLocation()) !== "undefined" && this.isAnchored()) {
+			debug.warn("Tried to set the secondary location of anchored entity " + this.getId());
+			return false; // bool
+		} else {
+			// TODO: clone the location
+			this.getLine().direction = location.to3D().subtract(this.getLocation()).toUnitVector();
+			if (this.getLine().liesIn(Plane.XY)) {
+				this.getProperties().line.centerPoint = this.getLine().pointClosestTo(Vector.Zero(3));
+			}
+			return true; // bool
+		}
+	},
+	getSecondaryLocation: function() {
+		return this.getLocation().add(this.getLine().direction); // point as Vector
 	},
 	
 	// Returns the smallest-magnitude vector from the line entity to the given location
