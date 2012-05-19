@@ -103,7 +103,29 @@ var canvasAnimationsSupport = {
 		canvasAnimations: new Array(),
 		canvasAnimationsToRemove: new Array()
 	},
+	activeOnFrameHandler: function(event) {
+		canvasAnimationsSupport.data.canvasAnimations.forEach(function(animation) {
+			if (animation.shouldUpdate(event)) {
+				animation.update(event);
+			}
+			if (animation.shouldRemove(event)) {
+				canvasAnimationsSupport.data.canvasAnimationsToRemove.push(animation);
+			}
+		});
+		if (canvasAnimationsSupport.data.canvasAnimationsToRemove.length > 0) {
+			canvasAnimationsSupport.data.canvasAnimationsToRemove.forEach(function(animation) {
+				canvasAnimationsSupport.data.canvasAnimations.erase(animation);
+			});
+			canvasAnimationsSupport.data.canvasAnimationsToRemove.empty();
+		}
+		if (canvasAnimationsSupport.data.canvasAnimations.length == 0) {
+			delete view.onFrame;
+		}
+	},
 	zoom: function(targetZoom, stepCount, animationDuration) {
+		if (typeof(view.onFrame) == "undefined") {
+			view.onFrame = this.activeOnFrameHandler;
+		}
 		var zoomAnimation = new LinearZoomAnimation({
 			targetZoom: targetZoom,
 			stepCount: stepCount,
@@ -112,6 +134,9 @@ var canvasAnimationsSupport = {
 		this.data.canvasAnimations.push(zoomAnimation);
 	},
 	pan: function(locationOffset, stepCount, animationDuration) {
+		if (typeof(view.onFrame) == "undefined") {
+			view.onFrame = this.activeOnFrameHandler;
+		}
 		var panAnimation = new LinearPanAnimation({
 			locationOffset: locationOffset,
 			stepCount: stepCount,
@@ -120,6 +145,9 @@ var canvasAnimationsSupport = {
 		this.data.canvasAnimations.push(panAnimation);
 	},
 	scaleVectors: function(targetScale, stepCount, animationDuration) {
+		if (typeof(view.onFrame) == "undefined") {
+			view.onFrame = this.activeOnFrameHandler;
+		}
 		var scaleAnimation = new LinearScaleVectorsAnimation({
 			targetScale: targetScale,
 			stepCount: stepCount,
@@ -128,20 +156,3 @@ var canvasAnimationsSupport = {
 		this.data.canvasAnimations.push(scaleAnimation);
 	}
 };
-
-view.onFrame = function(event) {
-	canvasAnimationsSupport.data.canvasAnimations.forEach(function(animation) {
-		if (animation.shouldUpdate(event)) {
-			animation.update(event);
-		}
-		if (animation.shouldRemove(event)) {
-			canvasAnimationsSupport.data.canvasAnimationsToRemove.push(animation);
-		}
-	});
-	if (canvasAnimationsSupport.data.canvasAnimationsToRemove.length > 0) {
-		canvasAnimationsSupport.data.canvasAnimationsToRemove.forEach(function(animation) {
-			canvasAnimationsSupport.data.canvasAnimations.erase(animation);
-		});
-		canvasAnimationsSupport.data.canvasAnimationsToRemove.empty();
-	}
-}
