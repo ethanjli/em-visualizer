@@ -150,6 +150,8 @@ var LineEntity = new Class({
 		this.getSelected().borderOuter = selectedBorderOuter;
 		this.getSelected().group.appendBottom(selectedBorderOuter);
 		this.setUntouched();
+		this.getAnchor().getGroup().group.insertAbove(this.getGroup().group);
+		this.getSecondaryAnchor().getGroup().group.insertAbove(this.getGroup().group);
 		this.refreshCanvasPosition(universe);
 	},
 	
