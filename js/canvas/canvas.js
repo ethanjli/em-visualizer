@@ -96,24 +96,24 @@ antiProtonPreset = {
 	}
 };
 currentUniverse.addEntity(new AntiProton(antiProtonPreset, currentUniverse));
-Line1Preset = {
+XAxisPreset = {
 	id: currentUniverse.getNextEntityId(),
-	name: "First Line",
+	name: "X Axis",
 	line: {
 		line: Line.X,
 		anchor: currentUniverse.getEntity(0)
 	}
 };
-currentUniverse.addEntity(new LineEntity(Line1Preset, currentUniverse));
-Line2Preset = {
+currentUniverse.addEntity(new UniverseAxis(XAxisPreset, currentUniverse));
+YAxisPreset = {
 	id: currentUniverse.getNextEntityId(),
-	name: "Second Line",
+	name: "Y Axis",
 	line: {
 		line: Line.Y,
 		anchor: currentUniverse.getEntity(0)
 	}
 };
-currentUniverse.addEntity(new LineEntity(Line2Preset, currentUniverse));
+currentUniverse.addEntity(new UniverseAxis(YAxisPreset, currentUniverse));
 Line3Preset = {
 	id: currentUniverse.getNextEntityId(),
 	name: "Third Line",

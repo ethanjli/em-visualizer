@@ -104,9 +104,9 @@ var LineEntity = new Class({
 			universe.addEntity(properties.line.direction);
 		}
 		
-		this.properties.line.anchor = properties.line.anchor;
-		this.properties.line.direction = properties.line.direction;
 		this.setLocation(properties.line.anchor.getLocation());
+		this.setAnchor(properties.line.anchor);
+		this.setSecondaryAnchor(properties.line.direction);
 	},
 	initializeGraphics: function(universe) { // Universe
 		this.parent(universe);
@@ -167,18 +167,35 @@ var LineEntity = new Class({
 	getLine: function() {
 		return this.properties.line.line; // Line
 	},
+	setAnchor: function(anchor) { // Entity
+		this.properties.line.anchor = anchor;
+	},
+	getAnchor: function() {
+		return this.properties.line.anchor; // Entity
+	},
+	setSecondaryAnchor: function(anchor) { // Entity
+		this.properties.line.direction = anchor;
+	},
+	getSecondaryAnchor: function() {
+		return this.properties.line.direction; // Entity
+	},
 	translateLocation: function(offset) { // vector as Vector
-		this.getLine().translate(offset);
-		this.getProperties().line.anchor.translateLocation(offset);
-		this.getProperties().line.direction.translateLocation(offset);
-		if (this.getLine().liesIn(Plane.XY)) {
-			this.getProperties().line.centerPoint = this.getLine().pointClosestTo(Vector.Zero(3));
+		if (typeof(this.getLine()) !== "undefined" && this.isAnchored()) {
+			debug.warn("Tried to set the location of anchored entity " + this.getId());
+			return false; // bool
+		} else {
+			this.getLine().translate(offset);
+			this.getAnchor().translateLocation(offset);
+			this.getProperties().line.direction.translateLocation(offset);
+			if (this.getLine().liesIn(Plane.XY)) {
+				this.getProperties().line.centerPoint = this.getLine().pointClosestTo(Vector.Zero(3));
+			}
+			return true;
 		}
-		return true;
 	},
 	// Handles the line's anchor's location
 	setLocation: function(location) { // point as Vector
-		if (typeof(this.getLocation()) !== "undefined" && this.isAnchored()) {
+		if (typeof(this.getAnchor()) !== "undefined" && (this.isAnchored() || this.getAnchor().isAnchored())) {
 			debug.warn("Tried to set the location of anchored entity " + this.getId());
 			return false; // bool
 		} else {
@@ -198,7 +215,7 @@ var LineEntity = new Class({
 	},
 	// Handles the line's secondary anchor's location 
 	setSecondaryLocation: function(location) { // point as Vector
-		if (typeof(this.getLocation()) !== "undefined" && this.isAnchored()) {
+		if (typeof(this.getSecondaryAnchor()) !== "undefined" && (this.isAnchored() || this.getAnchor().isAnchored())) {
 			debug.warn("Tried to set the secondary location of anchored entity " + this.getId());
 			return false; // bool
 		} else {
@@ -260,8 +277,8 @@ var LineEntity = new Class({
 			this.getSelected().borderInner.lastSegment.point = secondEndpoint;
 			this.getSelected().borderOuter.firstSegment.point = firstEndpoint;
 			this.getSelected().borderOuter.lastSegment.point = secondEndpoint;
-			this.getProperties().line.anchor.refreshCanvasPosition(universe);
-			this.getProperties().line.direction.refreshCanvasPosition(universe);
+			this.getAnchor().refreshCanvasPosition(universe);
+			this.getSecondaryAnchor().refreshCanvasPosition(universe);
 		} else if (this.getLine().isParallelTo(Line.Z)) { // Perpendicular to the plane
 			
 		}
@@ -301,5 +318,55 @@ var LineSegmentEntity = new Class({
 		this.getType().push("Segment");
 		// Handle line-segment-specific variables
 		this.setLineSegment(properties.lineSegment.lineSegment);
+	}
+});
+
+// Models axes in the universe
+var UniverseAxis = new Class({
+	Extends: LineEntity,
+	
+	initialize: function(properties, universe) { // Object, Universe
+		// Handle preset properties
+		//var newProperties = Object.clone(properties);
+		var newProperties = properties;
+		newProperties.anchored = true;
+		// Handle preset properties which don't clone properly with MooTools
+		// Send up to parent
+		this.parent(newProperties, universe);
+		// Initialize axis-specific properties container
+		this.properties.axis = new Object();
+		// Handle axis-specific constants
+		this.getType().push("Axis");
+		// Handle axis-specific variables
+	},
+	
+	initializeGraphics: function(universe) { // Universe
+		this.parent(universe);
+		// Hide the secondary endpoint
+		this.getProperties().line.direction.getGroup().group.visible = false;
+	},
+	
+	// Handles graphical display of the entity
+	refreshCanvasPosition: function(universe) { // Universe
+		if (this.getLine().liesIn(Plane.XY)) { // Lies in the plane
+			var lengthFromCenterPoint = Math.sqrt(Math.pow(this.getObservedUniverseOuterRadius(), 2) - Math.pow(this.getProperties().line.centerPoint.distanceFrom(Vector.Zero(3)), 2));
+			var offset = this.getLine().direction.multiply(lengthFromCenterPoint);
+			var firstEndpoint = universe.findCanvasCoordinates(this.getProperties().line.centerPoint.add(offset));
+			var secondEndpoint = universe.findCanvasCoordinates(this.getProperties().line.centerPoint.add(offset.multiply(-1)));
+			this.getMain().lineSegment.firstSegment.point = firstEndpoint;
+			this.getMain().lineSegment.lastSegment.point = secondEndpoint;
+			this.getHovered().border.firstSegment.point = firstEndpoint;
+			this.getHovered().border.lastSegment.point = secondEndpoint;
+			this.getSelected().borderInner.firstSegment.point = firstEndpoint;
+			this.getSelected().borderInner.lastSegment.point = secondEndpoint;
+			this.getSelected().borderOuter.firstSegment.point = firstEndpoint;
+			this.getSelected().borderOuter.lastSegment.point = secondEndpoint;
+			this.getProperties().line.anchor.refreshCanvasPosition(universe);
+			this.getProperties().line.direction.refreshCanvasPosition(universe);
+		} else if (this.getLine().isParallelTo(Line.Z)) { // Perpendicular to the plane
+			
+		}
+		
+		return true; // bool
 	}
 });
