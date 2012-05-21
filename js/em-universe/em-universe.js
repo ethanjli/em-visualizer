@@ -152,6 +152,32 @@ var Universe = new Class({
 		});
 		return maxRadius + 1;
 	},
+	getObservedUniverseInnerRadius: function(universe) { // Universe
+		var origin = this.findCanvasCoordinates(Vector.Zero(3));
+		if (view.bounds.contains(origin)) { // both axes are in view
+			return 0;
+		} else if (view.bounds.bottom > origin.y && origin.y > view.bounds.top) { // x axis is in view
+			if (origin.x < view.bounds.left) { // view is to the right of the y axis
+				return (view.bounds.left - origin.x) / this.getCanvasZoom();
+			} else {
+				return (origin.x - view.bounds.right) / this.getCanvasZoom();
+			}
+		} else if (view.bounds.left < origin.x && origin.x < view.bounds.right) { // y axis is in view
+			if (origin.y < view.bounds.bottom) { // view is above the x axis
+				return (view.bounds.top - origin.y) / this.getCanvasZoom();
+			} else {
+				return (origin.y - view.bounds.bottom) / this.getCanvasZoom();
+			}
+		} else {
+			var corners = [view.bounds.topLeft, view.bounds.topRight, view.bounds.bottomRight, view.bounds.bottomLeft];
+			var minRadius = corners.map(function(corner) {
+				return universe.findUniverseCoordinates(corner).modulus();
+			}).reduce(function(previousValue, currentValue) {
+				return Math.min(previousValue, currentValue);
+			});
+			return minRadius;
+		}
+	},
 	
 	// Handles the location in the universe where the center of the canvas is
 	setCenterOfCanvas: function(location) { // point as Vector
@@ -207,12 +233,22 @@ var Universe = new Class({
 	},
 	refreshObservedUniverseData: function(universe) { // Universe
 		this.getObservedUniverseEntities().forEach(function(entity) {
-			entity.setObservedUniverseOuterRadius(Math.max(entity.getObservedUniverseOuterRadius(), universe.getObservedUniverseOuterRadius(universe)));
+			if (typeof(entity.setObservedUniverseOuterRadius) !== "undefined") {
+				entity.setObservedUniverseOuterRadius(Math.max(entity.getObservedUniverseOuterRadius(), universe.getObservedUniverseOuterRadius(universe)));
+			}
+			if (typeof(entity.setObservedUniverseInnerRadius) !== "undefined") {
+				entity.setObservedUniverseInnerRadius(Math.min(entity.getObservedUniverseInnerRadius(), universe.getObservedUniverseInnerRadius(universe)));
+			}
 		});
 	},
 	resetObservedUniverseData: function(universe) { // Universe
 		this.getObservedUniverseEntities().forEach(function(entity) {
-			entity.setObservedUniverseOuterRadius(universe.getObservedUniverseOuterRadius(universe));
+			if (typeof(entity.setObservedUniverseOuterRadius) !== "undefined") {
+				entity.setObservedUniverseOuterRadius(universe.getObservedUniverseOuterRadius(universe));
+			}
+			if (typeof(entity.setObservedUniverseInnerRadius) !== "undefined") {
+				entity.setObservedUniverseInnerRadius(universe.getObservedUniverseInnerRadius(universe));
+			}
 		});
 	},
 	refreshCompositeEntityCanvasPositions: function(universe) { // Universe

@@ -370,5 +370,13 @@ var UniverseAxis = new Class({
 		}
 		
 		return true; // bool
-	}
+	},
+	
+	setObservedUniverseInnerRadius: function(innerRadius) { // double
+		this.getProperties().line.observedUniverse.innerRadius = innerRadius;
+		return true; // boolean
+	},
+	getObservedUniverseInnerRadius: function() {
+		return this.getProperties().line.observedUniverse.innerRadius; // double
+	},
 });
