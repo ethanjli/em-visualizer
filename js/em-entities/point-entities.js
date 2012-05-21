@@ -113,7 +113,6 @@ var PointEntity = new Class({
 				// Translate
 				this.getGroup().group.translate(canvasCoordinatesOffset);
 				// Update the graphics
-				this.refreshGraphics(universe);
 				this.setCanvasCoordinates(canvasCoordinates);
 				return true; // bool
 			} else {
@@ -126,7 +125,6 @@ var PointEntity = new Class({
 				// Translate
 				this.getGroup().group.translate(canvasCoordinatesOffset);
 				// Update the graphics
-				this.refreshGraphics(universe);
 				this.setCanvasCoordinates(location);
 				return true; // bool
 			} else {
@@ -142,7 +140,6 @@ var PointEntity = new Class({
 				// Translate
 				this.getGroup().group.translate(canvasCoordinatesOffset);
 				// Update the graphics
-				this.refreshGraphics(universe);
 				this.translateCanvasCoordinates(canvasCoordinatesOffset);
 				return true; // bool
 			} else {
@@ -153,7 +150,6 @@ var PointEntity = new Class({
 				// Translate
 				this.getGroup().group.translate(offset);
 				// Update the graphics
-				this.refreshGraphics(universe);
 				this.translateCanvasCoordinates(offset);
 				return true; // bool
 			} else {

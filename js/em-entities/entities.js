@@ -154,6 +154,11 @@ var Entity = new Class({
 	refreshCanvasPosition: function() {
 		return true;
 	},
+	refreshParentEntityCanvasPosition: function(universe) { // Universe
+		if (typeof(this.properties.parentEntity) !== "undefined") {
+			this.properties.parentEntity.refreshCanvasPosition(universe);
+		}
+	},
 	
 	// Handles mouse events
 	setHovered: function() {

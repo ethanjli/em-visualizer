@@ -19,10 +19,11 @@ var canvasToolsActions = {
 			canvasToolsSupport.data.selectionTools.selectedGroups.forEach(function(selectedGroup) {
 				if (!selectedGroup.associatedEntity.isAnchored()) {
 					selectedGroup.associatedEntity.updateLocationByOffset(event.delta, currentUniverse);
+					selectedGroup.associatedEntity.refreshCanvasPosition(currentUniverse);
+					selectedGroup.associatedEntity.refreshParentEntityCanvasPosition(currentUniverse);
 				}
 			});
 			currentUniverse.refreshProbeGraphics(currentUniverse);
-			currentUniverse.refreshCompositeEntityCanvasPositions(currentUniverse);
 		},
 		pan: function(event) {
 			currentUniverse.translateCenterOfCanvas(currentUniverse.findUniverseCoordinatesOffset(event.delta).multiply(-1));
@@ -89,8 +90,9 @@ var canvasToolsActions = {
 				if (!selectedGroup.associatedEntity.isAnchored()) {
 					selectedGroup.associatedEntity.updateLocationByOffset(offset, currentUniverse);
 				}
+				selectedGroup.associatedEntity.refreshCanvasPosition(currentUniverse);
+				selectedGroup.associatedEntity.refreshParentEntityCanvasPosition(currentUniverse);
 			});
-			currentUniverse.refreshCompositeEntityCanvasPositions(currentUniverse);
 		},
 		pan: function(event) {
 			var increment = 40;
@@ -130,7 +132,9 @@ var canvasToolsActions = {
 			var targetScale = Math.round(currentUniverse.getVectorScalingExponent() / increment) * increment + delta;
 			canvasAnimationsSupport.scaleVectors(targetScale, 8, 0.1);
 			currentUniverse.refreshProbeGraphics(currentUniverse);
-			currentUniverse.refreshCompositeEntityCanvasPositions(currentUniverse);
+			canvasToolsSupport.data.selectionTools.selectedGroups.forEach(function(selectedGroup) {
+				selectedGroup.associatedEntity.refreshParentEntityGraphics(currentUniverse);
+			});
 		}
 	}
 }
