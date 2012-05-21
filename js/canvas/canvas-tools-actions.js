@@ -93,6 +93,7 @@ var canvasToolsActions = {
 				selectedGroup.associatedEntity.refreshCanvasPosition(currentUniverse);
 				selectedGroup.associatedEntity.refreshParentEntityCanvasPosition(currentUniverse);
 			});
+			currentUniverse.refreshProbeGraphics(currentUniverse);
 		},
 		pan: function(event) {
 			var increment = 40;
