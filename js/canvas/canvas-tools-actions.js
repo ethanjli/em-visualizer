@@ -20,6 +20,7 @@ var canvasToolsActions = {
 				if (!selectedGroup.associatedEntity.isAnchored()) {
 					selectedGroup.associatedEntity.updateLocationByOffset(event.delta, currentUniverse);
 					selectedGroup.associatedEntity.refreshCanvasPosition(currentUniverse);
+					selectedGroup.associatedEntity.refreshGraphics(currentUniverse);
 					selectedGroup.associatedEntity.refreshParentEntityCanvasPosition(currentUniverse);
 				}
 			});
@@ -91,6 +92,7 @@ var canvasToolsActions = {
 					selectedGroup.associatedEntity.updateLocationByOffset(offset, currentUniverse);
 				}
 				selectedGroup.associatedEntity.refreshCanvasPosition(currentUniverse);
+				selectedGroup.associatedEntity.refreshGraphics(currentUniverse);
 				selectedGroup.associatedEntity.refreshParentEntityCanvasPosition(currentUniverse);
 			});
 			currentUniverse.refreshProbeGraphics(currentUniverse);

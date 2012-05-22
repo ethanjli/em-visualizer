@@ -280,7 +280,9 @@ var LineEntity = new Class({
 			this.getSelected().borderOuter.firstSegment.point = firstEndpoint;
 			this.getSelected().borderOuter.lastSegment.point = secondEndpoint;
 			this.getAnchor().refreshCanvasPosition(universe);
+			this.getAnchor().refreshGraphics(universe);
 			this.getSecondaryAnchor().refreshCanvasPosition(universe);
+			this.getSecondaryAnchor().refreshGraphics(universe);
 		} else if (this.getLine().isParallelTo(Line.Z)) { // Perpendicular to the plane
 			
 		}
@@ -340,6 +342,7 @@ var UniverseAxis = new Class({
 		// Handle axis-specific constants
 		this.getType().push("Axis");
 		// Handle axis-specific variables
+		this.properties.axis.ticks = new Array();
 	},
 	
 	initializeGraphics: function(universe) { // Universe
@@ -349,34 +352,11 @@ var UniverseAxis = new Class({
 	},
 	
 	// Handles graphical display of the entity
-	refreshCanvasPosition: function(universe) { // Universe
-		if (this.getLine().liesIn(Plane.XY)) { // Lies in the plane
-			var lengthFromCenterPoint = Math.sqrt(Math.pow(this.getObservedUniverseOuterRadius(), 2) - Math.pow(this.getProperties().line.centerPoint.distanceFrom(Vector.Zero(3)), 2));
-			var offset = this.getLine().direction.multiply(lengthFromCenterPoint);
-			var firstEndpoint = universe.findCanvasCoordinates(this.getProperties().line.centerPoint.add(offset));
-			var secondEndpoint = universe.findCanvasCoordinates(this.getProperties().line.centerPoint.add(offset.multiply(-1)));
-			this.getMain().lineSegment.firstSegment.point = firstEndpoint;
-			this.getMain().lineSegment.lastSegment.point = secondEndpoint;
-			this.getHovered().border.firstSegment.point = firstEndpoint;
-			this.getHovered().border.lastSegment.point = secondEndpoint;
-			this.getSelected().borderInner.firstSegment.point = firstEndpoint;
-			this.getSelected().borderInner.lastSegment.point = secondEndpoint;
-			this.getSelected().borderOuter.firstSegment.point = firstEndpoint;
-			this.getSelected().borderOuter.lastSegment.point = secondEndpoint;
-			this.getProperties().line.anchor.refreshCanvasPosition(universe);
-			this.getProperties().line.direction.refreshCanvasPosition(universe);
-		} else if (this.getLine().isParallelTo(Line.Z)) { // Perpendicular to the plane
-			
-		}
-		
-		return true; // bool
-	},
-	
 	setObservedUniverseInnerRadius: function(innerRadius) { // double
 		this.getProperties().line.observedUniverse.innerRadius = innerRadius;
 		return true; // boolean
 	},
 	getObservedUniverseInnerRadius: function() {
 		return this.getProperties().line.observedUniverse.innerRadius; // double
-	},
+	}
 });
