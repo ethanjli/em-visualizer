@@ -342,13 +342,43 @@ var UniverseAxis = new Class({
 		// Handle axis-specific constants
 		this.getType().push("Axis");
 		// Handle axis-specific variables
-		this.properties.axis.ticks = new Array();
+		this.setSpacing(properties.axis.spacing);
+		this.properties.axis.ticks = new Object();
 	},
 	
 	initializeGraphics: function(universe) { // Universe
 		this.parent(universe);
 		// Hide the secondary endpoint
 		this.getProperties().line.direction.getGroup().group.visible = false;
+	},
+	
+	// Handles axis tick spacing
+	setSpacing: function(spacing) { // double
+		this.getProperties().axis.spacing = spacing;
+	},
+	getSpacing: function() {
+		return this.getProperties().axis.spacing; // double
+	},
+	// Handles axis ticks
+	addTick: function(universe, location) { // Universe, double
+		if (typeof(this.getTicks().location) !== "undefined") { // Tick is already on the axis
+			return false;
+		} else {
+			// Make a new tick
+			var tick = new UniverseAxisTick({
+				id: universe.getNextEntityId(),
+				name: "Axis Tick",
+				anchored: true,
+				point: {
+					location: this.getLine().anchor.add(this.getLine().direction.multiply(location))
+				}
+			}, universe);
+			universe.addEntity(tick);
+			return true;
+		}
+	},
+	getTicks: function() {
+		return this.getProperties().axis.ticks; // Array
 	},
 	
 	// Handles graphical display of the entity

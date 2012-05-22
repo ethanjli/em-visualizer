@@ -117,6 +117,12 @@ var Universe = new Class({
 		entity.remove(universe);
 		return entity; // Entity
 	},
+	removeEntityById: function(universe, id) { // Universe, int
+		var entity = this.getEntity(id);
+		delete this.properties.entities.entities[id];
+		entity.remove(universe);
+		return entity; // Entity
+	},
 	// TODO: add method to compress the entity list and entity ids by filling empty spots
 	
 	// Calculates the electric field in the universe at a given spot by superpositioning

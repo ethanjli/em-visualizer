@@ -255,3 +255,27 @@ var LinearEntitySecondaryPoint = new Class({
 		}
 	},
 });
+
+var UniverseAxisTick = new Class({
+	Extends: UniverseLocation,
+	
+	initializeGraphics: function(universe) { // Universe
+		this.parent(universe);
+		this.getMainLabel().text.position = this.getCanvasCoordinates().add(new Point(10, 0));
+		this.getMainLabel().text.paragraphStyle.justification = 'right';
+		this.getMainLabel().text.rotate(-30, this.getCanvasCoordinates());
+	},
+	
+	// Handles graphical display of the entity
+	refreshGraphics: function(universe) { // Universe
+		var decimalEpsilonPrecision = universe.getDecimalEpsilonPrecision();
+		if (parseFloat(this.getLocation().e(1).toPrecision(decimalEpsilonPrecision)) != 0) { // x-axis is nonzero
+			this.getMainLabel().text.content = parseFloat(this.getLocation().e(1).toPrecision(decimalEpsilonPrecision)) + "m";
+		} else if (parseFloat(this.getLocation().e(2).toPrecision(decimalEpsilonPrecision))) { // y-axis is nonzero
+			this.getMainLabel().text.content = parseFloat(this.getLocation().e(2).toPrecision(decimalEpsilonPrecision)) + "m";
+		} else { // is at origin
+			this.getMainLabel().text.content = "(0m,0m)";
+		}
+		return true; // bool
+	},
+});
