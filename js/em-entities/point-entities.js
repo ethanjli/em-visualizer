@@ -81,12 +81,12 @@ var PointEntity = new Class({
 	// Handles the entity's location
 	setLocation: function(location) { // point as Vector
 		if (typeof(this.getLocation()) !== "undefined" && this.isAnchored()) {
-			debug.warn("Tried to set the location of anchored entity " + this.getId());
+			debug.warn("Tried to set the location of anchored point entity " + this.getId());
 			return false; // bool
 		} else {
 			// TODO: clone the location
 			this.properties.point.location = location.to3D();
-			if (typeof(this.getProperties().parentEntity) !== "undefined") {
+			if (typeof(this.getProperties().parentEntity) !== "undefined" && !this.getProperties().parentEntity.isAnchored()) {
 				this.getProperties().parentEntity.setLocation(location);
 			}
 			return true; // bool
@@ -261,9 +261,16 @@ var UniverseAxisTick = new Class({
 	
 	initializeGraphics: function(universe) { // Universe
 		this.parent(universe);
+		// Modify text label
 		this.getMainLabel().text.position = this.getCanvasCoordinates().add(new Point(10, 0));
 		this.getMainLabel().text.paragraphStyle.justification = 'right';
 		this.getMainLabel().text.rotate(-30, this.getCanvasCoordinates());
+		// Make unclickable
+		this.getClickable().group.isClickable = false;
+		this.getHovered().group.remove();
+		this.getSelected().group.remove();
+		// Move to bottom of canvas
+		this.getGroup().group.insertBelow(this.getProperties().parentEntity.getGroup().group);
 	},
 	
 	// Handles graphical display of the entity
@@ -274,7 +281,7 @@ var UniverseAxisTick = new Class({
 		} else if (parseFloat(this.getLocation().e(2).toPrecision(decimalEpsilonPrecision))) { // y-axis is nonzero
 			this.getMainLabel().text.content = parseFloat(this.getLocation().e(2).toPrecision(decimalEpsilonPrecision)) + "m";
 		} else { // is at origin
-			this.getMainLabel().text.content = "(0m,0m)";
+			this.getMainLabel().text.content = "";
 		}
 		return true; // bool
 	},

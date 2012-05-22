@@ -183,7 +183,7 @@ var LineEntity = new Class({
 	},
 	translateLocation: function(offset) { // vector as Vector
 		if (typeof(this.getLine()) !== "undefined" && this.isAnchored()) {
-			debug.warn("Tried to set the location of anchored entity " + this.getId());
+			debug.warn("Tried to set the location of anchored line entity " + this.getId());
 			return false; // bool
 		} else {
 			this.getLine().translate(offset);
@@ -198,7 +198,7 @@ var LineEntity = new Class({
 	// Handles the line's anchor's location
 	setLocation: function(location) { // point as Vector
 		if (typeof(this.getAnchor()) !== "undefined" && (this.isAnchored() || this.getAnchor().isAnchored())) {
-			debug.warn("Tried to set the location of anchored entity " + this.getId());
+			debug.warn("Tried to set the location of anchored line entity " + this.getId());
 			return false; // bool
 		} else {
 			// TODO: clone the location
@@ -218,7 +218,7 @@ var LineEntity = new Class({
 	// Handles the line's secondary anchor's location 
 	setSecondaryLocation: function(location) { // point as Vector
 		if (typeof(this.getSecondaryAnchor()) !== "undefined" && (this.isAnchored() || this.getAnchor().isAnchored())) {
-			debug.warn("Tried to set the secondary location of anchored entity " + this.getId());
+			debug.warn("Tried to set the secondary location of anchored line entity " + this.getId());
 			return false; // bool
 		} else {
 			// TODO: clone the location
@@ -344,6 +344,7 @@ var UniverseAxis = new Class({
 		// Handle axis-specific variables
 		this.setSpacing(properties.axis.spacing);
 		this.properties.axis.ticks = new Object();
+		this.properties.line.observedUniverse.innerRadius = universe.getObservedUniverseInnerRadius(universe);
 	},
 	
 	initializeGraphics: function(universe) { // Universe
@@ -368,6 +369,7 @@ var UniverseAxis = new Class({
 			var tick = new UniverseAxisTick({
 				id: universe.getNextEntityId(),
 				name: "Axis Tick",
+				parentEntity: this,
 				anchored: true,
 				point: {
 					location: this.getLine().anchor.add(this.getLine().direction.multiply(location))
@@ -377,8 +379,22 @@ var UniverseAxis = new Class({
 			return true;
 		}
 	},
+	addNewTicks: function(universe) { // Universe
+		var increment = this.getSpacing();
+		if (increment == 0) {
+			return false;
+		}
+		for (var i = Math.floor(this.getObservedUniverseInnerRadius() / increment); i <= Math.ceil(this.getObservedUniverseOuterRadius() / increment); i++) {
+			this.addTick(universe, i * increment);
+			this.addTick(universe, -1 * i * increment);
+		}
+		return true;
+	},
 	getTicks: function() {
 		return this.getProperties().axis.ticks; // Array
+	},
+	updateTicks: function(universe) { // Universe
+		
 	},
 	
 	// Handles graphical display of the entity

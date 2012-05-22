@@ -104,7 +104,7 @@ XAxisPreset = {
 		anchor: currentUniverse.getEntity(0)
 	},
 	axis: {
-		spacing: 0.1
+		spacing: 0.5
 	}
 };
 currentUniverse.addEntity(new UniverseAxis(XAxisPreset, currentUniverse));
@@ -116,7 +116,7 @@ YAxisPreset = {
 		anchor: currentUniverse.getEntity(0)
 	},
 	axis: {
-		spacing: 0.1
+		spacing: 0.5
 	}
 };
 currentUniverse.addEntity(new UniverseAxis(YAxisPreset, currentUniverse));
@@ -130,8 +130,8 @@ Line3Preset = {
 	}
 };
 currentUniverse.addEntity(new LineEntity(Line3Preset, currentUniverse));
-currentUniverse.getEntity(12).addTick(currentUniverse, 0.1);
-currentUniverse.getEntity(10).addTick(currentUniverse, 0.1);
+currentUniverse.getEntity(10).addNewTicks(currentUniverse);
+currentUniverse.getEntity(12).addNewTicks(currentUniverse);
 debug.debug("Test universe now looks like", currentUniverse);
 
 // Set up view stuff

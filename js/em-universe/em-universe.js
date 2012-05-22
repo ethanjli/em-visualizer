@@ -156,7 +156,7 @@ var Universe = new Class({
 		}).reduce(function(previousValue, currentValue) {
 			return Math.max(previousValue, currentValue);
 		});
-		return maxRadius + 1;
+		return maxRadius;
 	},
 	getObservedUniverseInnerRadius: function(universe) { // Universe
 		var origin = this.findCanvasCoordinates(Vector.Zero(3));
