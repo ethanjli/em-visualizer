@@ -113,9 +113,8 @@ var LineEntity = new Class({
 		// Draw the line
 		var lineSegment = new Path.Line(this.getProperties().line.centerPoint, this.getProperties().line.centerPoint);
 		lineSegment.style = {
-			fillColor: "black",
-			strokeColor: "black",
 			strokeWidth: 2
+			strokeColor: "black",
 		};
 		// Draw the hovered-border for the line
 		var hoveredBorder = new Path.Line(this.getProperties().line.centerPoint, this.getProperties().line.centerPoint);

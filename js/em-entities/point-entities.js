@@ -204,7 +204,7 @@ var UniverseLocation = new Class({
 		var decimalEpsilonPrecision = universe.getDecimalEpsilonPrecision();
 		this.getMainLabel().text.content = "(" + parseFloat(this.getLocation().e(1).toPrecision(decimalEpsilonPrecision)) + "m," + parseFloat(this.getLocation().e(2).toPrecision(decimalEpsilonPrecision)) + "m)";
 		return true; // bool
-	},
+	}
 });
 
 // Models the (0,0) anchor in the universe
