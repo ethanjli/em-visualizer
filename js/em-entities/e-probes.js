@@ -240,6 +240,42 @@ var EFieldMagnitude = new Class({
 	},
 });
 
+// Draws the E Field line from a given point
+var EFieldLine = new Class({
+	Extends: EField,
+	
+	initialize: function(properties, universe) { // Object, Universe
+		// Send up to parent
+		this.parent(properties, universe);
+		// Handle e-field-line-probe-specific constants
+		this.getType().push("Line");
+		// Handle e-field-line-probe-specific variables
+	},
+	initializeGraphics: function(universe) { // Universe
+		this.parent(universe);
+		// Initialize the curve
+		var curve = new Path();
+		curve.style = {
+			strokeColor: "black",
+			strokeWidth: 1
+		};
+		this.refreshGraphics(universe);
+	},
+	
+	// Calculates the field line's vertices
+	
+	// Handles graphical display of the entity
+	refreshGraphics: function(universe) { // Universe
+		var decimalEpsilonPrecision = universe.getDecimalEpsilonPrecision();
+		this.getMainLabel().text.content = "(" + parseFloat(this.getLocation().e(1).toPrecision(decimalEpsilonPrecision)) + "m," + parseFloat(this.getLocation().e(2).toPrecision(decimalEpsilonPrecision)) + "m)";
+		return true; // bool
+	},
+	refreshCanvasPosition: function(universe) { // Universe
+		this.parent(universe);
+		return true; // bool
+	}
+});
+
 // Gets the E Potential for a point in the universe
 var EPotential = new Class({
 	Extends: PointEntity,
