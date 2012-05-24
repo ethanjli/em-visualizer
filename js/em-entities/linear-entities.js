@@ -242,16 +242,12 @@ var LineEntity = new Class({
 	updateLocationByOffset: function(offset, universe) { // vector as Vector or Point
 		if ("create" in offset) { // location is a Vector
 			if (this.translateLocation(offset)) { // Successfully updated the location
-				// Update the graphics
-				this.refreshGraphics(universe);
 				return true; // bool
 			} else {
 				return false; // bool
 			}
 		} else { // location is a Point
 			if (this.translateLocation(universe.findUniverseCoordinatesOffset(offset))) { // Successfully updated the location
-				// Update the graphics
-				this.refreshGraphics(universe);
 				return true; // bool
 			} else {
 				return false; // bool
@@ -377,7 +373,7 @@ var UniverseAxis = new Class({
 			// Make a new tick
 			var tick = new UniverseAxisTick({
 				id: universe.getNextEntityId(),
-				name: location + " " + this.getName(),
+				name: "Tick on " + this.getName(),
 				parentEntity: this,
 				anchored: true,
 				point: {
@@ -394,7 +390,7 @@ var UniverseAxis = new Class({
 		if (increment == 0) {
 			return false;
 		}
-		for (var i = Math.floor(this.getObservedUniverseInnerRadius() / increment); i <= Math.ceil(this.getObservedUniverseOuterRadius() / increment); i++) {
+		for (var i = Math.floor(this.getObservedUniverseInnerRadius() / increment); i < Math.ceil(this.getObservedUniverseOuterRadius() / increment); i++) {
 			this.addTick(universe, i * increment);
 			this.addTick(universe, -1 * i * increment);
 		}
@@ -404,7 +400,15 @@ var UniverseAxis = new Class({
 		return this.getProperties().axis.ticks; // Array
 	},
 	updateTicks: function(universe) { // Universe
-		
+		Object.values(this.getTicks()).forEach(function(tick, index) {
+			if (tick.getLocation().modulus() < this.getObservedUniverseInnerRadius() || tick.getLocation().modulus() > this.getObservedUniverseOuterRadius()) { // outside the bounds of the observed universe
+				delete this.getTicks()[Object.keys(this.getTicks())[index]];
+				universe.removeEntity(universe, tick);
+			} else if (parseFloat(tick.getLocation().modulus() / this.getSpacing()) != parseInt(tick.getLocation().modulus() / this.getSpacing())) { // not within the right tick spacing
+				delete this.getTicks()[Object.keys(this.getTicks())[index]];
+				universe.removeEntity(universe, tick);
+			}
+		}, this);
 		this.addNewTicks(universe);
 	},
 	
@@ -415,5 +419,10 @@ var UniverseAxis = new Class({
 	},
 	getObservedUniverseInnerRadius: function() {
 		return this.getProperties().line.observedUniverse.innerRadius; // double
+	},
+	refreshCanvasPosition: function(universe) { // Universe
+		this.parent(universe);
+		this.updateTicks(universe);
+		return true; // bool
 	}
 });

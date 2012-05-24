@@ -130,8 +130,6 @@ Line3Preset = {
 	}
 };
 currentUniverse.addEntity(new LineEntity(Line3Preset, currentUniverse));
-currentUniverse.getEntity(10).addNewTicks(currentUniverse);
-currentUniverse.getEntity(12).addNewTicks(currentUniverse);
 debug.debug("Test universe now looks like", currentUniverse);
 
 // Set up view stuff
