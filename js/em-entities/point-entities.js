@@ -273,6 +273,12 @@ var UniverseAxisTick = new Class({
 		this.getGroup().group.insertBelow(this.getProperties().parentEntity.getGroup().group);
 	},
 	
+	// Method to remove the entity
+	remove: function(universe) { // Universe
+		delete this.properties.id;
+		return this.getGroup().group.remove(); // bool
+	},
+	
 	// Handles graphical display of the entity
 	refreshGraphics: function(universe) { // Universe
 		var decimalEpsilonPrecision = universe.getDecimalEpsilonPrecision();

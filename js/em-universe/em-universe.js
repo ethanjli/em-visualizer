@@ -128,7 +128,7 @@ var Universe = new Class({
 	// Calculates the electric field in the universe at a given spot by superpositioning
 	findElectricFieldAt: function(location) { // point as Vector
 		var vacuumPermittivity = this.getVacuumPermittivity();
-		return this.properties.entities.entities.reduce(function(totalElectricField, currentEntity, index, entities) { // vector as Vector, Entity, int, Entity[] // vector as Vector
+		return this.properties.entities.entities.reduce(function(totalElectricField, currentEntity) { // vector as Vector, Entity
 			if (typeof(currentEntity.findElectricFieldAt) !== "undefined") {
 				return totalElectricField.add(currentEntity.findElectricFieldAt(location, vacuumPermittivity)); // vector as Vector
 			} else {

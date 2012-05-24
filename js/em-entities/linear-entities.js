@@ -343,7 +343,7 @@ var UniverseAxis = new Class({
 		this.getType().push("Axis");
 		// Handle axis-specific variables
 		this.setSpacing(properties.axis.spacing);
-		this.properties.axis.ticks = new Object();
+		this.properties.axis.ticks = new Array();
 		this.properties.line.observedUniverse.innerRadius = universe.getObservedUniverseInnerRadius(universe);
 	},
 	
@@ -351,6 +351,15 @@ var UniverseAxis = new Class({
 		this.parent(universe);
 		// Hide the secondary endpoint
 		this.getProperties().line.direction.getGroup().group.visible = false;
+	},
+	
+	// Method to remove the entity
+	remove: function(universe) { // Universe
+		Object.values(this.getTicks()).forEach(function(tick) {
+			universe.removeEntity(universe, tick);
+		});
+		this.parent(universe);
+		return true;
 	},
 	
 	// Handles axis tick spacing
@@ -362,13 +371,13 @@ var UniverseAxis = new Class({
 	},
 	// Handles axis ticks
 	addTick: function(universe, location) { // Universe, double
-		if (typeof(this.getTicks().location) !== "undefined") { // Tick is already on the axis
+		if (typeof(this.getTicks()[location + " " + this.getName()]) !== "undefined") { // Tick is already on the axis
 			return false;
 		} else {
 			// Make a new tick
 			var tick = new UniverseAxisTick({
 				id: universe.getNextEntityId(),
-				name: "Axis Tick",
+				name: location + " " + this.getName(),
 				parentEntity: this,
 				anchored: true,
 				point: {
@@ -376,6 +385,7 @@ var UniverseAxis = new Class({
 				}
 			}, universe);
 			universe.addEntity(tick);
+			this.getTicks()[location + " " + this.getName()] = tick;
 			return true;
 		}
 	},
@@ -395,6 +405,7 @@ var UniverseAxis = new Class({
 	},
 	updateTicks: function(universe) { // Universe
 		
+		this.addNewTicks(universe);
 	},
 	
 	// Handles graphical display of the entity

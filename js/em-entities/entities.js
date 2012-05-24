@@ -72,6 +72,7 @@ var Entity = new Class({
 	
 	// Method to remove the entity
 	remove: function(universe) { // Universe
+		delete this.properties.id;
 		if (typeof(this.getProperties().parentEntity) === "undefined") {
 			return this.getGroup().group.remove(); // bool
 		} else {
