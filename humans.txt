@@ -13,5 +13,6 @@
 /* SITE */
   Standards: HTML5, LESS
   Components: Bootstrap, Modernizr, LABjs, Javascript Debug, MooTools, Paper.js, Sylvester, Stats.js
+  Numerical ODE Algorithm: Kenneth I. Joy, "Numerical Methods for Particle Tracking in Vector Fields"
   Software: Aptana Studio 3, GitExtensions, UglifyJS
   Icons: Glyphicons

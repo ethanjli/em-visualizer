@@ -262,7 +262,41 @@ var EFieldLine = new Class({
 		this.refreshGraphics(universe);
 	},
 	
-	// Calculates the field line's vertices
+	measure: function(universe) {
+		var stepSize = 0.01;
+		var approximationVertices = new Array();
+		var locationCorrectors = new Array();
+		var locationPredictors = new Array();
+		var locationIterator = this.getLocation();
+		var eFieldIterator = this.parent(universe);
+		// Iterate forwards using the fourth-order Runge-Kutta method
+		while (locationIterator && !eFieldIterator.eql(Vector.Zero(3))) { // the field line has not hit an e-entity or the edge of the observed universe or a location where the e field is 0
+			locationCorrectors[0] = eFieldIterator.multiply(stepSize);
+			locationPredictors[0] = locationIterator.add(locationCorrectors[0].multiply(0.5));
+			locationCorrectors[1] = locationPredictors[0].multiply(stepSize);
+			locationPredictors[1] = locationIterator.add(locationCorrectors[1].multiply(0.5));
+			locationCorrectors[2] = locationPredictors[1].multiply(stepSize);
+			locationPredictors[2] = locationIterator.add(locationCorrectors[2]);
+			locationCorrectors[3] = locationPredictors[3].multiply(stepSize);
+			locationIterator = locationIterator.add(locationCorrectors[0].add(locationCorrectors[1].multiply(2)).add(locationCorrectors[2].multiply(2)).add(locationCorrectors[3]).multiply(1 / 6));
+			approximationVertices.push(locationIterator);
+		}
+		// Iterate backwards using the fourth-order Runge-Kutta method
+		locationIterator = this.getLocation();
+		var eFieldIterator = this.parent(universe);
+		while (locationIterator && !eFieldIterator.eql(Vector.Zero(3))) { // the field line has not hit an e-entity or the edge of the observed universe or a location where the e field is 0
+			locationCorrectors[0] = eFieldIterator.multiply(stepSize);
+			locationPredictors[0] = locationIterator.add(locationCorrectors[0].multiply(0.5));
+			locationCorrectors[1] = locationPredictors[0].multiply(stepSize);
+			locationPredictors[1] = locationIterator.add(locationCorrectors[1].multiply(0.5));
+			locationCorrectors[2] = locationPredictors[1].multiply(stepSize);
+			locationPredictors[2] = locationIterator.add(locationCorrectors[2]);
+			locationCorrectors[3] = locationPredictors[3].multiply(stepSize);
+			locationIterator = locationIterator.add(locationCorrectors[0].add(locationCorrectors[1].multiply(2)).add(locationCorrectors[2].multiply(2)).add(locationCorrectors[3]).multiply(1 / 6));
+			eFieldIterator = universe.findElectricFieldAt(locationIterator);
+			approximationVertices.unshift(locationIterator);
+		}
+	},
 	
 	// Handles graphical display of the entity
 	refreshGraphics: function(universe) { // Universe
