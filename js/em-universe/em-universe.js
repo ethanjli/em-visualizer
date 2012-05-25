@@ -31,10 +31,34 @@ var Universe = new Class({
 		this.addEntity(new UniverseAnchorPoint({
 			id: this.getNextEntityId()
 		}, this));
+		////// Add the x axis
+		this.addEntity(new UniverseAxis({
+			id: this.getNextEntityId(),
+			name: "X Axis",
+			line: {
+				line: Line.X,
+				anchor: this.getEntity(0)
+			},
+			axis: {
+				spacing: 0.5
+			}
+		}, this)); 
+		////// Add the y axis
+		this.addEntity(new UniverseAxis({
+			id: this.getNextEntityId(),
+			name: "Y Axis",
+			line: {
+				line: Line.Y,
+				anchor: this.getEntity(0)
+			},
+			axis: {
+				spacing: 0.5
+			}
+		}, this));
 		////// Put all the other entities in if the entity list is not undefined
 		if (typeof(properties.entities) !== "undefined" && typeof(properties.entities.entities) !== "undefined" && properties.entities.entities.length != 0) {
 			this.setEntities(properties.entities.entities);
-		} 
+		}
 	},
 	
 	getId: function() {
