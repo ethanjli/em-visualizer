@@ -4,7 +4,7 @@ var canvasToolsActions = {
 			var hitResult = project.hitTest(event.point, canvasToolsSupport.data.hitOptions);
 			
 			if (hitResult && hitResult.item.parent && canvasToolsSupport.isInClickableGroup(hitResult.item)) { // Hit a group!
-				if (canvasToolsSupport.data.selectionTools.hoveredGroup != null && canvasToolsSupport.data.selectionTools.hoveredGroup != hitResult.item.parent.parent) { // Moved from a group onto a different one
+				if (canvasToolsSupport.data.selectionTools.hoveredGroup != null && canvasToolsSupport.data.selectionTools.hoveredGroup != canvasToolsSupport.findOverallGroupParent(hitResult.item)) { // Moved from a group onto a different one
 					canvasToolsSupport.data.selectionTools.hoveredGroup.associatedEntity.setUnhovered();
 					canvasToolsSupport.hoverFromItem(hitResult.item);
 				} else if (canvasToolsSupport.data.selectionTools.hoveredGroup == null) { // Move from blank canvas onto a group
@@ -148,7 +148,7 @@ var canvasToolsSupport = {
 			fill: true,
 			stroke: true,
 			segment: true,
-			tolerance: 0
+			tolerance: 3
 		},
 		selectionTools: {
 			selectedGroups: new Array(),

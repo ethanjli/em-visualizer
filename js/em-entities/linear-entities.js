@@ -113,42 +113,13 @@ var LineEntity = new Class({
 		// Draw the line
 		var lineSegment = new Path.Line(this.getProperties().line.centerPoint, this.getProperties().line.centerPoint);
 		lineSegment.style = {
-			strokeWidth: 2
-			strokeColor: "black",
-		};
-		// Draw the hovered-border for the line
-		var hoveredBorder = new Path.Line(this.getProperties().line.centerPoint, this.getProperties().line.centerPoint);
-		hoveredBorder.style = {
-			strokeWidth: 6,
-			strokeColor: "gray"
-		};
-		hoveredBorder.strokeColor.alpha = 0.5;
-		// Draw the selected-border for the line
-		var selectedBorderInner = new Path.Line(this.getProperties().line.centerPoint, this.getProperties().line.centerPoint);
-		selectedBorderInner.style = {
-			strokeWidth: 6,
-			strokeColor: "white"
-		};
-		selectedBorderInner.strokeColor.alpha = 0.9;
-		var selectedBorderOuter = new Path.Line(this.getProperties().line.centerPoint, this.getProperties().line.centerPoint);
-		selectedBorderOuter.style = {
-			strokeWidth: 12,
+			strokeWidth: 2,
 			strokeColor: "black"
 		};
-		selectedBorderOuter.strokeColor.alpha = 0.5;
 		// Commit graphics
 		//// Add the line segment
 		this.getMain().lineSegment = lineSegment;
 		this.getMain().group.appendTop(lineSegment);
-		//// Add the hovered border
-		this.getHovered().border = hoveredBorder;
-		this.getHovered().group.appendTop(hoveredBorder);
-		//// Add the selected border
-		this.getSelected().borderInner = selectedBorderInner;
-		this.getSelected().group.appendTop(selectedBorderInner);
-		this.getSelected().borderOuter = selectedBorderOuter;
-		this.getSelected().group.appendBottom(selectedBorderOuter);
-		this.setUntouched();
 		this.getAnchor().getGroup().group.insertAbove(this.getGroup().group);
 		this.getSecondaryAnchor().getGroup().group.insertAbove(this.getGroup().group);
 		this.refreshCanvasPosition(universe);
@@ -266,14 +237,20 @@ var LineEntity = new Class({
 			var offset = this.getLine().direction.multiply(lengthFromCenterPoint);
 			var firstEndpoint = universe.findCanvasCoordinates(this.getProperties().line.centerPoint.add(offset));
 			var secondEndpoint = universe.findCanvasCoordinates(this.getProperties().line.centerPoint.add(offset.multiply(-1)));
+			this.getProperties().line.firstEndpoint = firstEndpoint;
+			this.getProperties().line.secondEndpoint = secondEndpoint;
 			this.getMain().lineSegment.firstSegment.point = firstEndpoint;
 			this.getMain().lineSegment.lastSegment.point = secondEndpoint;
-			this.getHovered().border.firstSegment.point = firstEndpoint;
-			this.getHovered().border.lastSegment.point = secondEndpoint;
-			this.getSelected().borderInner.firstSegment.point = firstEndpoint;
-			this.getSelected().borderInner.lastSegment.point = secondEndpoint;
-			this.getSelected().borderOuter.firstSegment.point = firstEndpoint;
-			this.getSelected().borderOuter.lastSegment.point = secondEndpoint;
+			if (typeof(this.getHovered().border) !== "undefined") {
+				this.getHovered().border.firstSegment.point = firstEndpoint;
+				this.getHovered().border.lastSegment.point = secondEndpoint;
+			}
+			if (typeof(this.getSelected().borderInner) !== "undefined" && typeof(this.getSelected().borderOuter) !== "undefined") {
+				this.getSelected().borderInner.firstSegment.point = firstEndpoint;
+				this.getSelected().borderInner.lastSegment.point = secondEndpoint;
+				this.getSelected().borderOuter.firstSegment.point = firstEndpoint;
+				this.getSelected().borderOuter.lastSegment.point = secondEndpoint;
+			}
 			this.getAnchor().refreshCanvasPosition(universe);
 			this.getAnchor().refreshGraphics(universe);
 			this.getSecondaryAnchor().refreshCanvasPosition(universe);
@@ -284,6 +261,50 @@ var LineEntity = new Class({
 		
 		return true; // bool
 	},
+	
+	// Handles mouse events
+	setHovered: function() {
+		// Draw the hovered-border for the line
+		var hoveredBorder = new Path.Line(this.getProperties().line.firstEndpoint, this.getProperties().line.secondEndpoint);
+		hoveredBorder.style = {
+			strokeWidth: 6,
+			strokeColor: "gray"
+		};
+		hoveredBorder.strokeColor.alpha = 0.5;
+		// Commit graphics
+		this.getHovered().border = hoveredBorder;
+		this.getHovered().group.appendTop(hoveredBorder);
+	},
+	setUnhovered: function() {
+		this.getHovered().border.remove();
+		delete this.getHovered().border;
+	},
+	setSelected: function() {
+		// Draw the selected-border for the line
+		var selectedBorderInner = new Path.Line(this.getProperties().line.firstEndpoint, this.getProperties().line.secondEndpoint);
+		selectedBorderInner.style = {
+			strokeWidth: 6,
+			strokeColor: "white"
+		};
+		selectedBorderInner.strokeColor.alpha = 0.9;
+		var selectedBorderOuter = new Path.Line(this.getProperties().line.firstEndpoint, this.getProperties().line.secondEndpoint);
+		selectedBorderOuter.style = {
+			strokeWidth: 12,
+			strokeColor: "black"
+		};
+		selectedBorderOuter.strokeColor.alpha = 0.5;
+		// Commit graphics
+		this.getSelected().borderInner = selectedBorderInner;
+		this.getSelected().group.appendTop(selectedBorderInner);
+		this.getSelected().borderOuter = selectedBorderOuter;
+		this.getSelected().group.appendBottom(selectedBorderOuter);
+	},
+	setUnselected: function() {
+		this.getSelected().borderInner.remove();
+		delete this.getSelected().borderInner;
+		this.getSelected().borderOuter.remove();
+		delete this.getSelected().borderOuter;
+	}
 });
 
 // Models any ray object in the universe

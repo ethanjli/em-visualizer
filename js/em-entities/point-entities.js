@@ -38,24 +38,6 @@ var PointEntity = new Class({
 			strokeColor: "black",
 			strokeWidth: 1.5
 		};
-		// Draw the hovered-border for the point
-		var hoveredBorder = new Path.Circle(this.getCanvasCoordinates(), 5);
-		hoveredBorder.style = {
-			fillColor: "white",
-			strokeWidth: 3,
-			strokeColor: "gray"
-		};
-		hoveredBorder.fillColor.alpha = 0;
-		hoveredBorder.strokeColor.alpha = 0.5;
-		// Draw the selected-border for the point
-		var selectedBorder = new Path.Circle(this.getCanvasCoordinates(), 8);
-		selectedBorder.style = {
-			fillColor: "white",
-			strokeWidth: 3,
-			strokeColor: "black"
-		};
-		selectedBorder.fillColor.alpha = 0.5;
-		selectedBorder.strokeColor.alpha = 0.5;
 		// Draw the label
 		var label = new PointText(this.getCanvasCoordinates().add(new Point(5, -5)));
 		label.fillColor = "black";
@@ -66,12 +48,6 @@ var PointEntity = new Class({
 		//// Add the point
 		this.getMain().point = point;
 		this.getMain().group.addChild(point);
-		//// Add the hovered border
-		this.getHovered().border = hoveredBorder;
-		this.getHovered().group.appendTop(hoveredBorder);
-		//// Add the selected border
-		this.getSelected().border = selectedBorder;
-		this.getSelected().group.appendTop(selectedBorder);
 		//// Add the label
 		this.getMainLabel().text = label;
 		this.getMainLabel().group.appendTop(label);
@@ -174,6 +150,46 @@ var PointEntity = new Class({
 		// Translate
 		this.getGroup().group.translate(canvasCoordinatesOffset);
 		return true; // bool
+	},
+	
+	// Handles mouse events
+	setHovered: function() {
+		// Draw the hovered-border for the point
+		var hoveredBorder = new Path.Circle(this.getCanvasCoordinates(), 5);
+		hoveredBorder.style = {
+			fillColor: "white",
+			strokeWidth: 3,
+			strokeColor: "gray"
+		};
+		hoveredBorder.fillColor.alpha = 0;
+		hoveredBorder.strokeColor.alpha = 0.5;
+		// Commit graphics
+		this.getHovered().border = hoveredBorder;
+		this.getHovered().group.appendTop(hoveredBorder);
+	},
+	setUnhovered: function() {
+		if (typeof(this.getHovered().border) !== "undefined") {
+			this.getHovered().border.remove();
+		}
+	},
+	setSelected: function() {
+		// Draw the selected-border for the point
+		var selectedBorder = new Path.Circle(this.getCanvasCoordinates(), 8);
+		selectedBorder.style = {
+			fillColor: "white",
+			strokeWidth: 3,
+			strokeColor: "black"
+		};
+		selectedBorder.fillColor.alpha = 0.5;
+		selectedBorder.strokeColor.alpha = 0.5;
+		// Commit graphics
+		this.getSelected().border = selectedBorder;
+		this.getSelected().group.appendTop(selectedBorder);
+	},
+	setUnselected: function() {
+		if (typeof(this.getSelected().border) !== "undefined") {
+			this.getSelected().border.remove();
+		}
 	}
 });
 

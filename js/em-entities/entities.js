@@ -163,16 +163,16 @@ var Entity = new Class({
 	
 	// Handles mouse events
 	setHovered: function() {
-		this.getHovered().group.visible = true;
+		return true;
 	},
 	setUnhovered: function() {
-		this.getHovered().group.visible = false;
+		return true;
 	},
 	setSelected: function() {
-		this.getSelected().group.visible = true;
+		return true;
 	},
 	setUnselected: function() {
-		this.getSelected().group.visible = false;
+		return true;
 	},
 	setUntouched: function() {
 		this.setUnhovered();
