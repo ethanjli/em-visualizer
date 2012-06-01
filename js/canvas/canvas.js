@@ -8,6 +8,7 @@ debug.info("Set up canvas view of", view.viewSize);
 var currentUniverse = new Universe({
 	id: 0,
 	name: "Test Universe",
+	locationPrecision: Math.pow(10, -6),
 	physicalConstants: {
 		vacuumPermittivity: 1.0 / (4 * Math.PI * Math.pow(10, -7) * Math.pow(299792458, 2)),
 		vacuumPermeability: 4 * Math.PI * Math.pow(10, -7)
@@ -101,11 +102,19 @@ Line3Preset = {
 	name: "Third Line",
 	line: {
 		/*line: Line.create([0.1, 0], [0.05, -0.1])*/
-		anchor: currentUniverse.getEntity(1),
+		anchor: currentUniverse.getEntity(location0Preset.id),
 		direction: [0.05, -0.1]
 	}
 };
 currentUniverse.addEntity(new LineEntity(Line3Preset, currentUniverse));
+EFieldLine1Preset = {
+	id: currentUniverse.getNextEntityId(),
+	name: "First E Field Line Probe",
+	point: {
+		location: Vector.create([0, 0.1])
+	}
+}
+currentUniverse.addEntity(new EFieldLine(EFieldLine1Preset, currentUniverse));
 debug.debug("Test universe now looks like", currentUniverse);
 
 // Set up view stuff

@@ -7,6 +7,7 @@ var Universe = new Class({
 		this.properties.type = "Universe";
 		// Handle universe-specific variables
 		this.setName(properties.name);
+		this.setLocationPrecision(properties.locationPrecision);
 		// Handle physical constant variables
 		this.properties.physicalConstants = new Object();
 		this.setVacuumPermittivity(properties.physicalConstants.vacuumPermittivity);
@@ -77,6 +78,16 @@ var Universe = new Class({
 		return this.properties.name; // String
 	},
 	
+	// Handles the precision by which two locations are to be considered identical
+	setLocationPrecision: function(locationPrecision) { // double
+		Sylvester.precision = 5 * locationPrecision * Math.pow(10, 4);
+		this.properties.locationPrecision = locationPrecision;
+		return true;
+	},
+	getLocationPrecision: function() {
+		return this.properties.locationPrecision; // double
+	},
+	
 	// Handles the universe's ε_0
 	setVacuumPermittivity: function(vacuumPermittivity) { // double
 		this.properties.physicalConstants.vacuumPermittivity = vacuumPermittivity;
@@ -125,6 +136,11 @@ var Universe = new Class({
 			return typeof(entity.getProperties().parentEntity) !== "undefined";
 		}).map(function(entity) {
 			return entity.getProperties().parentEntity;
+		}); // Entity[]
+	},
+	getChargedEntities: function() {
+		return this.properties.entities.entities.filter(function(entity) {
+			return typeof(entity.findElectricFieldAt) !== "undefined";
 		}); // Entity[]
 	},
 	addEntity: function(entity) { // Entity

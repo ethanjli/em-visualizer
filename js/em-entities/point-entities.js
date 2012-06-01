@@ -218,7 +218,15 @@ var UniverseLocation = new Class({
 	// Handles graphical display of the entity
 	refreshGraphics: function(universe) { // Universe
 		var decimalEpsilonPrecision = universe.getDecimalEpsilonPrecision();
-		this.getMainLabel().text.content = "(" + parseFloat(this.getLocation().e(1).toPrecision(decimalEpsilonPrecision)) + "m," + parseFloat(this.getLocation().e(2).toPrecision(decimalEpsilonPrecision)) + "m)";
+		var coordinates = this.getLocation().elements.map(function(coordinate) {
+			var rounded = parseFloat(coordinate.toPrecision(decimalEpsilonPrecision));
+			if (Math.abs(rounded) < universe.getLocationPrecision()) {
+				return 0;
+			} else {
+				return rounded;
+			}
+		});
+		this.getMainLabel().text.content = "(" + coordinates[0] + "m," + coordinates[1] + "m)";
 		return true; // bool
 	}
 });

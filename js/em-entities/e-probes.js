@@ -247,9 +247,15 @@ var EFieldLine = new Class({
 	initialize: function(properties, universe) { // Object, Universe
 		// Send up to parent
 		this.parent(properties, universe);
+		// Initialize e-field-line-probe-specific properties container
+		this.properties.curve = new Object();
 		// Handle e-field-line-probe-specific constants
 		this.getType().push("Line");
 		// Handle e-field-line-probe-specific variables
+		this.properties.curve.observedUniverse = {
+			outerRadius: universe.getObservedUniverseOuterRadius(universe),
+			innerRadius: universe.getObservedUniverseInnerRadius(universe)
+		};
 	},
 	initializeGraphics: function(universe) { // Universe
 		this.parent(universe);
@@ -259,53 +265,107 @@ var EFieldLine = new Class({
 			strokeColor: "black",
 			strokeWidth: 1
 		};
+		this.getGroup().curve = curve;
+		this.getGroup().group.appendBottom(curve);
 		this.refreshGraphics(universe);
 	},
 	
 	measure: function(universe) {
-		var stepSize = 0.01;
-		var approximationVertices = new Array();
+		var stepSize = 0.005;
+		var vectorMultiplier = Math.pow(10, 8);
+		var approximationVertices = [this.getLocation()];
 		var locationCorrectors = new Array();
 		var locationPredictors = new Array();
+		var observedUniverseInnerRadius = this.getObservedUniverseInnerRadius();
+		var observedUniverseOuterRadius = this.getObservedUniverseOuterRadius();
 		var locationIterator = this.getLocation();
-		var eFieldIterator = this.parent(universe);
-		// Iterate forwards using the fourth-order Runge-Kutta method
-		while (locationIterator && !eFieldIterator.eql(Vector.Zero(3))) { // the field line has not hit an e-entity or the edge of the observed universe or a location where the e field is 0
+		var eFieldIterator = this.parent(universe).multiply(vectorMultiplier);
+		var hasEndedAtEntity = false;
+		var chargedEntities = universe.getChargedEntities();
+		// Iterate forwards
+		while (observedUniverseInnerRadius < locationIterator.modulus() && locationIterator.modulus() < observedUniverseOuterRadius && !eFieldIterator.eql(Vector.Zero(3)) && !hasEndedAtEntity) { // the field line has not hit an e-entity or the edge of the observed universe or a location where the e field is 0
+			// Approximate to the next vertex with the fourth-order Runge-Kutta method
 			locationCorrectors[0] = eFieldIterator.multiply(stepSize);
-			locationPredictors[0] = locationIterator.add(locationCorrectors[0].multiply(0.5));
+			locationPredictors[0] = universe.findElectricFieldAt(locationIterator.add(locationCorrectors[0].multiply(0.5)));
 			locationCorrectors[1] = locationPredictors[0].multiply(stepSize);
-			locationPredictors[1] = locationIterator.add(locationCorrectors[1].multiply(0.5));
+			locationPredictors[1] = universe.findElectricFieldAt(locationIterator.add(locationCorrectors[1].multiply(0.5)));
 			locationCorrectors[2] = locationPredictors[1].multiply(stepSize);
-			locationPredictors[2] = locationIterator.add(locationCorrectors[2]);
-			locationCorrectors[3] = locationPredictors[3].multiply(stepSize);
+			locationPredictors[2] = universe.findElectricFieldAt(locationIterator.add(locationCorrectors[2]));
+			locationCorrectors[3] = locationPredictors[2].multiply(stepSize);
 			locationIterator = locationIterator.add(locationCorrectors[0].add(locationCorrectors[1].multiply(2)).add(locationCorrectors[2].multiply(2)).add(locationCorrectors[3]).multiply(1 / 6));
+			//locationIterator = locationIterator.add(eFieldIterator.multiply(stepSize));
 			approximationVertices.push(locationIterator);
+			// Iterate forwards
+			eFieldIterator = universe.findElectricFieldAt(locationIterator).multiply(vectorMultiplier);;
+			// Check if we've ended at a charged entity
+			hasEndedAtEntity = chargedEntities.some(function(entity) {
+				var closeEnough = entity.getLocation().eql(locationIterator);
+				if (closeEnough) {
+					approximationVertices.push(entity.getLocation());
+				}
+				return closeEnough;
+			});
 		}
-		// Iterate backwards using the fourth-order Runge-Kutta method
+		// Iterate backwards
 		locationIterator = this.getLocation();
-		var eFieldIterator = this.parent(universe);
-		while (locationIterator && !eFieldIterator.eql(Vector.Zero(3))) { // the field line has not hit an e-entity or the edge of the observed universe or a location where the e field is 0
+		var eFieldIterator = this.parent(universe).multiply(-1).multiply(vectorMultiplier);
+		hasEndedAtEntity = false;
+		while (observedUniverseInnerRadius < locationIterator.modulus() && locationIterator.modulus() < observedUniverseOuterRadius && !eFieldIterator.eql(Vector.Zero(3)) && !hasEndedAtEntity) { // the field line has not hit an e-entity or the edge of the observed universe or a location where the e field is 0
+			// Approximate to the next vertex with the fourth-order Runge-Kutta method
 			locationCorrectors[0] = eFieldIterator.multiply(stepSize);
-			locationPredictors[0] = locationIterator.add(locationCorrectors[0].multiply(0.5));
+			locationPredictors[0] = universe.findElectricFieldAt(locationIterator.add(locationCorrectors[0].multiply(0.5)));
 			locationCorrectors[1] = locationPredictors[0].multiply(stepSize);
-			locationPredictors[1] = locationIterator.add(locationCorrectors[1].multiply(0.5));
+			locationPredictors[1] = universe.findElectricFieldAt(locationIterator.add(locationCorrectors[1].multiply(0.5)));
 			locationCorrectors[2] = locationPredictors[1].multiply(stepSize);
-			locationPredictors[2] = locationIterator.add(locationCorrectors[2]);
-			locationCorrectors[3] = locationPredictors[3].multiply(stepSize);
+			locationPredictors[2] = universe.findElectricFieldAt(locationIterator.add(locationCorrectors[2]));
+			locationCorrectors[3] = locationPredictors[2].multiply(stepSize);
 			locationIterator = locationIterator.add(locationCorrectors[0].add(locationCorrectors[1].multiply(2)).add(locationCorrectors[2].multiply(2)).add(locationCorrectors[3]).multiply(1 / 6));
-			eFieldIterator = universe.findElectricFieldAt(locationIterator);
+			//locationIterator = locationIterator.add(eFieldIterator.multiply(stepSize));
 			approximationVertices.unshift(locationIterator);
+			// Iterate forwards
+			eFieldIterator = universe.findElectricFieldAt(locationIterator).multiply(-1).multiply(vectorMultiplier);
+			// Check if we've ended at a charged entity
+			hasEndedAtEntity = chargedEntities.some(function(entity) {
+				var closeEnough = entity.getLocation().eql(locationIterator);
+				if (closeEnough) {
+					approximationVertices.unshift(entity.getLocation());
+				}
+				return closeEnough;
+			});
 		}
+		this.properties.curve.approximation = approximationVertices;
+		return approximationVertices;
 	},
 	
+	// Tracks the observed universe
+	setObservedUniverseOuterRadius: function(outerRadius) { // double
+		this.getProperties().curve.observedUniverse.outerRadius = outerRadius;
+		return true; // boolean
+	},
+	getObservedUniverseOuterRadius: function() {
+		return this.getProperties().curve.observedUniverse.outerRadius; // double
+	},
+	setObservedUniverseInnerRadius: function(innerRadius) { // double
+		this.getProperties().curve.observedUniverse.innerRadius = innerRadius;
+		return true; // boolean
+	},
+	getObservedUniverseInnerRadius: function() {
+		return this.getProperties().curve.observedUniverse.innerRadius; // double
+	},
 	// Handles graphical display of the entity
 	refreshGraphics: function(universe) { // Universe
-		var decimalEpsilonPrecision = universe.getDecimalEpsilonPrecision();
-		this.getMainLabel().text.content = "(" + parseFloat(this.getLocation().e(1).toPrecision(decimalEpsilonPrecision)) + "m," + parseFloat(this.getLocation().e(2).toPrecision(decimalEpsilonPrecision)) + "m)";
-		return true; // bool
+		this.measure(universe);
+		this.getGroup().curve.segments = this.getProperties().curve.approximation.map(function(location) {
+			return new Segment(universe.findCanvasCoordinates(location));
+		});
+		this.getGroup().curve.smooth();
 	},
 	refreshCanvasPosition: function(universe) { // Universe
 		this.parent(universe);
+		this.getGroup().curve.segments = this.getProperties().curve.approximation.map(function(location) {
+			return new Segment(universe.findCanvasCoordinates(location));
+		});
+		this.getGroup().curve.smooth();
 		return true; // bool
 	}
 });
