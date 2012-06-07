@@ -271,14 +271,16 @@ var EFieldLine = new Class({
 	},
 	
 	measure: function(universe) {
+		// Approximation parameters
 		var stepSize = 0.005;
 		var vectorMultiplier = Math.pow(10, 8);
-		var approximationVertices = [this.getLocation()];
-		var locationCorrectors = new Array();
-		var locationPredictors = new Array();
 		var observedUniverseInnerRadius = this.getObservedUniverseInnerRadius();
 		var observedUniverseOuterRadius = this.getObservedUniverseOuterRadius();
+		// Iteration variables
+		var locationCorrectors = new Array();
+		var locationPredictors = new Array();
 		var locationIterator = this.getLocation();
+		var approximationVertices = [locationIterator];
 		var eFieldIterator = this.parent(universe).multiply(vectorMultiplier);
 		var hasEndedAtEntity = false;
 		var chargedEntities = universe.getChargedEntities();
@@ -358,14 +360,14 @@ var EFieldLine = new Class({
 		this.getGroup().curve.segments = this.getProperties().curve.approximation.map(function(location) {
 			return new Segment(universe.findCanvasCoordinates(location));
 		});
-		this.getGroup().curve.smooth();
+		this.getGroup().curve.simplify();
 	},
 	refreshCanvasPosition: function(universe) { // Universe
 		this.parent(universe);
 		this.getGroup().curve.segments = this.getProperties().curve.approximation.map(function(location) {
 			return new Segment(universe.findCanvasCoordinates(location));
 		});
-		this.getGroup().curve.smooth();
+		this.getGroup().curve.simplify();
 		return true; // bool
 	}
 });
