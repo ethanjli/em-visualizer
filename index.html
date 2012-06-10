@@ -16,6 +16,8 @@
 		<!-- <link rel="stylesheet/less" href="less/style.less">
 		<script src="js/libs/less.js/dist/less-1.3.0.min.js"></script>-->
 		<link rel="stylesheet" type="text/css" href="less/style.css">
+		<script src="js/libs/jquery/jquery-1.7.2.min.js"></script>
+		<script src="js/libs/bootstrap/bootstrap.min.js"></script>
 	</head>
 	<body style="padding: 0;">
 		<!--[if lt IE 7]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
@@ -103,7 +105,6 @@
 		</div>
 		<div class="modal hide fade" id="welcome">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal">×</button>
 				<h3>Welcome!</h3>
 			</div>
 			<div class="modal-body">
@@ -111,7 +112,10 @@
 				<p>Note: Unfortunately, this page does not yet work under Internet Explorer. Mozilla Firefox, Google Chrome, Safari, and Opera have been tested and work fine, though.</p>
 			</div>
 			<div class="modal-footer">
-				<a href="#" class="btn" data-dismiss="modal">Get started!</a>
+				<div class="progress progress-striped active" id="loadingProgressBar">
+					<div class="bar" id="loadingProgressBarContent"></div>
+				</div>
+				<button class="btn" data-loading-text="Loading..." id="launchButton" data-dismiss="modal">Get started!</a>
 			</div>
 		</div>
 		<div class="modal hide fade" id="usage">
@@ -144,10 +148,16 @@
 		<!--</div>-->
 		<!--Statistics Tracking for noscript browsers-->
 		<noscript>
-			<p>
-				<img alt="Clicky" width="1" height="1" src="//in.getclicky.com/66563347ns.gif" />
-			</p>
+			<p><img alt="Clicky" width="1" height="1" src="//in.getclicky.com/66563347ns.gif" /></p>
 		</noscript>
+		<!--Load jQuery first so we can show a progress bar-->
+		<script type="text/javascript">
+			jQuery.noConflict();
+			jQuery(".dropdown-toggle").dropdown();
+			jQuery("#welcome").modal();
+			jQuery("#loadingProgressBarContent").width("20%");
+			jQuery("#launchButton").button("loading");
+		</script>
 		<!--Javascript loader-->
 		<script src="js/libs/labjs/LAB.min.js"></script>
 		<script src="js/startup.js"></script>

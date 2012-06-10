@@ -3,7 +3,9 @@ $LAB.setGlobalDefaults({
 });
 
 // Initial Scripts
-$LAB.script("js/libs/modernizr/modernizr.js");
+$LAB.script("js/libs/modernizr/modernizr.js").wait(function() {
+	jQuery("#loadingProgressBarContent").width("40%");
+});
 $LAB.script("js/libs/javascript-debug/ba-debug.js").wait(function() {
 	debug.info("Logger initialized");
 });
@@ -17,24 +19,10 @@ $LAB.script("//static.getclicky.com/js").wait(function() {
 	} catch(e) {}
 });
 
-// jQuery Scripts
-$LAB.script("js/libs/jquery/jquery-1.7.2.min.js").wait(function() {
-	jQuery.noConflict();
-})
-	.script("js/libs/bootstrap/alert.js")
-	.script("js/libs/bootstrap/bootstrap.js").wait(function() {
-		jQuery(".dropdown-toggle").dropdown();
-		jQuery("#welcome").modal();
-		debug.info("Finished loading bootstrap jQuery plugins");
-	});
-
 // Modeling Scripts
-$LAB.script("js/libs/sylvester/lib/sylvester-min.js")
-	.script("js/libs/paper.js/dist/paper.js").wait(function() {
-		debug.info("Finished loading paper.js and sylvester");
-	})
-	.script("js/libs/mootools/mootools-core-1.4.5-full-nocompat.js")/*
+$LAB.script("js/libs/mootools/mootools-core-1.4.5-full-nocompat.js")/*
 	.script("js/libs/mootools/mootools-more-1.4.0.1.js")*/.wait(function() {
+		jQuery("#loadingProgressBarContent").width("60%");
 		debug.info("Finished loading MooTools");
 	})
 	.script("js/em-entities/entities.js").wait()
@@ -44,14 +32,19 @@ $LAB.script("js/libs/sylvester/lib/sylvester-min.js")
 	.script("js/em-entities/standard-model-particles.js")
 	.script("js/em-entities/e-probes.js")
 	.script("js/em-universe/em-universe.js").wait(function() {
+		jQuery("#loadingProgressBarContent").width("65%");
 		debug.info("Finished loading core classes");
+	});
+$LAB.script("js/libs/paper.js/dist/paper.js")
+    .script("js/libs/sylvester/lib/sylvester-min.js").wait(function() {
+		jQuery("#loadingProgressBarContent").width("90%");
+		debug.info("Finished loading paper.js");
 	})
-	.script("js/canvas/canvas.js").wait(function() {
-		debug.info("Started up the canvas");
-	})
+	.script("js/canvas/canvas.js")
 	.script("js/canvas/canvas-tools.js")
-	.script("js/canvas/canvas-tools-actions.js").wait(function() {
-		debug.info("Set up mouse and keyboard tools");
-	}).script("js/canvas/canvas-animations.js").wait(function() {
-		debug.info("Set up animations");
+	.script("js/canvas/canvas-tools-actions.js").script("js/canvas/canvas-animations.js").wait(function() {
+		debug.info("Set the canvas");
+		jQuery("#loadingProgressBarContent").width("100%");
+		jQuery("#launchButton").button("reset");
+		//jQuery("#loadingProgressBar").hide("slow");
 	});
