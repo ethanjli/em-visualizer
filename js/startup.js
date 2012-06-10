@@ -24,6 +24,7 @@ $LAB.script("//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js").wait(f
 	.script("js/libs/bootstrap/alert.js")
 	.script("js/libs/bootstrap/bootstrap.js").wait(function() {
 		jQuery(".dropdown-toggle").dropdown();
+		jQuery("#welcome").modal();
 		debug.info("Finished loading bootstrap jQuery plugins");
 	});
 
