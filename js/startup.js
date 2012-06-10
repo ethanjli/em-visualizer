@@ -18,9 +18,14 @@ $LAB.script("//static.getclicky.com/js").wait(function() {
 });
 
 // jQuery Scripts
-/*$LAB.script("js/libs/jquery/dist/jquery.js").wait()
-	.script("js/libs/bootstrap/transition.js")
-	.script("js/libs/bootstrap/collapse.js");*/
+$LAB.script("//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js").wait(function() {
+	jQuery.noConflict();
+})
+	.script("js/libs/bootstrap/alert.js")
+	.script("js/libs/bootstrap/bootstrap.js").wait(function() {
+		jQuery(".dropdown-toggle").dropdown();
+		debug.info("Finished loading bootstrap jQuery plugins");
+	});
 
 // Modeling Scripts
 $LAB.script("js/libs/sylvester/lib/sylvester-min.js")
