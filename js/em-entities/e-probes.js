@@ -356,6 +356,16 @@ var EFieldLine = new Class({
 	},
 	// Handles graphical display of the entity
 	refreshGraphics: function(universe) { // Universe
+		var decimalEpsilonPrecision = universe.getDecimalEpsilonPrecision();
+		var coordinates = this.getLocation().elements.map(function(coordinate) {
+			var rounded = parseFloat(coordinate.toPrecision(decimalEpsilonPrecision));
+			if (Math.abs(rounded) < universe.getLocationPrecision()) {
+				return 0;
+			} else {
+				return rounded;
+			}
+		});
+		this.getMainLabel().text.content = "(" + coordinates[0] + "m," + coordinates[1] + "m)";
 		this.measure(universe);
 		this.getGroup().curve.segments = this.getProperties().curve.approximation.map(function(location) {
 			return new Segment(universe.findCanvasCoordinates(location));
