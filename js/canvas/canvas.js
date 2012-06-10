@@ -25,7 +25,7 @@ var currentUniverse = new Universe({
 		decimalEpsilonPrecision: 10
 	}
 });
-location0Preset = {
+/*location0Preset = {
 	id: currentUniverse.getNextEntityId(),
 	name: "Second Location",
 	point: {
@@ -101,7 +101,7 @@ Line3Preset = {
 	id: currentUniverse.getNextEntityId(),
 	name: "Third Line",
 	line: {
-		/*line: Line.create([0.1, 0], [0.05, -0.1])*/
+		//line: Line.create([0.1, 0], [0.05, -0.1])
 		anchor: currentUniverse.getEntity(location0Preset.id),
 		direction: [0.05, -0.1]
 	}
@@ -114,7 +114,7 @@ EFieldLine1Preset = {
 		location: Vector.create([0, 0.1])
 	}
 }
-currentUniverse.addEntity(new EFieldLine(EFieldLine1Preset, currentUniverse));
+currentUniverse.addEntity(new EFieldLine(EFieldLine1Preset, currentUniverse));*/
 debug.debug("Test universe now looks like", currentUniverse);
 
 // Set up view stuff
