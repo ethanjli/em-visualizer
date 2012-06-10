@@ -18,7 +18,7 @@ $LAB.script("//static.getclicky.com/js").wait(function() {
 });
 
 // jQuery Scripts
-$LAB.script("//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js").wait(function() {
+$LAB.script("js/libs/jquery/jquery-1.7.2.min.js").wait(function() {
 	jQuery.noConflict();
 })
 	.script("js/libs/bootstrap/alert.js")
