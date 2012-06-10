@@ -7,10 +7,10 @@ $LAB.script("js/libs/modernizr/modernizr.js");
 $LAB.script("js/libs/javascript-debug/ba-debug.js").wait(function() {
 	debug.info("Logger initialized");
 });
-$LAB.script("js/libs/stats.js/build/Stats.js").wait(function() {
+/*$LAB.script("js/libs/stats.js/build/Stats.js").wait(function() {
 	debug.info("Stats.js initialized");
 })
-	.script("js/script.js");
+	.script("js/script.js");*/
 $LAB.script("//static.getclicky.com/js").wait(function() {
 	try{
 		clicky.init(66563347);
